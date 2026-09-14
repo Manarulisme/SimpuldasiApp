@@ -12,7 +12,7 @@
     >
 
     <title>
-        Data Umum Kepegawaian - Kelurahan XXXXX
+        Data Anak Putus Sekolah - Kelurahan XXXXX
     </title>
 
 
@@ -971,6 +971,22 @@
         .action-edit {
 
             color: var(--primary);
+
+        }
+
+
+        .action-view {
+
+            color: #2d6a9f;
+
+        }
+
+
+        .action-view:hover {
+
+            background: #eef6fc;
+
+            border-color: #c2dced;
 
         }
 
@@ -2037,11 +2053,11 @@
                 <div>
 
                     <h1 class="page-title">
-                        Data Umum Kepegawaian
+                        Data Anak Putus Sekolah
                     </h1>
 
                     <p class="page-subtitle">
-                        Kesekretariatan · Data Umum Kepegawaian
+                        Kesejahteraan Sosial · Data Anak Putus Sekolah
                     </p>
 
                 </div>
@@ -2107,18 +2123,19 @@
                 <div>
 
                     <h2>
-                        Data Umum Kepegawaian (DUK)
+                        Data Anak Putus Sekolah
                     </h2>
 
                     <p>
-                        Kelola data pegawai dan aparatur
+                        Kelola data anak putus sekolah Kelurahan XXXXX
                         Kelurahan XXXXX.
                     </p>
 
                 </div>
 
 
-                <button
+                <a
+                    href="{{ url('/tambah-data-putus-sekolah') }}"
                     class="btn-add"
                     id="btnTambah"
                 >
@@ -2129,7 +2146,7 @@
 
                     Tambah Data
 
-                </button>
+                </a>
 
 
             </div>
@@ -2148,11 +2165,11 @@
                     <div>
 
                         <h3>
-                            Daftar Pegawai
+                            Daftar Anak Putus Sekolah
                         </h3>
 
                         <p>
-                            Data Umum Kepegawaian Kelurahan XXXXX
+                            Data Anak Putus Sekolah Kelurahan XXXXX
                         </p>
 
                     </div>
@@ -2162,7 +2179,7 @@
                         class="total-data"
                         id="totalData"
                     >
-                        5 Pegawai
+                        5 Anak
                     </span>
 
                 </div>
@@ -2182,27 +2199,27 @@
                             <tr>
 
                                 <th>
-                                    Jenis
+                                    Nama Anak
                                 </th>
 
                                 <th>
-                                    NIP / NRP / TT
+                                    NIK
                                 </th>
 
                                 <th>
-                                    Nama
+                                    RW
                                 </th>
 
                                 <th>
-                                    Golongan
+                                    Usia (Tahun)
                                 </th>
 
                                 <th>
-                                    Pangkat
+                                    Jenjang Terakhir
                                 </th>
 
                                 <th>
-                                    Jabatan
+                                    Keterangan
                                 </th>
 
                                 <th>
@@ -2226,13 +2243,13 @@
                                     <span
                                         class="badge badge-asn"
                                     >
-                                        ASN
+                                        Andi Pratama
                                     </span>
 
                                 </td>
 
                                 <td>
-                                    19780512 200501 1 001
+                                    3204011205140001
                                 </td>
 
                                 <td>
@@ -2240,13 +2257,7 @@
                                     <div
                                         class="employee-name"
                                     >
-                                        Ahmad Hidayat
-                                    </div>
-
-                                    <div
-                                        class="employee-id"
-                                    >
-                                        Pegawai 001
+                                        RW 04
                                     </div>
 
                                 </td>
@@ -2256,17 +2267,17 @@
                                     <span
                                         class="badge badge-gol"
                                     >
-                                        III/d
+                                        14
                                     </span>
 
                                 </td>
 
                                 <td>
-                                    Pembina Tk. I
+                                    SD Kelas 6
                                 </td>
 
                                 <td>
-                                    Lurah
+                                    Untuk administrasi kelurahan
                                 </td>
 
                                 <td>
@@ -2276,8 +2287,16 @@
                                     >
 
                                         <button
+                                            class="action-btn action-view"
+                                            onclick="viewData(this)"
+                                            title="Lihat Data"
+                                        >
+                                            ◉
+                                        </button>
+
+                                        <button
                                             class="action-btn action-edit"
-                                            onclick="editData('Ahmad Hidayat')"
+                                            onclick="editData(this)"
                                             title="Ubah Data"
                                         >
                                             ✎
@@ -2285,7 +2304,7 @@
 
                                         <button
                                             class="action-btn action-delete"
-                                            onclick="hapusData('Ahmad Hidayat')"
+                                            onclick="hapusData(this)"
                                             title="Hapus Data"
                                         >
                                             ×
@@ -2308,13 +2327,13 @@
                                     <span
                                         class="badge badge-asn"
                                     >
-                                        ASN
+                                        Siti Nurhaliza
                                     </span>
 
                                 </td>
 
                                 <td>
-                                    19820415 200701 2 002
+                                    3204014508120002
                                 </td>
 
                                 <td>
@@ -2322,13 +2341,7 @@
                                     <div
                                         class="employee-name"
                                     >
-                                        Siti Rahmawati
-                                    </div>
-
-                                    <div
-                                        class="employee-id"
-                                    >
-                                        Pegawai 002
+                                        RW 07
                                     </div>
 
                                 </td>
@@ -2338,17 +2351,17 @@
                                     <span
                                         class="badge badge-gol"
                                     >
-                                        III/c
+                                        16
                                     </span>
 
                                 </td>
 
                                 <td>
-                                    Penata
+                                    SMP Kelas 8
                                 </td>
 
                                 <td>
-                                    Sekretaris Kelurahan
+                                    Ruang pelayanan umum
                                 </td>
 
                                 <td>
@@ -2358,8 +2371,16 @@
                                     >
 
                                         <button
+                                            class="action-btn action-view"
+                                            onclick="viewData(this)"
+                                            title="Lihat Data"
+                                        >
+                                            ◉
+                                        </button>
+
+                                        <button
                                             class="action-btn action-edit"
-                                            onclick="editData('Siti Rahmawati')"
+                                            onclick="editData(this)"
                                             title="Ubah Data"
                                         >
                                             ✎
@@ -2367,7 +2388,7 @@
 
                                         <button
                                             class="action-btn action-delete"
-                                            onclick="hapusData('Siti Rahmawati')"
+                                            onclick="hapusData(this)"
                                             title="Hapus Data"
                                         >
                                             ×
@@ -2390,13 +2411,13 @@
                                     <span
                                         class="badge badge-asn"
                                     >
-                                        ASN
+                                        Rian Saputra
                                     </span>
 
                                 </td>
 
                                 <td>
-                                    19870622 201001 1 003
+                                    3204012309100003
                                 </td>
 
                                 <td>
@@ -2404,13 +2425,7 @@
                                     <div
                                         class="employee-name"
                                     >
-                                        Budi Santoso
-                                    </div>
-
-                                    <div
-                                        class="employee-id"
-                                    >
-                                        Pegawai 003
+                                        RW 02
                                     </div>
 
                                 </td>
@@ -2420,17 +2435,17 @@
                                     <span
                                         class="badge badge-gol"
                                     >
-                                        III/b
+                                        13
                                     </span>
 
                                 </td>
 
                                 <td>
-                                    Penata Muda Tk. I
+                                    SD Kelas 5
                                 </td>
 
                                 <td>
-                                    Kasi Pemerintahan
+                                    Cetak dokumen dan laporan
                                 </td>
 
                                 <td>
@@ -2440,8 +2455,16 @@
                                     >
 
                                         <button
+                                            class="action-btn action-view"
+                                            onclick="viewData(this)"
+                                            title="Lihat Data"
+                                        >
+                                            ◉
+                                        </button>
+
+                                        <button
                                             class="action-btn action-edit"
-                                            onclick="editData('Budi Santoso')"
+                                            onclick="editData(this)"
                                             title="Ubah Data"
                                         >
                                             ✎
@@ -2449,7 +2472,7 @@
 
                                         <button
                                             class="action-btn action-delete"
-                                            onclick="hapusData('Budi Santoso')"
+                                            onclick="hapusData(this)"
                                             title="Hapus Data"
                                         >
                                             ×
@@ -2472,13 +2495,13 @@
                                     <span
                                         class="badge badge-asn"
                                     >
-                                        ASN
+                                        Maya Lestari
                                     </span>
 
                                 </td>
 
                                 <td>
-                                    19900318 201502 2 004
+                                    3204016711070004
                                 </td>
 
                                 <td>
@@ -2486,13 +2509,7 @@
                                     <div
                                         class="employee-name"
                                     >
-                                        Dewi Lestari
-                                    </div>
-
-                                    <div
-                                        class="employee-id"
-                                    >
-                                        Pegawai 004
+                                        RW 09
                                     </div>
 
                                 </td>
@@ -2502,17 +2519,17 @@
                                     <span
                                         class="badge badge-gol"
                                     >
-                                        III/a
+                                        17
                                     </span>
 
                                 </td>
 
                                 <td>
-                                    Penata Muda
+                                    SMP Kelas 9
                                 </td>
 
                                 <td>
-                                    Kasi Pelayanan
+                                    Area tunggu masyarakat
                                 </td>
 
                                 <td>
@@ -2522,8 +2539,16 @@
                                     >
 
                                         <button
+                                            class="action-btn action-view"
+                                            onclick="viewData(this)"
+                                            title="Lihat Data"
+                                        >
+                                            ◉
+                                        </button>
+
+                                        <button
                                             class="action-btn action-edit"
-                                            onclick="editData('Dewi Lestari')"
+                                            onclick="editData(this)"
                                             title="Ubah Data"
                                         >
                                             ✎
@@ -2531,7 +2556,7 @@
 
                                         <button
                                             class="action-btn action-delete"
-                                            onclick="hapusData('Dewi Lestari')"
+                                            onclick="hapusData(this)"
                                             title="Hapus Data"
                                         >
                                             ×
@@ -2554,13 +2579,13 @@
                                     <span
                                         class="badge badge-pppk"
                                     >
-                                        PPPK
+                                        Fajar Hidayat
                                     </span>
 
                                 </td>
 
                                 <td>
-                                    19940527 202301 1 005
+                                    3204013403160005
                                 </td>
 
                                 <td>
@@ -2568,13 +2593,7 @@
                                     <div
                                         class="employee-name"
                                     >
-                                        Rudi Hermawan
-                                    </div>
-
-                                    <div
-                                        class="employee-id"
-                                    >
-                                        Pegawai 005
+                                        RW 01
                                     </div>
 
                                 </td>
@@ -2584,17 +2603,17 @@
                                     <span
                                         class="badge badge-gol"
                                     >
-                                        IX
+                                        15
                                     </span>
 
                                 </td>
 
                                 <td>
-                                    Ahli Pertama
+                                    SD Kelas 6
                                 </td>
 
                                 <td>
-                                    Staf Pelayanan
+                                    Operasional kelurahan
                                 </td>
 
                                 <td>
@@ -2604,8 +2623,16 @@
                                     >
 
                                         <button
+                                            class="action-btn action-view"
+                                            onclick="viewData(this)"
+                                            title="Lihat Data"
+                                        >
+                                            ◉
+                                        </button>
+
+                                        <button
                                             class="action-btn action-edit"
-                                            onclick="editData('Rudi Hermawan')"
+                                            onclick="editData(this)"
                                             title="Ubah Data"
                                         >
                                             ✎
@@ -2613,7 +2640,7 @@
 
                                         <button
                                             class="action-btn action-delete"
-                                            onclick="hapusData('Rudi Hermawan')"
+                                            onclick="hapusData(this)"
                                             title="Hapus Data"
                                         >
                                             ×
@@ -2673,7 +2700,7 @@
         <div class="modal-header">
 
             <h3>
-                Tambah Data Kepegawaian
+                Tambah Data Anak Putus Sekolah
             </h3>
 
             <button
@@ -2703,12 +2730,12 @@
                     <div class="form-group">
 
                         <label class="form-label">
-                            Jenis
+                            Nama Anak
                         </label>
 
                         <select
                             class="form-control"
-                            id="jenis"
+                            id="nama_anak"
                             required
                         >
 
@@ -2716,16 +2743,8 @@
                                 Pilih Jenis
                             </option>
 
-                            <option value="ASN">
-                                ASN
-                            </option>
-
-                            <option value="PPPK">
-                                PPPK
-                            </option>
-
-                            <option value="Non-ASN">
-                                Non-ASN
+                            <option value="">
+                                Masukkan nama anak
                             </option>
 
                         </select>
@@ -2739,14 +2758,14 @@
                     <div class="form-group">
 
                         <label class="form-label">
-                            NIP / NRP / TT
+                            NIK
                         </label>
 
                         <input
                             type="text"
                             class="form-control"
-                            id="nomor"
-                            placeholder="Masukkan NIP / NRP / TT"
+                            id="nik"
+                            placeholder="Masukkan NIK"
                             required
                         >
 
@@ -2759,14 +2778,14 @@
                     <div class="form-group">
 
                         <label class="form-label">
-                            Nama
+                            RW
                         </label>
 
                         <input
                             type="text"
                             class="form-control"
-                            id="nama"
-                            placeholder="Nama lengkap"
+                            id="rw"
+                            placeholder="Contoh: RW 04"
                             required
                         >
 
@@ -2779,14 +2798,14 @@
                     <div class="form-group">
 
                         <label class="form-label">
-                            Golongan
+                            Usia (Tahun)
                         </label>
 
                         <input
                             type="text"
                             class="form-control"
-                            id="golongan"
-                            placeholder="Contoh: III/d"
+                            id="usia_tahun"
+                            placeholder="Contoh: 14"
                             required
                         >
 
@@ -2799,14 +2818,14 @@
                     <div class="form-group">
 
                         <label class="form-label">
-                            Pangkat
+                            Jenjang Terakhir
                         </label>
 
                         <input
                             type="text"
                             class="form-control"
-                            id="pangkat"
-                            placeholder="Masukkan pangkat"
+                            id="jenjang_terakhir"
+                            placeholder="Contoh: SMP Kelas 8"
                             required
                         >
 
@@ -2819,14 +2838,14 @@
                     <div class="form-group">
 
                         <label class="form-label">
-                            Jabatan
+                            Alasan
                         </label>
 
                         <input
                             type="text"
                             class="form-control"
-                            id="jabatan"
-                            placeholder="Masukkan jabatan"
+                            id="alasan"
+                            placeholder="Alasan putus sekolah"
                             required
                         >
 
@@ -2867,6 +2886,61 @@
 
 </div>
 
+
+
+<!-- =====================================================
+     MODAL EDIT DATA
+===================================================== -->
+
+<div class="modal-overlay" id="modalEditOverlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Edit Data Anak Putus Sekolah</h3>
+            <button type="button" class="modal-close" id="modalEditClose" aria-label="Tutup form edit">×</button>
+        </div>
+
+        <div class="modal-body">
+            <form id="formEditDUK">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="editNama">Nama Anak</label>
+                        <input type="text" class="form-control" id="editNama" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editNIK">NIK</label>
+                        <input type="text" class="form-control" id="editNIK" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label class="form-label" for="editRW">RW</label>
+                        <input type="text" class="form-control" id="editRW" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editUsia">Usia (Tahun)</label>
+                        <input type="number" class="form-control" id="editUsia" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editJenjang">Jenjang Terakhir</label>
+                        <input type="text" class="form-control" id="editJenjang" required>
+                    </div>
+
+                    <div class="form-group full">
+                        <label class="form-label" for="editAlasan">Alasan</label>
+                        <input type="text" class="form-control" id="editAlasan" required>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="btnEditBatal">Batal</button>
+            <button type="button" class="btn-save" id="btnEditSimpan">Perbarui Data</button>
+        </div>
+    </div>
+</div>
 
 
 <!-- =====================================================
@@ -3025,6 +3099,29 @@
         document.getElementById("formDUK");
 
 
+    const modalEditOverlay =
+        document.getElementById("modalEditOverlay");
+
+
+    const modalEditClose =
+        document.getElementById("modalEditClose");
+
+
+    const btnEditBatal =
+        document.getElementById("btnEditBatal");
+
+
+    const btnEditSimpan =
+        document.getElementById("btnEditSimpan");
+
+
+    const formEditDUK =
+        document.getElementById("formEditDUK");
+
+
+    let selectedEditRow = null;
+
+
 
     function bukaModal() {
 
@@ -3042,10 +3139,13 @@
     }
 
 
-    btnTambah.addEventListener(
-        "click",
-        bukaModal
-    );
+    function tutupModalEdit() {
+
+        modalEditOverlay.classList.remove("active");
+
+        formEditDUK.reset();
+
+    }
 
 
     modalClose.addEventListener(
@@ -3070,6 +3170,32 @@
             ) {
 
                 tutupModal();
+
+            }
+
+        }
+    );
+
+
+    modalEditClose.addEventListener(
+        "click",
+        tutupModalEdit
+    );
+
+
+    btnEditBatal.addEventListener(
+        "click",
+        tutupModalEdit
+    );
+
+
+    modalEditOverlay.addEventListener(
+        "click",
+        function(event) {
+
+            if (event.target === modalEditOverlay) {
+
+                tutupModalEdit();
 
             }
 
@@ -3114,20 +3240,78 @@
 
 
     /* =====================================================
-       EDIT DATA
+       VIEW DATA
     ===================================================== */
 
-    function editData(nama) {
+    function viewData(button) {
+
+        const cells = button.closest("tr").cells;
 
         alert(
-            "Ubah data:\n\n" +
-            nama +
-            "\n\n" +
-            "Form edit akan terhubung " +
-            "ke database pada tahap Laravel."
+            "Detail Anak Putus Sekolah\n\n" +
+            "Nama Anak: " + cells[0].innerText.trim() + "\n" +
+            "NIK: " + cells[1].innerText.trim() + "\n" +
+            "RW: " + cells[2].innerText.trim() + "\n" +
+            "Usia (Tahun): " + cells[3].innerText.trim() + "\n" +
+            "Jenjang Terakhir: " + cells[4].innerText.trim() + "\n" +
+            "Alasan: " + cells[5].innerText.trim()
         );
 
     }
+
+
+    /* =====================================================
+       EDIT DATA
+    ===================================================== */
+
+    function editData(button) {
+
+        selectedEditRow = button.closest("tr");
+
+        const cells = selectedEditRow.cells;
+
+        document.getElementById("editNama").value = cells[0].innerText.trim();
+        document.getElementById("editNIK").value = cells[1].innerText.trim();
+        document.getElementById("editRW").value = cells[2].innerText.trim();
+        document.getElementById("editUsia").value = cells[3].innerText.trim();
+        document.getElementById("editJenjang").value = cells[4].innerText.trim();
+        document.getElementById("editAlasan").value = cells[5].innerText.trim();
+
+        modalEditOverlay.classList.add("active");
+
+    }
+
+
+    btnEditSimpan.addEventListener(
+        "click",
+        function() {
+
+            if (!formEditDUK.checkValidity()) {
+
+                formEditDUK.reportValidity();
+
+                return;
+
+            }
+
+            alert(
+                "Data Anak Putus Sekolah berhasil diperbarui.\n\n" +
+                "Nama Anak: " + document.getElementById("editNama").value
+            );
+
+            const cells = selectedEditRow.cells;
+
+            cells[0].innerText = document.getElementById("editNama").value;
+            cells[1].innerText = document.getElementById("editNIK").value;
+            cells[2].innerText = document.getElementById("editRW").value;
+            cells[3].innerText = document.getElementById("editUsia").value;
+            cells[4].innerText = document.getElementById("editJenjang").value;
+            cells[5].innerText = document.getElementById("editAlasan").value;
+
+            tutupModalEdit();
+
+        }
+    );
 
 
 
@@ -3135,7 +3319,10 @@
        HAPUS DATA
     ===================================================== */
 
-    function hapusData(nama) {
+    function hapusData(button) {
+
+        const row = button.closest("tr");
+        const nama = row.cells[0].innerText.trim();
 
 
         const konfirmasi =
@@ -3148,11 +3335,7 @@
 
         if (konfirmasi) {
 
-            alert(
-                "Data " +
-                nama +
-                " berhasil dihapus."
-            );
+            row.remove();
 
         }
 
@@ -3175,7 +3358,7 @@
                 "totalData"
             ).textContent =
                 info.recordsDisplay +
-                " Pegawai";
+                " Anak";
 
         }
     );
