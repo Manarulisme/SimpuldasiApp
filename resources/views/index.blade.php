@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Website Resmi Kelurahan</title>
+    <title>Website Resmi Kelurahan Binong</title>
 
     <style>
+
         * {
             margin: 0;
             padding: 0;
@@ -24,6 +27,7 @@
             text-decoration: none;
             color: inherit;
         }
+
 
         /* =========================
            NAVBAR
@@ -52,16 +56,10 @@
             gap: 12px;
         }
 
-        .logo-icon {
-            width: 45px;
-            height: 45px;
-            background: #0b6b3a;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
+        .logo img {
+            width: 40px;
+            height: auto;
+            display: block;
         }
 
         .logo-text strong {
@@ -98,22 +96,101 @@
             border-radius: 6px;
         }
 
+
         /* =========================
            HERO
         ========================= */
 
         .hero {
+            position: relative;
             min-height: 600px;
-            background:
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            isolation: isolate;
+        }
+
+        .hero::before,
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-position: center center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            z-index: -2;
+        }
+
+        /* FOTO 1 */
+
+        .hero::before {
+            background-image:
                 linear-gradient(
                     rgba(0, 0, 0, 0.45),
                     rgba(0, 0, 0, 0.45)
                 ),
-                url("assets/hero.jpg") center center / cover no-repeat;
+                url('{{ asset('Assets/Image/foto_kelurahan1.jpg') }}');
 
-            display: flex;
-            align-items: center;
+            animation: heroSlide1 10s infinite;
         }
+
+        /* FOTO 2 */
+
+        .hero::after {
+            background-image:
+                linear-gradient(
+                    rgba(0, 0, 0, 0.45),
+                    rgba(0, 0, 0, 0.45)
+                ),
+                url('{{ asset('Assets/Image/foto_kelurahan2.jpg') }}');
+
+            opacity: 0;
+
+            animation: heroSlide2 10s infinite;
+        }
+
+
+        /* =========================
+           HERO ANIMATION
+        ========================= */
+
+        @keyframes heroSlide1 {
+
+            0%,
+            45% {
+                opacity: 1;
+            }
+
+            50%,
+            95% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+
+        }
+
+
+        @keyframes heroSlide2 {
+
+            0%,
+            45% {
+                opacity: 0;
+            }
+
+            50%,
+            95% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+
+        }
+
 
         .hero-container {
             max-width: 1200px;
@@ -164,10 +241,19 @@
             color: white;
         }
 
+        .btn-primary:hover {
+            background: #095b31;
+        }
+
         .btn-white {
             background: white;
             color: #222;
         }
+
+        .btn-white:hover {
+            background: #f1f1f1;
+        }
+
 
         /* =========================
            GENERAL SECTION
@@ -204,6 +290,7 @@
             color: #666;
         }
 
+
         /* =========================
            SURVEY
         ========================= */
@@ -222,7 +309,7 @@
             align-items: center;
             justify-content: space-between;
             gap: 40px;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
         }
 
         .survey-content {
@@ -248,6 +335,10 @@
             font-weight: 600;
         }
 
+        .survey-button:hover {
+            background: #095b31;
+        }
+
         .survey-icon {
             width: 130px;
             height: 130px;
@@ -257,64 +348,166 @@
             align-items: center;
             justify-content: center;
             font-size: 50px;
+            color: #0b6b3a;
         }
 
+
         /* =========================
-           PERSYARATAN
+           PERSYARATAN PELAYANAN
         ========================= */
 
         .requirements-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 25px;
+            max-width: 1100px;
+            margin: auto;
         }
 
         .requirement-card {
-            border: 1px solid #eee;
-            border-radius: 10px;
+            background: #fff;
+            border: 1px solid #e8ecea;
+            border-radius: 12px;
             overflow: hidden;
-            background: white;
-            transition: 0.3s;
+            transition: 0.3s ease;
+            cursor: pointer;
         }
 
         .requirement-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
         }
 
         .requirement-image {
-            height: 220px;
-            background: #eee;
+            width: 100%;
+            height: 500px;
+            background: #f3f5f4;
             overflow: hidden;
+            position: relative;
         }
 
         .requirement-image img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            display: block;
+            transition: transform 0.3s ease;
         }
 
-        .requirement-content {
-            padding: 22px;
+        .requirement-card:hover .requirement-image img {
+            transform: scale(1.02);
         }
 
-        .requirement-content h3 {
-            font-size: 19px;
-            margin-bottom: 8px;
+        .zoom-label {
+            position: absolute;
+            right: 15px;
+            bottom: 15px;
+            background: rgba(11, 107, 58, 0.9);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
-        .requirement-content p {
-            font-size: 14px;
-            color: #666;
+
+        /* =========================
+           IMAGE VIEWER
+        ========================= */
+
+        .image-viewer {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.88);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 30px;
         }
 
-        .requirement-link {
-            display: inline-block;
-            margin-top: 15px;
-            color: #0b6b3a;
-            font-size: 14px;
-            font-weight: bold;
+        .image-viewer.show {
+            display: flex;
         }
+
+        .image-viewer-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .image-viewer img {
+            max-width: 90%;
+            max-height: 85%;
+            object-fit: contain;
+            user-select: none;
+            cursor: grab;
+            transition: transform 0.2s ease;
+        }
+
+        .image-viewer img:active {
+            cursor: grabbing;
+        }
+
+        .viewer-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-size: 25px;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .viewer-close:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .viewer-controls {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 0, 0, 0.55);
+            padding: 8px;
+            border-radius: 8px;
+            z-index: 2;
+        }
+
+        .viewer-controls button {
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .viewer-controls button:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .viewer-zoom-value {
+            color: #fff;
+            min-width: 55px;
+            text-align: center;
+            font-size: 12px;
+        }
+
 
         /* =========================
            LOGIN PEGAWAI
@@ -345,6 +538,7 @@
             border-radius: 6px;
             font-weight: bold;
         }
+
 
         /* =========================
            FOOTER
@@ -392,6 +586,7 @@
             font-size: 13px;
         }
 
+
         /* =========================
            RESPONSIVE
         ========================= */
@@ -407,13 +602,19 @@
             }
 
             .requirements-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 1fr;
+            }
+
+            .requirement-image {
+                height: 450px;
             }
 
             .footer-container {
                 grid-template-columns: 1fr 1fr;
             }
+
         }
+
 
         @media (max-width: 650px) {
 
@@ -433,6 +634,10 @@
                 font-size: 15px;
             }
 
+            .hero-content small {
+                font-size: 12px;
+            }
+
             .survey-box {
                 flex-direction: column;
                 text-align: center;
@@ -441,6 +646,10 @@
 
             .requirements-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .requirement-image {
+                height: 350px;
             }
 
             .footer-container {
@@ -454,11 +663,29 @@
             .section-header h2 {
                 font-size: 28px;
             }
+
+            .image-viewer {
+                padding: 15px;
+            }
+
+            .image-viewer img {
+                max-width: 95%;
+                max-height: 80%;
+            }
+
+            .viewer-controls {
+                bottom: 15px;
+            }
+
         }
+
     </style>
+
 </head>
 
+
 <body>
+
 
     <!-- =========================
          NAVBAR
@@ -470,42 +697,55 @@
 
             <a href="#" class="logo">
 
-                <div class="logo-icon">
-                    LOGO
-                </div>
+                <img
+                    src="{{ asset('Assets/Image/logo_simpuldasi.png') }}"
+                    alt="Logo Simpuldasi"
+                >
 
                 <div class="logo-text">
-                    <strong>Kelurahan XXXXX</strong>
-                    <span>Website Resmi Kelurahan</span>
+
+                    <strong>
+                        Kelurahan Binong
+                    </strong>
+
+                    <span>
+                        Website Resmi Kelurahan Binong
+                    </span>
+
                 </div>
 
             </a>
 
+
             <ul class="nav-menu">
 
                 <li>
-                    <a href="#">Beranda</a>
+                    <a href="#">
+                        Beranda
+                    </a>
                 </li>
 
                 <li>
-                    <a href="#">Profil</a>
+                    <a href="#">
+                        Profil
+                    </a>
                 </li>
 
                 <li>
-                    <a href="#">Pelayanan</a>
+                    <a href="#">
+                        Pelayanan
+                    </a>
                 </li>
 
                 <li>
-                    <a href="#">Persyaratan</a>
+                    <a href="#">
+                        Persyaratan
+                    </a>
                 </li>
 
                 <li>
-                    <a href="#survey">Survey</a>
-                </li>
-
-                <li>
-                    <a href="#login" class="login-button">
-                        Login Pegawai
+                    <a href="#survey">
+                        Survey
                     </a>
                 </li>
 
@@ -514,6 +754,7 @@
         </div>
 
     </header>
+
 
 
     <!-- =========================
@@ -532,7 +773,7 @@
 
                 <h1>
                     Selamat Datang di
-                    Kelurahan XXXXX
+                    Kelurahan Binong
                 </h1>
 
                 <p>
@@ -540,13 +781,20 @@
                     secara mudah, cepat, transparan, dan terpercaya.
                 </p>
 
+
                 <div class="hero-buttons">
 
-                    <a href="#" class="btn btn-primary">
+                    <a
+                        href="#"
+                        class="btn btn-primary"
+                    >
                         Lihat Profil
                     </a>
 
-                    <a href="#" class="btn btn-white">
+                    <a
+                        href="#"
+                        class="btn btn-white"
+                    >
                         Informasi Pelayanan
                     </a>
 
@@ -559,13 +807,18 @@
     </section>
 
 
+
     <!-- =========================
          SURVEY
     ========================= -->
 
-    <section class="section survey-section" id="survey">
+    <section
+        class="section survey-section"
+        id="survey"
+    >
 
         <div class="container">
+
 
             <div class="section-header">
 
@@ -587,6 +840,7 @@
             </div>
 
 
+
             <div class="survey-box">
 
                 <div class="survey-content">
@@ -604,12 +858,14 @@
                     <a
                         href="https://forms.gle/A4DD1UZrSNxzgQa28"
                         target="_blank"
+                        rel="noopener noreferrer"
                         class="survey-button"
                     >
                         Isi Survey Sekarang
                     </a>
 
                 </div>
+
 
                 <div class="survey-icon">
                     ✓
@@ -622,6 +878,7 @@
     </section>
 
 
+
     <!-- =========================
          PERSYARATAN PELAYANAN
     ========================= -->
@@ -629,6 +886,7 @@
     <section class="section">
 
         <div class="container">
+
 
             <div class="section-header">
 
@@ -641,109 +899,62 @@
                 </h2>
 
                 <p>
-                    Ketahui dokumen dan persyaratan yang diperlukan
-                    sebelum mengajukan pelayanan administrasi.
+                    Informasi persyaratan pelayanan administrasi
+                    Kelurahan Binong dapat dilihat pada gambar berikut.
                 </p>
 
             </div>
 
 
+
             <div class="requirements-grid">
 
 
-                <!-- CARD 1 -->
+                <!-- =========================
+                     PERSYARATAN 1
+                ========================= -->
 
-                <div class="requirement-card">
+                <div
+                    class="requirement-card"
+                    onclick="openImageViewer('{{ asset('Assets/Image/persyaratan_pelayanan1.png') }}')"
+                >
 
                     <div class="requirement-image">
 
                         <img
-                            src="assets/persyaratan-1.jpg"
-                            alt="Persyaratan Pelayanan"
+                            src="{{ asset('Assets/Image/persyaratan_pelayanan1.png') }}"
+                            alt="Persyaratan Pelayanan Kelurahan Binong"
                         >
 
-                    </div>
-
-                    <div class="requirement-content">
-
-                        <h3>
-                            Pelayanan Administrasi
-                        </h3>
-
-                        <p>
-                            Informasi mengenai persyaratan
-                            administrasi pelayanan masyarakat.
-                        </p>
-
-                        <a href="#" class="requirement-link">
-                            Lihat Persyaratan →
-                        </a>
+                        <span class="zoom-label">
+                            🔍 Klik untuk memperbesar
+                        </span>
 
                     </div>
 
                 </div>
 
 
-                <!-- CARD 2 -->
 
-                <div class="requirement-card">
+                <!-- =========================
+                     PERSYARATAN 2
+                ========================= -->
 
-                    <div class="requirement-image">
-
-                        <img
-                            src="assets/persyaratan-2.jpg"
-                            alt="Persyaratan Pelayanan"
-                        >
-
-                    </div>
-
-                    <div class="requirement-content">
-
-                        <h3>
-                            Surat Keterangan
-                        </h3>
-
-                        <p>
-                            Informasi persyaratan untuk pengurusan
-                            surat keterangan.
-                        </p>
-
-                        <a href="#" class="requirement-link">
-                            Lihat Persyaratan →
-                        </a>
-
-                    </div>
-
-                </div>
-
-
-                <!-- CARD 3 -->
-
-                <div class="requirement-card">
+                <div
+                    class="requirement-card"
+                    onclick="openImageViewer('{{ asset('Assets/Image/persyaratan_pelayanan2.png') }}')"
+                >
 
                     <div class="requirement-image">
 
                         <img
-                            src="assets/persyaratan-3.jpg"
-                            alt="Persyaratan Pelayanan"
+                            src="{{ asset('Assets/Image/persyaratan_pelayanan2.png') }}"
+                            alt="Persyaratan Pelayanan Kelurahan Binong"
                         >
 
-                    </div>
-
-                    <div class="requirement-content">
-
-                        <h3>
-                            Pelayanan Kependudukan
-                        </h3>
-
-                        <p>
-                            Informasi mengenai dokumen dan persyaratan
-                            pelayanan kependudukan.
-                        </p>
-
-                        <a href="#" class="requirement-link">
-                            Lihat Persyaratan →
-                        </a>
+                        <span class="zoom-label">
+                            🔍 Klik untuk memperbesar
+                        </span>
 
                     </div>
 
@@ -757,30 +968,90 @@
     </section>
 
 
+
     <!-- =========================
-         LOGIN PEGAWAI
+         IMAGE VIEWER
     ========================= -->
 
-    <section class="section employee-section" id="login">
+    <div
+        class="image-viewer"
+        id="imageViewer"
+        onclick="closeImageViewer(event)"
+    >
 
-        <div class="container">
+        <div
+            class="image-viewer-content"
+            onclick="event.stopPropagation()"
+        >
 
-            <h2>
-                Portal Pegawai
-            </h2>
 
-            <p>
-                Akses sistem internal untuk mendukung pengelolaan
-                pelayanan dan administrasi Kelurahan.
-            </p>
+            <!-- CLOSE -->
 
-            <a href="login.html" class="employee-button">
-                🔐 Login Pegawai
-            </a>
+            <button
+                type="button"
+                class="viewer-close"
+                onclick="closeImageViewer()"
+                title="Tutup"
+            >
+                ×
+            </button>
+
+
+            <!-- IMAGE -->
+
+            <img
+                id="viewerImage"
+                src=""
+                alt="Persyaratan Pelayanan"
+            >
+
+
+            <!-- CONTROLS -->
+
+            <div class="viewer-controls">
+
+
+                <button
+                    type="button"
+                    onclick="zoomOut()"
+                    title="Zoom Out"
+                >
+                    −
+                </button>
+
+
+                <span
+                    class="viewer-zoom-value"
+                    id="zoomValue"
+                >
+                    100%
+                </span>
+
+
+                <button
+                    type="button"
+                    onclick="zoomIn()"
+                    title="Zoom In"
+                >
+                    +
+                </button>
+
+
+                <button
+                    type="button"
+                    onclick="resetZoom()"
+                    title="Reset Zoom"
+                >
+                    ↺
+                </button>
+
+
+            </div>
 
         </div>
 
-    </section>
+    </div>
+
 
 
     <!-- =========================
@@ -791,18 +1062,20 @@
 
         <div class="footer-container">
 
+
             <div class="footer-column">
 
                 <h3>
-                    Kelurahan XXXXX
+                    Kelurahan Binong
                 </h3>
 
                 <p>
-                    Website resmi Kelurahan XXXXX sebagai media
+                    Website resmi Kelurahan Binong sebagai media
                     informasi dan pelayanan publik bagi masyarakat.
                 </p>
 
             </div>
+
 
 
             <div class="footer-column">
@@ -812,13 +1085,35 @@
                 </h3>
 
                 <ul>
-                    <li><a href="#">Beranda</a></li>
-                    <li><a href="#">Profil</a></li>
-                    <li><a href="#">Pelayanan</a></li>
-                    <li><a href="#">Persyaratan</a></li>
+
+                    <li>
+                        <a href="#">
+                            Beranda
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#">
+                            Profil
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#">
+                            Pelayanan
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#">
+                            Persyaratan
+                        </a>
+                    </li>
+
                 </ul>
 
             </div>
+
 
 
             <div class="footer-column">
@@ -828,24 +1123,216 @@
                 </h3>
 
                 <ul>
-                    <li>Alamat Kelurahan</li>
-                    <li>Telepon</li>
-                    <li>Email</li>
-                    <li>Jam Pelayanan</li>
+
+                    <li>
+                        Alamat Kelurahan
+                    </li>
+
+                    <li>
+                        Telepon
+                    </li>
+
+                    <li>
+                        Email
+                    </li>
+
+                    <li>
+                        Jam Pelayanan
+                    </li>
+
                 </ul>
 
             </div>
 
+
         </div>
+
 
 
         <div class="copyright">
 
-            © 2026 Kelurahan XXXXX. All Rights Reserved.
+            © {{ date('Y') }} Kelurahan Binong. All Rights Reserved.
 
         </div>
 
     </footer>
 
+
+
+    <!-- =========================
+         JAVASCRIPT IMAGE VIEWER
+    ========================= -->
+
+    <script>
+
+        let currentZoom = 1;
+
+        const imageViewer =
+            document.getElementById('imageViewer');
+
+        const viewerImage =
+            document.getElementById('viewerImage');
+
+        const zoomValue =
+            document.getElementById('zoomValue');
+
+
+        /* =========================
+           OPEN VIEWER
+        ========================= */
+
+        function openImageViewer(imageSrc) {
+
+            viewerImage.src = imageSrc;
+
+            currentZoom = 1;
+
+            updateZoom();
+
+            imageViewer.classList.add('show');
+
+            document.body.style.overflow = 'hidden';
+
+        }
+
+
+        /* =========================
+           CLOSE VIEWER
+        ========================= */
+
+        function closeImageViewer(event) {
+
+            /*
+             * Jika klik background,
+             * tutup viewer.
+             */
+
+            if (event && event.target !== imageViewer) {
+                return;
+            }
+
+            imageViewer.classList.remove('show');
+
+            document.body.style.overflow = '';
+
+            currentZoom = 1;
+
+            updateZoom();
+
+        }
+
+
+        /* =========================
+           ZOOM IN
+        ========================= */
+
+        function zoomIn() {
+
+            if (currentZoom < 3) {
+
+                currentZoom += 0.25;
+
+                updateZoom();
+
+            }
+
+        }
+
+
+        /* =========================
+           ZOOM OUT
+        ========================= */
+
+        function zoomOut() {
+
+            if (currentZoom > 0.5) {
+
+                currentZoom -= 0.25;
+
+                updateZoom();
+
+            }
+
+        }
+
+
+        /* =========================
+           RESET ZOOM
+        ========================= */
+
+        function resetZoom() {
+
+            currentZoom = 1;
+
+            updateZoom();
+
+        }
+
+
+        /* =========================
+           UPDATE ZOOM
+        ========================= */
+
+        function updateZoom() {
+
+            viewerImage.style.transform =
+                `scale(${currentZoom})`;
+
+            zoomValue.textContent =
+                Math.round(currentZoom * 100) + '%';
+
+        }
+
+
+        /* =========================
+           KEYBOARD
+        ========================= */
+
+        document.addEventListener(
+            'keydown',
+            function(event) {
+
+                /* ESC = Close */
+
+                if (event.key === 'Escape') {
+
+                    imageViewer.classList.remove('show');
+
+                    document.body.style.overflow = '';
+
+                    currentZoom = 1;
+
+                    updateZoom();
+
+                }
+
+
+                /* + = Zoom In */
+
+                if (
+                    event.key === '+' ||
+                    event.key === '='
+                ) {
+
+                    zoomIn();
+
+                }
+
+
+                /* - = Zoom Out */
+
+                if (event.key === '-') {
+
+                    zoomOut();
+
+                }
+
+            }
+        );
+
+    </script>
+
+
 </body>
+
 </html>

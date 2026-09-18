@@ -1,6 +1,6 @@
 @extends('Admin.Layout.master')
 
-@section('title', 'Dashboard - Kelurahan XXXXX')
+@section('title', 'Dashboard - Kelurahan Cibinong')
 @section('page_title', 'Beranda')
 @section('page_subtitle', 'Dashboard Sistem Informasi Kelurahan')
 
@@ -43,7 +43,7 @@
 <section class="welcome">
     <small>SISTEM INFORMASI KELURAHAN</small>
     <h2>Selamat Datang, Administrator</h2>
-    <p>Kelola data dan informasi Kelurahan XXXXX melalui dashboard ini. Pastikan seluruh data pelayanan dan administrasi selalu diperbarui secara berkala.</p>
+    <p>Kelola data dan informasi Kelurahan Cibinong melalui dashboard ini. Pastikan seluruh data pelayanan dan administrasi selalu diperbarui secara berkala.</p>
 </section>
 
 <section class="stats-grid">

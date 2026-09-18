@@ -1,2683 +1,1492 @@
-```html
-<!DOCTYPE html>
-<html lang="id">
+@extends('Admin.Layout.master')
 
-<head>
+@section('title', 'Data Anak Putus Sekolah - Kelurahan XXXXX')
+@section('page_title', 'Data Anak Putus Sekolah')
+@section('page_subtitle', 'Kesejahteraan Sosial · Data Anak Putus Sekolah')
 
-    <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+@section('content')
 
-    <title>
-        Data Anak Putus Sekolah - Kelurahan XXXXX
-    </title>
+<style>
 
+    /* =====================================================
+       PAGE HEADER
+    ====================================================== */
 
-    <!-- =====================================================
-         DATATABLES CSS
-    ====================================================== -->
+    .content-header {
 
-    <link
-        rel="stylesheet"
-        href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css"
-    >
+        display: flex;
 
+        align-items: center;
 
-    <style>
+        justify-content: space-between;
 
-        /* =====================================================
-           RESET
-        ===================================================== */
+        gap: 20px;
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        margin-bottom: 22px;
 
+    }
 
-        :root {
 
-            --primary: #087443;
-            --primary-dark: #065c35;
-            --primary-light: #eaf5ef;
+    .content-header h2 {
 
-            --sidebar: #102f47;
-            --sidebar-hover: #173c58;
+        font-family: Georgia, serif;
 
-            --text: #263238;
-            --muted: #7a858d;
+        font-size: 22px;
 
-            --border: #e7ebee;
+        color: #18364d;
 
-            --background: #f5f7f8;
+        margin-bottom: 5px;
 
-            --white: #ffffff;
+    }
 
-            --danger: #c0392b;
 
-            --gold: #d8a600;
+    .content-header p {
 
-        }
+        color: #7a858d;
 
+        font-size: 12px;
 
-        body {
+        line-height: 1.6;
 
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
+    }
 
-            background: var(--background);
 
-            color: var(--text);
+    /* =====================================================
+       BUTTON TAMBAH
+    ====================================================== */
 
-            min-height: 100vh;
+    .btn-add {
 
-        }
+        display: inline-flex;
 
+        align-items: center;
 
-        a {
+        gap: 8px;
 
-            text-decoration: none;
+        background: #087443;
 
-            color: inherit;
+        color: white;
 
-        }
+        border: none;
 
+        border-radius: 7px;
 
-        button,
-        input,
-        select {
+        padding: 11px 16px;
 
-            font-family: inherit;
+        font-size: 12px;
 
-        }
+        font-weight: 600;
 
+        cursor: pointer;
 
+        white-space: nowrap;
 
-        /* =====================================================
-           LAYOUT
-        ===================================================== */
+        transition: 0.2s;
 
-        .dashboard {
+    }
 
-            display: flex;
 
-            min-height: 100vh;
+    .btn-add:hover {
 
-        }
+        background: #065c35;
 
+        color: white;
 
+        transform: translateY(-1px);
 
-        /* =====================================================
-           SIDEBAR
-        ===================================================== */
+    }
 
-        .sidebar {
 
-            width: 270px;
+    .btn-add-icon {
 
-            background: var(--sidebar);
+        font-size: 17px;
 
-            color: white;
+        line-height: 1;
 
-            position: fixed;
+    }
 
-            top: 0;
-            left: 0;
-            bottom: 0;
 
-            z-index: 100;
+    /* =====================================================
+       TABLE PANEL
+    ====================================================== */
 
-            overflow-y: auto;
+    .table-panel {
 
-            transition: 0.3s;
+        background: white;
 
-        }
+        border: 1px solid #e7ebee;
 
+        border-radius: 10px;
 
-        .sidebar::-webkit-scrollbar {
+        overflow: hidden;
 
-            width: 5px;
+    }
 
-        }
 
+    .table-panel-header {
 
-        .sidebar::-webkit-scrollbar-thumb {
+        padding: 19px 22px;
 
-            background:
-                rgba(255,255,255,0.15);
+        border-bottom: 1px solid #e7ebee;
 
-            border-radius: 10px;
+        display: flex;
 
-        }
+        align-items: center;
 
+        justify-content: space-between;
 
+    }
 
-        /* =====================================================
-           SIDEBAR BRAND
-        ===================================================== */
 
-        .sidebar-brand {
+    .table-panel-header h3 {
 
-            height: 82px;
+        font-size: 15px;
 
-            padding: 0 22px;
+        color: #18364d;
 
-            display: flex;
+    }
 
-            align-items: center;
 
-            gap: 12px;
+    .table-panel-header p {
 
-            border-bottom:
-                1px solid
-                rgba(255,255,255,0.08);
+        font-size: 11px;
 
-        }
+        color: #7a858d;
 
+        margin-top: 4px;
 
-        .brand-logo {
+    }
 
-            width: 43px;
 
-            height: 43px;
+    .total-data {
 
-            border-radius: 50%;
+        font-size: 11px;
 
-            background: white;
+        background: #eaf5ef;
 
-            color: var(--primary);
+        color: #087443;
 
-            display: flex;
+        padding: 6px 10px;
 
-            align-items: center;
+        border-radius: 20px;
 
-            justify-content: center;
+        font-weight: 600;
 
-            font-size: 9px;
+    }
 
-            font-weight: bold;
 
-            flex-shrink: 0;
+    .table-wrapper {
 
-        }
+        padding: 0 22px 20px;
 
+        overflow-x: auto;
 
-        .brand-name strong {
+    }
 
-            display: block;
 
-            font-family: Georgia, serif;
+    /* =====================================================
+       DATATABLE
+    ====================================================== */
 
-            font-size: 16px;
+    #anakPutusSekolahTable {
 
-        }
+        width: 100% !important;
 
+        border-collapse: collapse !important;
 
-        .brand-name span {
+        margin-top: 15px !important;
 
-            display: block;
+    }
 
-            font-size: 10px;
 
-            margin-top: 3px;
+    #anakPutusSekolahTable thead th {
 
-            color: #9eb1c0;
+        background: #f8faf9;
 
-            letter-spacing: 0.4px;
+        color: #52616b;
 
-        }
+        font-size: 11px;
 
+        font-weight: 600;
 
+        padding: 13px 12px;
 
-        /* =====================================================
-           SIDEBAR MENU
-        ===================================================== */
+        border-bottom: 1px solid #e7ebee;
 
-        .sidebar-menu {
+        white-space: nowrap;
 
-            padding: 18px 12px 30px;
+    }
 
-        }
 
+    #anakPutusSekolahTable tbody td {
 
-        .menu-title {
+        padding: 14px 12px;
 
-            font-size: 10px;
+        font-size: 12px;
 
-            color: #7590a3;
+        border-bottom: 1px solid #f0f2f3;
 
-            letter-spacing: 0.7px;
+        color: #39474f;
 
-            text-transform: uppercase;
+        vertical-align: middle;
 
-            padding: 16px 12px 8px;
+    }
 
-        }
 
+    #anakPutusSekolahTable tbody tr:hover {
 
-        .menu-item {
+        background: #fafcfb;
 
-            display: flex;
+    }
 
-            align-items: center;
 
-            gap: 12px;
+    #anakPutusSekolahTable tbody tr:last-child td {
 
-            min-height: 42px;
+        border-bottom: none;
 
-            padding: 10px 12px;
+    }
 
-            border-radius: 7px;
 
-            color: #dce6ed;
+    /* =====================================================
+       DATA STYLE
+    ====================================================== */
 
-            font-size: 13px;
+    .child-name {
 
-            margin-bottom: 2px;
+        font-weight: 600;
 
-            transition: 0.2s;
+        color: #18364d;
 
-        }
+    }
 
 
-        .menu-item:hover {
+    .nik {
 
-            background: var(--sidebar-hover);
+        font-size: 11px;
 
-            color: white;
+        color: #65727a;
 
-        }
+        letter-spacing: 0.2px;
 
+    }
 
-        .menu-item.active {
 
-            background: #1d405c;
+    .badge {
 
-            color: white;
+        display: inline-block;
 
-            font-weight: 600;
+        padding: 5px 9px;
 
-            position: relative;
+        border-radius: 5px;
 
-        }
+        font-size: 10px;
 
+        font-weight: 600;
 
-        .menu-item.active::before {
+    }
 
-            content: "";
 
-            position: absolute;
+    .badge-age {
 
-            left: -12px;
+        background: #f1f3f4;
 
-            top: 0;
+        color: #58636a;
 
-            bottom: 0;
+    }
 
-            width: 3px;
 
-            background: var(--gold);
+    .badge-rw {
 
-            border-radius:
-                0 3px 3px 0;
+        background: #eef6fc;
 
-        }
+        color: #2d6a9f;
 
+    }
 
-        .menu-icon {
 
-            width: 19px;
+    /* =====================================================
+       ACTION BUTTON
+    ====================================================== */
 
-            height: 19px;
+    .action-buttons {
 
-            display: flex;
+        display: flex;
 
-            align-items: center;
+        align-items: center;
 
-            justify-content: center;
+        gap: 6px;
 
-            flex-shrink: 0;
+    }
 
-            font-size: 15px;
 
-        }
+    .action-btn {
 
+        width: 31px;
 
-        .menu-text {
+        height: 31px;
 
-            flex: 1;
+        border-radius: 6px;
 
-        }
+        border: 1px solid #e7ebee;
 
+        background: white;
 
+        cursor: pointer;
 
-        /* =====================================================
-           MAIN
-        ===================================================== */
+        display: flex;
 
-        .main {
+        align-items: center;
 
-            margin-left: 270px;
+        justify-content: center;
 
-            width:
-                calc(100% - 270px);
+        font-size: 13px;
 
-            min-height: 100vh;
+        transition: 0.2s;
 
-        }
+    }
 
 
+    .action-view {
 
-        /* =====================================================
-           TOPBAR
-        ===================================================== */
+        color: #2d6a9f;
 
-        .topbar {
+    }
 
-            height: 82px;
 
-            background: white;
+    .action-view:hover {
 
-            border-bottom:
-                1px solid
-                var(--border);
+        background: #eef6fc;
 
-            display: flex;
+        border-color: #c2dced;
 
-            align-items: center;
+    }
 
-            justify-content: space-between;
 
-            padding: 0 30px;
+    .action-edit {
 
-            position: sticky;
+        color: #087443;
 
-            top: 0;
+    }
 
-            z-index: 50;
 
-        }
+    .action-edit:hover {
 
+        background: #eaf5ef;
 
-        .topbar-left {
+        border-color: #b9ddca;
 
-            display: flex;
+    }
 
-            align-items: center;
 
-            gap: 15px;
+    .action-delete {
 
-        }
+        color: #c0392b;
 
+    }
 
-        .mobile-menu {
 
-            display: none;
+    .action-delete:hover {
 
-            border: none;
+        background: #fdf0ef;
 
-            background:
-                var(--primary-light);
+        border-color: #edc5c1;
 
-            color: var(--primary);
+    }
 
-            width: 40px;
 
-            height: 40px;
+    /* =====================================================
+       DATATABLE CONTROLS
+    ====================================================== */
 
-            border-radius: 7px;
+    .dt-container {
 
-            cursor: pointer;
+        font-size: 11px;
 
-            font-size: 20px;
+    }
 
-        }
 
+    .dt-layout-row {
 
-        .page-title {
+        margin-top: 14px !important;
 
-            font-family: Georgia, serif;
+    }
 
-            font-size: 25px;
 
-            color: #18364d;
+    .dt-length select,
+    .dt-search input {
 
-        }
+        border: 1px solid #e7ebee !important;
 
+        border-radius: 6px !important;
 
-        .page-subtitle {
+        font-size: 11px !important;
 
-            color: var(--muted);
+        padding: 7px 9px !important;
 
-            font-size: 12px;
+        outline: none !important;
 
-            margin-top: 3px;
+    }
 
-        }
 
+    .dt-search input:focus {
 
+        border-color: #087443 !important;
 
-        /* =====================================================
-           USER AREA
-        ===================================================== */
+        box-shadow:
+            0 0 0 2px
+            rgba(8,116,67,0.08);
 
-        .user-area {
+    }
 
-            display: flex;
 
-            align-items: center;
+    .dt-info {
 
-            gap: 14px;
+        color: #7a858d !important;
 
-        }
+        font-size: 11px !important;
 
+    }
 
-        .notification {
 
-            width: 38px;
+    .dt-paging button {
 
-            height: 38px;
+        border-radius: 5px !important;
 
-            border:
-                1px solid
-                var(--border);
+        font-size: 11px !important;
 
-            border-radius: 7px;
+        min-width: 30px;
 
-            display: flex;
+    }
 
-            align-items: center;
 
-            justify-content: center;
+    .dt-paging button.current {
 
-            font-size: 16px;
+        background: #087443 !important;
 
-            position: relative;
+        color: white !important;
 
-            cursor: pointer;
+        border-color: #087443 !important;
 
-            background: white;
+    }
 
-        }
 
+    /* =====================================================
+       MODAL
+    ====================================================== */
 
-        .notification-dot {
+    .modal-overlay {
 
-            width: 7px;
+        position: fixed;
 
-            height: 7px;
+        inset: 0;
 
-            background: var(--gold);
+        background: rgba(16,47,71,0.48);
 
-            border-radius: 50%;
+        display: none;
 
-            position: absolute;
+        align-items: center;
 
-            top: 7px;
+        justify-content: center;
 
-            right: 7px;
+        padding: 20px;
 
-        }
+        z-index: 500;
 
+    }
 
-        .user-profile {
 
-            display: flex;
+    .modal-overlay.active {
 
-            align-items: center;
+        display: flex;
 
-            gap: 10px;
+    }
 
-            padding-left: 14px;
 
-            border-left:
-                1px solid
-                var(--border);
+    .modal {
+
+        width: 100%;
+
+        max-width: 680px;
+
+        background: white;
+
+        border-radius: 10px;
+
+        box-shadow:
+            0 20px 60px
+            rgba(0,0,0,0.18);
+
+        overflow: hidden;
+
+        animation: modalShow 0.2s ease;
+
+    }
+
+
+    @keyframes modalShow {
+
+        from {
+
+            opacity: 0;
+
+            transform: translateY(10px);
 
         }
 
+        to {
 
-        .user-avatar {
+            opacity: 1;
 
-            width: 39px;
-
-            height: 39px;
-
-            border-radius: 50%;
-
-            background:
-                var(--primary-light);
-
-            color: var(--primary);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-weight: bold;
-
-            font-size: 13px;
+            transform: translateY(0);
 
         }
 
-
-        .user-info strong {
-
-            display: block;
-
-            font-size: 13px;
-
-        }
+    }
 
 
-        .user-info span {
+    .modal-header {
 
-            display: block;
+        padding: 19px 22px;
 
-            font-size: 11px;
+        border-bottom: 1px solid #e7ebee;
 
-            color: var(--muted);
+        display: flex;
 
-            margin-top: 2px;
+        align-items: center;
 
-        }
+        justify-content: space-between;
 
-
-
-        /* =====================================================
-           CONTENT
-        ===================================================== */
-
-        .content {
-
-            padding: 30px;
-
-        }
+    }
 
 
+    .modal-header h3 {
 
-        /* =====================================================
-           PAGE HEADER
-        ===================================================== */
+        font-family: Georgia, serif;
+
+        font-size: 18px;
+
+        color: #18364d;
+
+    }
+
+
+    .modal-close {
+
+        width: 32px;
+
+        height: 32px;
+
+        border: none;
+
+        background: #f4f6f7;
+
+        color: #69767d;
+
+        border-radius: 6px;
+
+        cursor: pointer;
+
+        font-size: 18px;
+
+    }
+
+
+    .modal-close:hover {
+
+        background: #e9edef;
+
+    }
+
+
+    .modal-body {
+
+        padding: 22px;
+
+    }
+
+
+    .form-grid {
+
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 17px;
+
+    }
+
+
+    .form-group {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 7px;
+
+    }
+
+
+    .form-group.full {
+
+        grid-column: 1 / -1;
+
+    }
+
+
+    .form-label {
+
+        font-size: 11px;
+
+        font-weight: 600;
+
+        color: #52616b;
+
+    }
+
+
+    .form-control {
+
+        width: 100%;
+
+        border: 1px solid #e7ebee;
+
+        border-radius: 6px;
+
+        padding: 10px 11px;
+
+        font-size: 12px;
+
+        color: #263238;
+
+        outline: none;
+
+        background: white;
+
+        transition: 0.2s;
+
+    }
+
+
+    .form-control:focus {
+
+        border-color: #087443;
+
+        box-shadow:
+            0 0 0 2px
+            rgba(8,116,67,0.08);
+
+    }
+
+
+    textarea.form-control {
+
+        min-height: 85px;
+
+        resize: vertical;
+
+    }
+
+
+    .modal-footer {
+
+        padding: 16px 22px;
+
+        border-top: 1px solid #e7ebee;
+
+        display: flex;
+
+        justify-content: flex-end;
+
+        gap: 8px;
+
+    }
+
+
+    .btn-cancel {
+
+        border: 1px solid #e7ebee;
+
+        background: white;
+
+        color: #65727a;
+
+        padding: 10px 15px;
+
+        border-radius: 6px;
+
+        font-size: 12px;
+
+        cursor: pointer;
+
+    }
+
+
+    .btn-save {
+
+        border: none;
+
+        background: #087443;
+
+        color: white;
+
+        padding: 10px 16px;
+
+        border-radius: 6px;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        cursor: pointer;
+
+    }
+
+
+    .btn-save:hover {
+
+        background: #065c35;
+
+    }
+
+
+    /* =====================================================
+       VIEW MODAL
+    ====================================================== */
+
+    .detail-grid {
+
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 16px;
+
+    }
+
+
+    .detail-item {
+
+        border: 1px solid #e7ebee;
+
+        border-radius: 7px;
+
+        padding: 12px;
+
+        background: #fafcfb;
+
+    }
+
+
+    .detail-item.full {
+
+        grid-column: 1 / -1;
+
+    }
+
+
+    .detail-label {
+
+        display: block;
+
+        font-size: 10px;
+
+        color: #7a858d;
+
+        margin-bottom: 5px;
+
+    }
+
+
+    .detail-value {
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        color: #18364d;
+
+    }
+
+
+    /* =====================================================
+       FOOTER
+    ====================================================== */
+
+    .dashboard-footer {
+
+        margin-top: 25px;
+
+        text-align: center;
+
+        color: #9aa3a9;
+
+        font-size: 11px;
+
+        padding: 10px;
+
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+    ====================================================== */
+
+    @media (max-width: 768px) {
 
         .content-header {
 
-            display: flex;
+            align-items: flex-start;
 
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 20px;
-
-            margin-bottom: 22px;
+            flex-direction: column;
 
         }
 
-
-        .content-header h2 {
-
-            font-family: Georgia, serif;
-
-            font-size: 22px;
-
-            color: #18364d;
-
-            margin-bottom: 5px;
-
-        }
-
-
-        .content-header p {
-
-            color: var(--muted);
-
-            font-size: 12px;
-
-            line-height: 1.6;
-
-        }
-
-
-        /* =====================================================
-           BUTTON TAMBAH
-        ===================================================== */
 
         .btn-add {
 
-            display: inline-flex;
+            width: 100%;
 
-            align-items: center;
-
-            gap: 8px;
-
-            background: var(--primary);
-
-            color: white;
-
-            border: none;
-
-            border-radius: 7px;
-
-            padding: 11px 16px;
-
-            font-size: 12px;
-
-            font-weight: 600;
-
-            cursor: pointer;
-
-            white-space: nowrap;
-
-            transition: 0.2s;
-
-        }
-
-
-        .btn-add:hover {
-
-            background: var(--primary-dark);
-
-            transform:
-                translateY(-1px);
-
-        }
-
-
-        .btn-add-icon {
-
-            font-size: 17px;
-
-            line-height: 1;
-
-        }
-
-
-
-        /* =====================================================
-           TABLE PANEL
-        ===================================================== */
-
-        .table-panel {
-
-            background: white;
-
-            border:
-                1px solid
-                var(--border);
-
-            border-radius: 10px;
-
-            overflow: hidden;
+            justify-content: center;
 
         }
 
 
         .table-panel-header {
 
-            padding: 19px 22px;
+            align-items: flex-start;
 
-            border-bottom:
-                1px solid
-                var(--border);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-        }
-
-
-        .table-panel-header h3 {
-
-            font-size: 15px;
-
-            color: #18364d;
-
-        }
-
-
-        .table-panel-header p {
-
-            font-size: 11px;
-
-            color: var(--muted);
-
-            margin-top: 4px;
-
-        }
-
-
-        .total-data {
-
-            font-size: 11px;
-
-            color: var(--muted);
-
-            background: var(--primary-light);
-
-            color: var(--primary);
-
-            padding: 6px 10px;
-
-            border-radius: 20px;
-
-            font-weight: 600;
+            gap: 10px;
 
         }
 
 
         .table-wrapper {
 
-            padding: 0 22px 20px;
+            padding-left: 15px;
 
-            overflow-x: auto;
-
-        }
-
-
-
-        /* =====================================================
-           DATATABLE STYLE
-        ===================================================== */
-
-        #dukTable {
-
-            width: 100% !important;
-
-            border-collapse:
-                collapse !important;
-
-            margin-top: 15px !important;
+            padding-right: 15px;
 
         }
 
 
-        #dukTable thead th {
+        .form-grid,
+        .detail-grid {
 
-            background: #f8faf9;
-
-            color: #52616b;
-
-            font-size: 11px;
-
-            font-weight: 600;
-
-            padding: 13px 12px;
-
-            border-bottom:
-                1px solid
-                var(--border);
-
-            white-space: nowrap;
+            grid-template-columns: 1fr;
 
         }
 
 
-        #dukTable tbody td {
+        .form-group.full,
+        .detail-item.full {
 
-            padding: 14px 12px;
+            grid-column: auto;
 
-            font-size: 12px;
+        }
 
-            border-bottom:
-                1px solid
-                #f0f2f3;
+    }
 
-            color: #39474f;
 
-            vertical-align: middle;
+    @media (max-width: 480px) {
+
+        .content-header h2 {
+
+            font-size: 19px;
 
         }
 
 
-        #dukTable tbody tr:hover {
+        .table-panel-header {
 
-            background: #fafcfb;
-
-        }
-
-
-        #dukTable tbody tr:last-child td {
-
-            border-bottom: none;
+            flex-direction: column;
 
         }
 
 
+        .total-data {
 
-        /* =====================================================
-           BADGE
-        ===================================================== */
-
-        .badge {
-
-            display: inline-block;
-
-            padding: 5px 9px;
-
-            border-radius: 5px;
-
-            font-size: 10px;
-
-            font-weight: 600;
-
-        }
-
-
-        .badge-asn {
-
-            background:
-                var(--primary-light);
-
-            color: var(--primary);
-
-        }
-
-
-        .badge-pppk {
-
-            background: #fff7df;
-
-            color: #987500;
-
-        }
-
-
-        .badge-gol {
-
-            background: #f1f3f4;
-
-            color: #58636a;
-
-        }
-
-
-        .employee-name {
-
-            font-weight: 600;
-
-            color: #18364d;
-
-        }
-
-
-        .employee-id {
-
-            font-size: 10px;
-
-            color: #8a969d;
-
-            margin-top: 3px;
-
-        }
-
-
-
-        /* =====================================================
-           ACTION BUTTON
-        ===================================================== */
-
-        .action-buttons {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 6px;
-
-        }
-
-
-        .action-btn {
-
-            width: 31px;
-
-            height: 31px;
-
-            border-radius: 6px;
-
-            border:
-                1px solid
-                var(--border);
-
-            background: white;
-
-            cursor: pointer;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 13px;
-
-            transition: 0.2s;
-
-        }
-
-
-        .action-edit {
-
-            color: var(--primary);
-
-        }
-
-
-        .action-view {
-
-            color: #2d6a9f;
-
-        }
-
-
-        .action-view:hover {
-
-            background: #eef6fc;
-
-            border-color: #c2dced;
-
-        }
-
-
-        .action-edit:hover {
-
-            background:
-                var(--primary-light);
-
-            border-color:
-                #b9ddca;
-
-        }
-
-
-        .action-delete {
-
-            color: var(--danger);
-
-        }
-
-
-        .action-delete:hover {
-
-            background: #fdf0ef;
-
-            border-color: #edc5c1;
-
-        }
-
-
-
-        /* =====================================================
-           DATATABLE CONTROLS
-        ===================================================== */
-
-        .dt-container {
-
-            font-size: 11px;
-
-        }
-
-
-        .dt-layout-row {
-
-            margin-top: 14px !important;
-
-        }
-
-
-        .dt-length select,
-        .dt-search input {
-
-            border:
-                1px solid
-                var(--border) !important;
-
-            border-radius: 6px !important;
-
-            font-size: 11px !important;
-
-            padding: 7px 9px !important;
-
-            outline: none !important;
-
-        }
-
-
-        .dt-search input:focus {
-
-            border-color:
-                var(--primary) !important;
-
-            box-shadow:
-                0 0 0 2px
-                rgba(8,116,67,0.08);
-
-        }
-
-
-        .dt-info {
-
-            color: var(--muted) !important;
-
-            font-size: 11px !important;
-
-        }
-
-
-        .dt-paging button {
-
-            border-radius: 5px !important;
-
-            font-size: 11px !important;
-
-            min-width: 30px;
-
-        }
-
-
-        .dt-paging button.current {
-
-            background:
-                var(--primary) !important;
-
-            color: white !important;
-
-            border-color:
-                var(--primary) !important;
-
-        }
-
-
-
-        /* =====================================================
-           MODAL
-        ===================================================== */
-
-        .modal-overlay {
-
-            position: fixed;
-
-            inset: 0;
-
-            background:
-                rgba(16,47,71,0.48);
-
-            display: none;
-
-            align-items: center;
-
-            justify-content: center;
-
-            padding: 20px;
-
-            z-index: 500;
-
-        }
-
-
-        .modal-overlay.active {
-
-            display: flex;
-
-        }
-
-
-        .modal {
-
-            width: 100%;
-
-            max-width: 680px;
-
-            background: white;
-
-            border-radius: 10px;
-
-            box-shadow:
-                0 20px 60px
-                rgba(0,0,0,0.18);
-
-            overflow: hidden;
-
-            animation:
-                modalShow 0.2s ease;
-
-        }
-
-
-        @keyframes modalShow {
-
-            from {
-
-                opacity: 0;
-
-                transform:
-                    translateY(10px);
-
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform:
-                    translateY(0);
-
-            }
-
-        }
-
-
-        .modal-header {
-
-            padding: 19px 22px;
-
-            border-bottom:
-                1px solid
-                var(--border);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-        }
-
-
-        .modal-header h3 {
-
-            font-family: Georgia, serif;
-
-            font-size: 18px;
-
-            color: #18364d;
-
-        }
-
-
-        .modal-close {
-
-            width: 32px;
-
-            height: 32px;
-
-            border: none;
-
-            background: #f4f6f7;
-
-            color: #69767d;
-
-            border-radius: 6px;
-
-            cursor: pointer;
-
-            font-size: 18px;
-
-        }
-
-
-        .modal-close:hover {
-
-            background: #e9edef;
+            align-self: flex-start;
 
         }
 
 
         .modal-body {
 
-            padding: 22px;
+            padding: 18px;
 
         }
 
+    }
 
-        .form-grid {
+</style>
 
-            display: grid;
 
-            grid-template-columns:
-                repeat(2, 1fr);
+<!-- =====================================================
+     CONTENT
+====================================================== -->
 
-            gap: 17px;
+<div class="content">
 
-        }
 
+    <!-- =================================================
+         PAGE HEADER
+    ================================================== -->
 
-        .form-group {
+    <div class="content-header">
 
-            display: flex;
+        <div>
 
-            flex-direction: column;
+            <h2>
+                Data Anak Putus Sekolah
+            </h2>
 
-            gap: 7px;
-
-        }
-
-
-        .form-group.full {
-
-            grid-column:
-                1 / -1;
-
-        }
-
-
-        .form-label {
-
-            font-size: 11px;
-
-            font-weight: 600;
-
-            color: #52616b;
-
-        }
-
-
-        .form-control {
-
-            width: 100%;
-
-            border:
-                1px solid
-                var(--border);
-
-            border-radius: 6px;
-
-            padding: 10px 11px;
-
-            font-size: 12px;
-
-            color: var(--text);
-
-            outline: none;
-
-            background: white;
-
-            transition: 0.2s;
-
-        }
-
-
-        .form-control:focus {
-
-            border-color:
-                var(--primary);
-
-            box-shadow:
-                0 0 0 2px
-                rgba(8,116,67,0.08);
-
-        }
-
-
-        .modal-footer {
-
-            padding: 16px 22px;
-
-            border-top:
-                1px solid
-                var(--border);
-
-            display: flex;
-
-            justify-content: flex-end;
-
-            gap: 8px;
-
-        }
-
-
-        .btn-cancel {
-
-            border:
-                1px solid
-                var(--border);
-
-            background: white;
-
-            color: #65727a;
-
-            padding: 10px 15px;
-
-            border-radius: 6px;
-
-            font-size: 12px;
-
-            cursor: pointer;
-
-        }
-
-
-        .btn-save {
-
-            border: none;
-
-            background: var(--primary);
-
-            color: white;
-
-            padding: 10px 16px;
-
-            border-radius: 6px;
-
-            font-size: 12px;
-
-            font-weight: 600;
-
-            cursor: pointer;
-
-        }
-
-
-        .btn-save:hover {
-
-            background:
-                var(--primary-dark);
-
-        }
-
-
-
-        /* =====================================================
-           FOOTER
-        ===================================================== */
-
-        .dashboard-footer {
-
-            margin-top: 25px;
-
-            text-align: center;
-
-            color: #9aa3a9;
-
-            font-size: 11px;
-
-            padding: 10px;
-
-        }
-
-
-
-        /* =====================================================
-           OVERLAY MOBILE
-        ===================================================== */
-
-        .sidebar-overlay {
-
-            display: none;
-
-        }
-
-
-
-        /* =====================================================
-           RESPONSIVE TABLET
-        ===================================================== */
-
-        @media (max-width: 1100px) {
-
-            .sidebar {
-
-                width: 240px;
-
-            }
-
-
-            .main {
-
-                margin-left: 240px;
-
-                width:
-                    calc(100% - 240px);
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-           RESPONSIVE MOBILE
-        ===================================================== */
-
-        @media (max-width: 768px) {
-
-            .sidebar {
-
-                transform:
-                    translateX(-100%);
-
-                width: 270px;
-
-            }
-
-
-            .sidebar.open {
-
-                transform:
-                    translateX(0);
-
-            }
-
-
-            .main {
-
-                margin-left: 0;
-
-                width: 100%;
-
-            }
-
-
-            .mobile-menu {
-
-                display: flex;
-
-                align-items: center;
-
-                justify-content: center;
-
-            }
-
-
-            .sidebar-overlay {
-
-                position: fixed;
-
-                inset: 0;
-
-                background:
-                    rgba(0,0,0,0.35);
-
-                z-index: 90;
-
-            }
-
-
-            .sidebar-overlay.active {
-
-                display: block;
-
-            }
-
-
-            .topbar {
-
-                height: 70px;
-
-                padding: 0 18px;
-
-            }
-
-
-            .page-title {
-
-                font-size: 20px;
-
-            }
-
-
-            .page-subtitle {
-
-                display: none;
-
-            }
-
-
-            .user-info {
-
-                display: none;
-
-            }
-
-
-            .user-profile {
-
-                padding-left: 8px;
-
-                border-left: none;
-
-            }
-
-
-            .notification {
-
-                display: none;
-
-            }
-
-
-            .content {
-
-                padding: 18px;
-
-            }
-
-
-            .content-header {
-
-                align-items: flex-start;
-
-                flex-direction: column;
-
-            }
-
-
-            .btn-add {
-
-                width: 100%;
-
-                justify-content: center;
-
-            }
-
-
-            .table-panel-header {
-
-                align-items: flex-start;
-
-                gap: 10px;
-
-            }
-
-
-            .table-wrapper {
-
-                padding-left: 15px;
-
-                padding-right: 15px;
-
-            }
-
-
-            .form-grid {
-
-                grid-template-columns: 1fr;
-
-            }
-
-
-            .form-group.full {
-
-                grid-column: auto;
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-           SMALL MOBILE
-        ===================================================== */
-
-        @media (max-width: 480px) {
-
-            .page-title {
-
-                font-size: 18px;
-
-            }
-
-
-            .content-header h2 {
-
-                font-size: 19px;
-
-            }
-
-
-            .table-panel-header {
-
-                flex-direction: column;
-
-            }
-
-
-            .total-data {
-
-                align-self: flex-start;
-
-            }
-
-
-            .modal-body {
-
-                padding: 18px;
-
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-
-<div class="dashboard">
-
-
-    <!-- =====================================================
-         SIDEBAR
-    ===================================================== -->
-
-    <aside
-        class="sidebar"
-        id="sidebar"
-    >
-
-
-        <!-- BRAND -->
-
-        <div class="sidebar-brand">
-
-            <div class="brand-logo">
-                LOGO
-            </div>
-
-            <div class="brand-name">
-
-                <strong>
-                    Kelurahan XXXXX
-                </strong>
-
-                <span>
-                    SISTEM INFORMASI KELURAHAN
-                </span>
-
-            </div>
+            <p>
+                Kelola data anak putus sekolah
+                Kelurahan XXXXX.
+            </p>
 
         </div>
 
 
+        <button
+            type="button"
+            class="btn-add"
+            id="btnTambah"
+        >
 
-        <!-- MENU -->
+            <span class="btn-add-icon">
+                +
+            </span>
 
-        <nav class="sidebar-menu">
+            Tambah Data
+
+        </button>
+
+    </div>
 
 
-            <!-- BERANDA -->
+    <!-- =================================================
+         TABLE
+    ================================================== -->
 
-            <a
-                href="dashboard.html"
-                class="menu-item"
+    <section class="table-panel">
+
+
+        <div class="table-panel-header">
+
+            <div>
+
+                <h3>
+                    Daftar Anak Putus Sekolah
+                </h3>
+
+                <p>
+                    Data anak putus sekolah Kelurahan XXXXX
+                </p>
+
+            </div>
+
+
+            <span
+                class="total-data"
+                id="totalData"
             >
-
-                <span class="menu-icon">
-                    ⌂
-                </span>
-
-                <span class="menu-text">
-                    Beranda
-                </span>
-
-            </a>
-
-
-
-            <!-- KESEKRETARIATAN -->
-
-            <div class="menu-title">
-                Kesekretariatan
-            </div>
-
-
-            <!-- ACTIVE -->
-
-            <a
-                href="duk.html"
-                class="menu-item active"
-            >
-
-                <span class="menu-icon">
-                    👤
-                </span>
-
-                <span class="menu-text">
-                    Data Umum Kepegawaian
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▣
-                </span>
-
-                <span class="menu-text">
-                    Data BMD
-                </span>
-
-            </a>
-
-
-
-            <!-- KESEJAHTERAAN SOSIAL -->
-
-            <div class="menu-title">
-                Kesejahteraan Sosial
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♡
-                </span>
-
-                <span class="menu-text">
-                    Posyandu & Posbindu
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♧
-                </span>
-
-                <span class="menu-text">
-                    Data Stunting
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♢
-                </span>
-
-                <span class="menu-text">
-                    KPM / Bantuan Sosial
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◉
-                </span>
-
-                <span class="menu-text">
-                    Anak Putus Sekolah
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▤
-                </span>
-
-                <span class="menu-text">
-                    Data Sekolah
-                </span>
-
-            </a>
-
-
-
-            <!-- EKONOMI & PEMBANGUNAN -->
-
-            <div class="menu-title">
-                Ekonomi & Pembangunan
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♙
-                </span>
-
-                <span class="menu-text">
-                    Data UMKM
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◈
-                </span>
-
-                <span class="menu-text">
-                    Data Rutillahu
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    🌱
-                </span>
-
-                <span class="menu-text">
-                    Data Buruan Sae
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♣
-                </span>
-
-                <span class="menu-text">
-                    Data Pohon
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▦
-                </span>
-
-                <span class="menu-text">
-                    Fasilitas Umum & Sosial
-                </span>
-
-            </a>
-
-
-
-            <!-- PEMERINTAHAN -->
-
-            <div class="menu-title">
-                Pemerintahan
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◫
-                </span>
-
-                <span class="menu-text">
-                    Laporan Kependudukan
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ⚑
-                </span>
-
-                <span class="menu-text">
-                    Linmas & Siskamling
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▥
-                </span>
-
-                <span class="menu-text">
-                    Data RT/RW & Periode
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◉
-                </span>
-
-                <span class="menu-text">
-                    Data PKL
-                </span>
-
-            </a>
-
-
-
-            <!-- SISTEM -->
-
-            <div class="menu-title">
-                Sistem
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ⚙
-                </span>
-
-                <span class="menu-text">
-                    Pengaturan
-                </span>
-
-            </a>
-
-
-            <a
-                href="index.html"
-                class="menu-item"
-            >
-
-                <span class="menu-icon">
-                    ↪
-                </span>
-
-                <span class="menu-text">
-                    Keluar
-                </span>
-
-            </a>
-
-
-        </nav>
-
-    </aside>
-
-
-
-    <!-- OVERLAY MOBILE -->
-
-    <div
-        class="sidebar-overlay"
-        id="sidebarOverlay"
-    ></div>
-
-
-
-    <!-- =====================================================
-         MAIN
-    ===================================================== -->
-
-    <main class="main">
-
-
-        <!-- =================================================
-             TOPBAR
-        ================================================= -->
-
-        <header class="topbar">
-
-
-            <div class="topbar-left">
-
-
-                <button
-                    class="mobile-menu"
-                    id="mobileMenu"
-                >
-                    ☰
-                </button>
-
-
-                <div>
-
-                    <h1 class="page-title">
-                        Data Anak Putus Sekolah
-                    </h1>
-
-                    <p class="page-subtitle">
-                        Kesejahteraan Sosial · Data Anak Putus Sekolah
-                    </p>
-
-                </div>
-
-
-            </div>
-
-
-
-            <div class="user-area">
-
-
-                <div class="notification">
-
-                    🔔
-
-                    <span
-                        class="notification-dot"
-                    ></span>
-
-                </div>
-
-
-                <div class="user-profile">
-
-                    <div class="user-avatar">
-                        AD
-                    </div>
-
-                    <div class="user-info">
-
-                        <strong>
-                            Administrator
-                        </strong>
-
-                        <span>
-                            Administrator
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-            </div>
-
-        </header>
-
-
-
-        <!-- =================================================
-             CONTENT
-        ================================================= -->
-
-        <div class="content">
-
-
-            <!-- PAGE HEADER -->
-
-            <div class="content-header">
-
-
-                <div>
-
-                    <h2>
-                        Data Anak Putus Sekolah
-                    </h2>
-
-                    <p>
-                        Kelola data anak putus sekolah Kelurahan XXXXX
-                        Kelurahan XXXXX.
-                    </p>
-
-                </div>
-
-
-                <a
-                    href="{{ url('/tambah-data-putus-sekolah') }}"
-                    class="btn-add"
-                    id="btnTambah"
-                >
-
-                    <span class="btn-add-icon">
-                        +
-                    </span>
-
-                    Tambah Data
-
-                </a>
-
-
-            </div>
-
-
-
-            <!-- =================================================
-                 TABLE
-            ================================================= -->
-
-            <section class="table-panel">
-
-
-                <div class="table-panel-header">
-
-                    <div>
-
-                        <h3>
-                            Daftar Anak Putus Sekolah
-                        </h3>
-
-                        <p>
-                            Data Anak Putus Sekolah Kelurahan XXXXX
-                        </p>
-
-                    </div>
-
-
-                    <span
-                        class="total-data"
-                        id="totalData"
-                    >
-                        5 Anak
-                    </span>
-
-                </div>
-
-
-
-                <div class="table-wrapper">
-
-
-                    <table
-                        id="dukTable"
-                        class="display"
-                    >
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Nama Anak
-                                </th>
-
-                                <th>
-                                    NIK
-                                </th>
-
-                                <th>
-                                    RW
-                                </th>
-
-                                <th>
-                                    Usia (Tahun)
-                                </th>
-
-                                <th>
-                                    Jenjang Terakhir
-                                </th>
-
-                                <th>
-                                    Keterangan
-                                </th>
-
-                                <th>
-                                    Aksi
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-
-                            <!-- DATA 1 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        Andi Pratama
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    3204011205140001
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        RW 04
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        14
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    SD Kelas 6
-                                </td>
-
-                                <td>
-                                    Untuk administrasi kelurahan
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 2 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        Siti Nurhaliza
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    3204014508120002
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        RW 07
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        16
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    SMP Kelas 8
-                                </td>
-
-                                <td>
-                                    Ruang pelayanan umum
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 3 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        Rian Saputra
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    3204012309100003
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        RW 02
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        13
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    SD Kelas 5
-                                </td>
-
-                                <td>
-                                    Cetak dokumen dan laporan
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 4 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        Maya Lestari
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    3204016711070004
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        RW 09
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        17
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    SMP Kelas 9
-                                </td>
-
-                                <td>
-                                    Area tunggu masyarakat
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 5 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-pppk"
-                                    >
-                                        Fajar Hidayat
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    3204013403160005
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        RW 01
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        15
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    SD Kelas 6
-                                </td>
-
-                                <td>
-                                    Operasional kelurahan
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-                        </tbody>
-
-                    </table>
-
-
-                </div>
-
-            </section>
-
-
-
-            <!-- FOOTER -->
-
-            <div class="dashboard-footer">
-
-                © 2026 Kelurahan XXXXX ·
-                Sistem Informasi Kelurahan
-
-            </div>
-
+                5 Anak
+            </span>
 
         </div>
 
 
-    </main>
+        <div class="table-wrapper">
+
+
+            <table
+                id="anakPutusSekolahTable"
+                class="display"
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Nama Anak
+                        </th>
+
+                        <th>
+                            NIK
+                        </th>
+
+                        <th>
+                            RW
+                        </th>
+
+                        <th>
+                            Usia
+                        </th>
+
+                        <th>
+                            Jenjang Terakhir
+                        </th>
+
+                        <th>
+                            Alasan
+                        </th>
+
+                        <th>
+                            Aksi
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    <!-- =================================================
+                         DATA 1
+                    ================================================== -->
+
+                    <tr>
+
+                        <td>
+
+                            <div class="child-name">
+                                Andi Pratama
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="nik">
+                                3204011205140001
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-rw">
+                                RW 04
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-age">
+                                14
+                            </span>
+
+                        </td>
+
+                        <td>
+                            SD Kelas 6
+                        </td>
+
+                        <td>
+                            Kondisi ekonomi keluarga
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- =================================================
+                         DATA 2
+                    ================================================== -->
+
+                    <tr>
+
+                        <td>
+
+                            <div class="child-name">
+                                Siti Nurhaliza
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="nik">
+                                3204014508120002
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-rw">
+                                RW 07
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-age">
+                                16
+                            </span>
+
+                        </td>
+
+                        <td>
+                            SMP Kelas 8
+                        </td>
+
+                        <td>
+                            Membantu orang tua bekerja
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- =================================================
+                         DATA 3
+                    ================================================== -->
+
+                    <tr>
+
+                        <td>
+
+                            <div class="child-name">
+                                Rian Saputra
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="nik">
+                                3204012309100003
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-rw">
+                                RW 02
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-age">
+                                13
+                            </span>
+
+                        </td>
+
+                        <td>
+                            SD Kelas 5
+                        </td>
+
+                        <td>
+                            Tidak melanjutkan sekolah
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- =================================================
+                         DATA 4
+                    ================================================== -->
+
+                    <tr>
+
+                        <td>
+
+                            <div class="child-name">
+                                Maya Lestari
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="nik">
+                                3204016711070004
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-rw">
+                                RW 09
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-age">
+                                17
+                            </span>
+
+                        </td>
+
+                        <td>
+                            SMP Kelas 9
+                        </td>
+
+                        <td>
+                            Masalah keluarga
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- =================================================
+                         DATA 5
+                    ================================================== -->
+
+                    <tr>
+
+                        <td>
+
+                            <div class="child-name">
+                                Fajar Hidayat
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="nik">
+                                3204013403160005
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-rw">
+                                RW 01
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-age">
+                                15
+                            </span>
+
+                        </td>
+
+                        <td>
+                            SD Kelas 6
+                        </td>
+
+                        <td>
+                            Kendala biaya pendidikan
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         FOOTER
+    ================================================== -->
+
+    <div class="dashboard-footer">
+
+        © {{ date('Y') }} Kelurahan XXXXX ·
+        Sistem Informasi Kelurahan
+
+    </div>
 
 
 </div>
@@ -2686,13 +1495,12 @@
 
 <!-- =====================================================
      MODAL TAMBAH DATA
-===================================================== -->
+====================================================== -->
 
 <div
     class="modal-overlay"
     id="modalOverlay"
 >
-
 
     <div class="modal">
 
@@ -2704,6 +1512,7 @@
             </h3>
 
             <button
+                type="button"
                 class="modal-close"
                 id="modalClose"
             >
@@ -2713,51 +1522,41 @@
         </div>
 
 
-
         <div class="modal-body">
 
 
-            <form
-                id="formDUK"
-            >
+            <form id="formData">
 
 
                 <div class="form-grid">
 
 
-                    <!-- JENIS -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
+                        <label
+                            class="form-label"
+                            for="nama_anak"
+                        >
                             Nama Anak
                         </label>
 
-                        <select
+                        <input
+                            type="text"
                             class="form-control"
                             id="nama_anak"
+                            placeholder="Masukkan nama anak"
                             required
                         >
-
-                            <option value="">
-                                Pilih Jenis
-                            </option>
-
-                            <option value="">
-                                Masukkan nama anak
-                            </option>
-
-                        </select>
 
                     </div>
 
 
-
-                    <!-- NIP -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
+                        <label
+                            class="form-label"
+                            for="nik"
+                        >
                             NIK
                         </label>
 
@@ -2766,18 +1565,19 @@
                             class="form-control"
                             id="nik"
                             placeholder="Masukkan NIK"
+                            maxlength="16"
                             required
                         >
 
                     </div>
 
 
-
-                    <!-- NAMA -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
+                        <label
+                            class="form-label"
+                            for="rw"
+                        >
                             RW
                         </label>
 
@@ -2792,60 +1592,114 @@
                     </div>
 
 
-
-                    <!-- GOLONGAN -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
+                        <label
+                            class="form-label"
+                            for="usia"
+                        >
                             Usia (Tahun)
                         </label>
 
                         <input
-                            type="text"
+                            type="number"
                             class="form-control"
-                            id="usia_tahun"
+                            id="usia"
                             placeholder="Contoh: 14"
+                            min="1"
+                            max="30"
                             required
                         >
 
                     </div>
 
 
-
-                    <!-- PANGKAT -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
+                        <label
+                            class="form-label"
+                            for="jenjang"
+                        >
                             Jenjang Terakhir
                         </label>
 
-                        <input
-                            type="text"
+                        <select
                             class="form-control"
-                            id="jenjang_terakhir"
-                            placeholder="Contoh: SMP Kelas 8"
+                            id="jenjang"
                             required
                         >
+
+                            <option value="">
+                                Pilih jenjang terakhir
+                            </option>
+
+                            <option value="SD Kelas 1">
+                                SD Kelas 1
+                            </option>
+
+                            <option value="SD Kelas 2">
+                                SD Kelas 2
+                            </option>
+
+                            <option value="SD Kelas 3">
+                                SD Kelas 3
+                            </option>
+
+                            <option value="SD Kelas 4">
+                                SD Kelas 4
+                            </option>
+
+                            <option value="SD Kelas 5">
+                                SD Kelas 5
+                            </option>
+
+                            <option value="SD Kelas 6">
+                                SD Kelas 6
+                            </option>
+
+                            <option value="SMP Kelas 7">
+                                SMP Kelas 7
+                            </option>
+
+                            <option value="SMP Kelas 8">
+                                SMP Kelas 8
+                            </option>
+
+                            <option value="SMP Kelas 9">
+                                SMP Kelas 9
+                            </option>
+
+                            <option value="SMA Kelas 10">
+                                SMA Kelas 10
+                            </option>
+
+                            <option value="SMA Kelas 11">
+                                SMA Kelas 11
+                            </option>
+
+                            <option value="SMA Kelas 12">
+                                SMA Kelas 12
+                            </option>
+
+                        </select>
 
                     </div>
 
 
-
-                    <!-- JABATAN -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
-                            Alasan
+                        <label
+                            class="form-label"
+                            for="alasan"
+                        >
+                            Alasan Putus Sekolah
                         </label>
 
                         <input
                             type="text"
                             class="form-control"
                             id="alasan"
-                            placeholder="Alasan putus sekolah"
+                            placeholder="Masukkan alasan"
                             required
                         >
 
@@ -2861,10 +1715,10 @@
         </div>
 
 
-
         <div class="modal-footer">
 
             <button
+                type="button"
                 class="btn-cancel"
                 id="btnBatal"
             >
@@ -2872,6 +1726,7 @@
             </button>
 
             <button
+                type="button"
                 class="btn-save"
                 id="btnSimpan"
             >
@@ -2883,491 +1738,997 @@
 
     </div>
 
-
 </div>
 
 
 
 <!-- =====================================================
      MODAL EDIT DATA
-===================================================== -->
+====================================================== -->
 
-<div class="modal-overlay" id="modalEditOverlay">
+<div
+    class="modal-overlay"
+    id="modalEditOverlay"
+>
+
     <div class="modal">
+
+
         <div class="modal-header">
-            <h3>Edit Data Anak Putus Sekolah</h3>
-            <button type="button" class="modal-close" id="modalEditClose" aria-label="Tutup form edit">×</button>
+
+            <h3>
+                Edit Data Anak Putus Sekolah
+            </h3>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="modalEditClose"
+            >
+                ×
+            </button>
+
         </div>
+
 
         <div class="modal-body">
-            <form id="formEditDUK">
+
+
+            <form id="formEdit">
+
+
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label" for="editNama">Nama Anak</label>
-                        <input type="text" class="form-control" id="editNama" required>
-                    </div>
+
 
                     <div class="form-group">
-                        <label class="form-label" for="editNIK">NIK</label>
-                        <input type="text" class="form-control" id="editNIK" required>
+
+                        <label
+                            class="form-label"
+                            for="editNama"
+                        >
+                            Nama Anak
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="editNama"
+                            required
+                        >
+
                     </div>
 
-                    <div class="form-group full">
-                        <label class="form-label" for="editRW">RW</label>
-                        <input type="text" class="form-control" id="editRW" required>
-                    </div>
 
                     <div class="form-group">
-                        <label class="form-label" for="editUsia">Usia (Tahun)</label>
-                        <input type="number" class="form-control" id="editUsia" required>
+
+                        <label
+                            class="form-label"
+                            for="editNIK"
+                        >
+                            NIK
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="editNIK"
+                            maxlength="16"
+                            required
+                        >
+
                     </div>
+
 
                     <div class="form-group">
-                        <label class="form-label" for="editJenjang">Jenjang Terakhir</label>
-                        <input type="text" class="form-control" id="editJenjang" required>
+
+                        <label
+                            class="form-label"
+                            for="editRW"
+                        >
+                            RW
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="editRW"
+                            required
+                        >
+
                     </div>
 
-                    <div class="form-group full">
-                        <label class="form-label" for="editAlasan">Alasan</label>
-                        <input type="text" class="form-control" id="editAlasan" required>
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="editUsia"
+                        >
+                            Usia (Tahun)
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="editUsia"
+                            min="1"
+                            max="30"
+                            required
+                        >
+
                     </div>
+
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="editJenjang"
+                        >
+                            Jenjang Terakhir
+                        </label>
+
+                        <select
+                            class="form-control"
+                            id="editJenjang"
+                            required
+                        >
+
+                            <option value="SD Kelas 1">
+                                SD Kelas 1
+                            </option>
+
+                            <option value="SD Kelas 2">
+                                SD Kelas 2
+                            </option>
+
+                            <option value="SD Kelas 3">
+                                SD Kelas 3
+                            </option>
+
+                            <option value="SD Kelas 4">
+                                SD Kelas 4
+                            </option>
+
+                            <option value="SD Kelas 5">
+                                SD Kelas 5
+                            </option>
+
+                            <option value="SD Kelas 6">
+                                SD Kelas 6
+                            </option>
+
+                            <option value="SMP Kelas 7">
+                                SMP Kelas 7
+                            </option>
+
+                            <option value="SMP Kelas 8">
+                                SMP Kelas 8
+                            </option>
+
+                            <option value="SMP Kelas 9">
+                                SMP Kelas 9
+                            </option>
+
+                            <option value="SMA Kelas 10">
+                                SMA Kelas 10
+                            </option>
+
+                            <option value="SMA Kelas 11">
+                                SMA Kelas 11
+                            </option>
+
+                            <option value="SMA Kelas 12">
+                                SMA Kelas 12
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="editAlasan"
+                        >
+                            Alasan Putus Sekolah
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="editAlasan"
+                            required
+                        >
+
+                    </div>
+
+
                 </div>
+
+
             </form>
+
+
         </div>
+
 
         <div class="modal-footer">
-            <button type="button" class="btn-cancel" id="btnEditBatal">Batal</button>
-            <button type="button" class="btn-save" id="btnEditSimpan">Perbarui Data</button>
+
+            <button
+                type="button"
+                class="btn-cancel"
+                id="btnEditBatal"
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="btn-save"
+                id="btnEditSimpan"
+            >
+                Perbarui Data
+            </button>
+
         </div>
+
+
     </div>
+
 </div>
 
 
+
 <!-- =====================================================
-     JAVASCRIPT DATATABLES
-===================================================== -->
+     MODAL VIEW DATA
+====================================================== -->
 
-<script
-    src="https://code.jquery.com/jquery-3.7.1.min.js">
-</script>
+<div
+    class="modal-overlay"
+    id="modalViewOverlay"
+>
 
+    <div class="modal">
+
+
+        <div class="modal-header">
+
+            <h3>
+                Detail Anak Putus Sekolah
+            </h3>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="modalViewClose"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+
+            <div class="detail-grid">
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Nama Anak
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewNama"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        NIK
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewNIK"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        RW
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewRW"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Usia
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewUsia"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Jenjang Terakhir
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewJenjang"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Alasan
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewAlasan"
+                    >
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                type="button"
+                class="btn-cancel"
+                id="btnViewTutup"
+            >
+                Tutup
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+@endsection
+
+
+
+@push('scripts')
 
 <script
     src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js">
 </script>
 
 
-
 <script>
 
-
-    /* =====================================================
-       MOBILE SIDEBAR
-    ===================================================== */
-
-    const mobileMenu =
-        document.getElementById("mobileMenu");
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
 
 
-    const sidebar =
-        document.getElementById("sidebar");
+        /* =================================================
+           DATATABLE
+        ================================================= */
+
+        const table =
+            new DataTable(
+                '#anakPutusSekolahTable',
+                {
+
+                    pageLength: 10,
+
+                    lengthMenu: [
+                        [5, 10, 25, 50],
+                        [5, 10, 25, 50]
+                    ],
+
+                    language: {
+
+                        search:
+                            'Cari:',
+
+                        lengthMenu:
+                            'Tampilkan _MENU_ data',
+
+                        info:
+                            'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+
+                        infoEmpty:
+                            'Tidak ada data',
+
+                        zeroRecords:
+                            'Data tidak ditemukan',
+
+                        emptyTable:
+                            'Belum ada data',
+
+                        paginate: {
+
+                            first:
+                                'Awal',
+
+                            last:
+                                'Akhir',
+
+                            next:
+                                '›',
+
+                            previous:
+                                '‹'
+
+                        }
+
+                    },
+
+                    columnDefs: [
+
+                        {
+                            orderable: false,
+                            searchable: false,
+                            targets: 6
+                        }
+
+                    ]
+
+                }
+            );
 
 
-    const overlay =
-        document.getElementById("sidebarOverlay");
+        /* =================================================
+           ELEMENT MODAL
+        ================================================= */
+
+        const modalTambah =
+            document.getElementById(
+                'modalOverlay'
+            );
 
 
-    mobileMenu.addEventListener(
-        "click",
-        function () {
+        const modalEdit =
+            document.getElementById(
+                'modalEditOverlay'
+            );
 
-            sidebar.classList.toggle("open");
 
-            overlay.classList.toggle("active");
+        const modalView =
+            document.getElementById(
+                'modalViewOverlay'
+            );
+
+
+        let selectedRow = null;
+
+
+        /* =================================================
+           TAMBAH DATA
+        ================================================= */
+
+        document.getElementById(
+            'btnTambah'
+        ).addEventListener(
+            'click',
+            function () {
+
+                modalTambah.classList.add(
+                    'active'
+                );
+
+            }
+        );
+
+
+        document.getElementById(
+            'modalClose'
+        ).addEventListener(
+            'click',
+            tutupTambah
+        );
+
+
+        document.getElementById(
+            'btnBatal'
+        ).addEventListener(
+            'click',
+            tutupTambah
+        );
+
+
+        function tutupTambah()
+        {
+
+            modalTambah.classList.remove(
+                'active'
+            );
+
+            document.getElementById(
+                'formData'
+            ).reset();
 
         }
-    );
 
 
-    overlay.addEventListener(
-        "click",
-        function () {
+        /* =================================================
+           SIMPAN DATA DUMMY
+        ================================================= */
 
-            sidebar.classList.remove("open");
-
-            overlay.classList.remove("active");
-
-        }
-    );
-
+        document.getElementById(
+            'btnSimpan'
+        ).addEventListener(
+            'click',
+            function () {
 
 
-    /* =====================================================
-       DATATABLE
-    ===================================================== */
+                const form =
+                    document.getElementById(
+                        'formData'
+                    );
 
-    const table =
-        new DataTable(
-            "#dukTable",
+
+                if (!form.checkValidity()) {
+
+                    form.reportValidity();
+
+                    return;
+
+                }
+
+
+                const nama =
+                    document.getElementById(
+                        'nama_anak'
+                    ).value;
+
+
+                alert(
+                    'Data berhasil disimpan.\n\n' +
+                    'Nama Anak: ' +
+                    nama
+                );
+
+
+                tutupTambah();
+
+            }
+        );
+
+
+        /* =================================================
+           EDIT DATA
+        ================================================= */
+
+        window.editData =
+            function (button)
             {
 
-                pageLength: 10,
+                selectedRow =
+                    button.closest('tr');
 
-                lengthMenu: [
-                    [5, 10, 25, 50],
-                    [5, 10, 25, 50]
-                ],
 
-                language: {
+                const cells =
+                    selectedRow.cells;
 
-                    search:
-                        "Cari:",
 
-                    lengthMenu:
-                        "Tampilkan _MENU_ data",
+                document.getElementById(
+                    'editNama'
+                ).value =
+                    cells[0].innerText.trim();
 
-                    info:
-                        "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
 
-                    infoEmpty:
-                        "Tidak ada data",
+                document.getElementById(
+                    'editNIK'
+                ).value =
+                    cells[1].innerText.trim();
 
-                    zeroRecords:
-                        "Data tidak ditemukan",
 
-                    emptyTable:
-                        "Belum ada data",
+                document.getElementById(
+                    'editRW'
+                ).value =
+                    cells[2].innerText.trim();
 
-                    paginate: {
 
-                        first:
-                            "Awal",
+                document.getElementById(
+                    'editUsia'
+                ).value =
+                    cells[3].innerText.trim();
 
-                        last:
-                            "Akhir",
 
-                        next:
-                            "›",
+                document.getElementById(
+                    'editJenjang'
+                ).value =
+                    cells[4].innerText.trim();
 
-                        previous:
-                            "‹"
 
-                    }
+                document.getElementById(
+                    'editAlasan'
+                ).value =
+                    cells[5].innerText.trim();
 
-                },
 
-                columnDefs: [
+                modalEdit.classList.add(
+                    'active'
+                );
 
-                    {
-                        orderable: false,
-                        searchable: false,
-                        targets: 6
-                    }
+            };
 
-                ]
+
+        document.getElementById(
+            'modalEditClose'
+        ).addEventListener(
+            'click',
+            tutupEdit
+        );
+
+
+        document.getElementById(
+            'btnEditBatal'
+        ).addEventListener(
+            'click',
+            tutupEdit
+        );
+
+
+        function tutupEdit()
+        {
+
+            modalEdit.classList.remove(
+                'active'
+            );
+
+            document.getElementById(
+                'formEdit'
+            ).reset();
+
+            selectedRow = null;
+
+        }
+
+
+        document.getElementById(
+            'btnEditSimpan'
+        ).addEventListener(
+            'click',
+            function ()
+            {
+
+                const form =
+                    document.getElementById(
+                        'formEdit'
+                    );
+
+
+                if (!form.checkValidity()) {
+
+                    form.reportValidity();
+
+                    return;
+
+                }
+
+
+                if (!selectedRow) {
+
+                    return;
+
+                }
+
+
+                selectedRow.cells[0].innerHTML =
+
+                    '<div class="child-name">' +
+                    document.getElementById(
+                        'editNama'
+                    ).value +
+                    '</div>';
+
+
+                selectedRow.cells[1].innerHTML =
+
+                    '<span class="nik">' +
+                    document.getElementById(
+                        'editNIK'
+                    ).value +
+                    '</span>';
+
+
+                selectedRow.cells[2].innerHTML =
+
+                    '<span class="badge badge-rw">' +
+                    document.getElementById(
+                        'editRW'
+                    ).value +
+                    '</span>';
+
+
+                selectedRow.cells[3].innerHTML =
+
+                    '<span class="badge badge-age">' +
+                    document.getElementById(
+                        'editUsia'
+                    ).value +
+                    '</span>';
+
+
+                selectedRow.cells[4].innerText =
+                    document.getElementById(
+                        'editJenjang'
+                    ).value;
+
+
+                selectedRow.cells[5].innerText =
+                    document.getElementById(
+                        'editAlasan'
+                    ).value;
+
+
+                alert(
+                    'Data berhasil diperbarui.'
+                );
+
+
+                tutupEdit();
 
             }
         );
 
 
+        /* =================================================
+           VIEW DATA
+        ================================================= */
 
-    /* =====================================================
-       MODAL
-    ===================================================== */
+        window.viewData =
+            function (button)
+            {
 
-    const btnTambah =
-        document.getElementById("btnTambah");
+                const row =
+                    button.closest('tr');
 
 
-    const modalOverlay =
-        document.getElementById("modalOverlay");
+                const cells =
+                    row.cells;
 
 
-    const modalClose =
-        document.getElementById("modalClose");
+                document.getElementById(
+                    'viewNama'
+                ).innerText =
+                    cells[0].innerText.trim();
 
 
-    const btnBatal =
-        document.getElementById("btnBatal");
+                document.getElementById(
+                    'viewNIK'
+                ).innerText =
+                    cells[1].innerText.trim();
 
 
-    const btnSimpan =
-        document.getElementById("btnSimpan");
+                document.getElementById(
+                    'viewRW'
+                ).innerText =
+                    cells[2].innerText.trim();
 
 
-    const formDUK =
-        document.getElementById("formDUK");
+                document.getElementById(
+                    'viewUsia'
+                ).innerText =
+                    cells[3].innerText.trim() +
+                    ' Tahun';
 
 
-    const modalEditOverlay =
-        document.getElementById("modalEditOverlay");
+                document.getElementById(
+                    'viewJenjang'
+                ).innerText =
+                    cells[4].innerText.trim();
 
 
-    const modalEditClose =
-        document.getElementById("modalEditClose");
+                document.getElementById(
+                    'viewAlasan'
+                ).innerText =
+                    cells[5].innerText.trim();
 
 
-    const btnEditBatal =
-        document.getElementById("btnEditBatal");
+                modalView.classList.add(
+                    'active'
+                );
 
+            };
 
-    const btnEditSimpan =
-        document.getElementById("btnEditSimpan");
 
-
-    const formEditDUK =
-        document.getElementById("formEditDUK");
-
-
-    let selectedEditRow = null;
-
-
-
-    function bukaModal() {
-
-        modalOverlay.classList.add("active");
-
-    }
-
-
-    function tutupModal() {
-
-        modalOverlay.classList.remove("active");
-
-        formDUK.reset();
-
-    }
-
-
-    function tutupModalEdit() {
-
-        modalEditOverlay.classList.remove("active");
-
-        formEditDUK.reset();
-
-    }
-
-
-    modalClose.addEventListener(
-        "click",
-        tutupModal
-    );
-
-
-    btnBatal.addEventListener(
-        "click",
-        tutupModal
-    );
-
-
-    modalOverlay.addEventListener(
-        "click",
-        function(event) {
-
-            if (
-                event.target ===
-                modalOverlay
-            ) {
-
-                tutupModal();
-
-            }
-
-        }
-    );
-
-
-    modalEditClose.addEventListener(
-        "click",
-        tutupModalEdit
-    );
-
-
-    btnEditBatal.addEventListener(
-        "click",
-        tutupModalEdit
-    );
-
-
-    modalEditOverlay.addEventListener(
-        "click",
-        function(event) {
-
-            if (event.target === modalEditOverlay) {
-
-                tutupModalEdit();
-
-            }
-
-        }
-    );
-
-
-
-    /* =====================================================
-       SIMPAN DATA DUMMY
-    ===================================================== */
-
-    btnSimpan.addEventListener(
-        "click",
-        function() {
-
-
-            if (
-                !formDUK.checkValidity()
-            ) {
-
-                formDUK.reportValidity();
-
-                return;
-
-            }
-
-
-            alert(
-                "Data berhasil disimpan.\n\n" +
-                "Pada tahap Laravel, data ini akan " +
-                "disimpan ke database."
-            );
-
-
-            tutupModal();
-
-
-        }
-    );
-
-
-
-    /* =====================================================
-       VIEW DATA
-    ===================================================== */
-
-    function viewData(button) {
-
-        const cells = button.closest("tr").cells;
-
-        alert(
-            "Detail Anak Putus Sekolah\n\n" +
-            "Nama Anak: " + cells[0].innerText.trim() + "\n" +
-            "NIK: " + cells[1].innerText.trim() + "\n" +
-            "RW: " + cells[2].innerText.trim() + "\n" +
-            "Usia (Tahun): " + cells[3].innerText.trim() + "\n" +
-            "Jenjang Terakhir: " + cells[4].innerText.trim() + "\n" +
-            "Alasan: " + cells[5].innerText.trim()
+        document.getElementById(
+            'modalViewClose'
+        ).addEventListener(
+            'click',
+            tutupView
         );
 
-    }
+
+        document.getElementById(
+            'btnViewTutup'
+        ).addEventListener(
+            'click',
+            tutupView
+        );
 
 
-    /* =====================================================
-       EDIT DATA
-    ===================================================== */
+        function tutupView()
+        {
 
-    function editData(button) {
+            modalView.classList.remove(
+                'active'
+            );
 
-        selectedEditRow = button.closest("tr");
-
-        const cells = selectedEditRow.cells;
-
-        document.getElementById("editNama").value = cells[0].innerText.trim();
-        document.getElementById("editNIK").value = cells[1].innerText.trim();
-        document.getElementById("editRW").value = cells[2].innerText.trim();
-        document.getElementById("editUsia").value = cells[3].innerText.trim();
-        document.getElementById("editJenjang").value = cells[4].innerText.trim();
-        document.getElementById("editAlasan").value = cells[5].innerText.trim();
-
-        modalEditOverlay.classList.add("active");
-
-    }
+        }
 
 
-    btnEditSimpan.addEventListener(
-        "click",
-        function() {
+        /* =================================================
+           HAPUS DATA
+        ================================================= */
 
-            if (!formEditDUK.checkValidity()) {
+        window.hapusData =
+            function (button)
+            {
 
-                formEditDUK.reportValidity();
+                const row =
+                    button.closest('tr');
 
-                return;
+
+                const nama =
+                    row.cells[0]
+                    .innerText
+                    .trim();
+
+
+                const konfirmasi =
+                    confirm(
+
+                        'Apakah Anda yakin ingin menghapus data:\n\n' +
+                        nama +
+                        '?'
+
+                    );
+
+
+                if (konfirmasi) {
+
+                    table
+                        .row(row)
+                        .remove()
+                        .draw();
+
+                }
+
+            };
+
+
+        /* =================================================
+           CLOSE MODAL CLICK OUTSIDE
+        ================================================= */
+
+        modalTambah.addEventListener(
+            'click',
+            function (event) {
+
+                if (
+                    event.target ===
+                    modalTambah
+                ) {
+
+                    tutupTambah();
+
+                }
 
             }
-
-            alert(
-                "Data Anak Putus Sekolah berhasil diperbarui.\n\n" +
-                "Nama Anak: " + document.getElementById("editNama").value
-            );
-
-            const cells = selectedEditRow.cells;
-
-            cells[0].innerText = document.getElementById("editNama").value;
-            cells[1].innerText = document.getElementById("editNIK").value;
-            cells[2].innerText = document.getElementById("editRW").value;
-            cells[3].innerText = document.getElementById("editUsia").value;
-            cells[4].innerText = document.getElementById("editJenjang").value;
-            cells[5].innerText = document.getElementById("editAlasan").value;
-
-            tutupModalEdit();
-
-        }
-    );
+        );
 
 
+        modalEdit.addEventListener(
+            'click',
+            function (event) {
 
-    /* =====================================================
-       HAPUS DATA
-    ===================================================== */
+                if (
+                    event.target ===
+                    modalEdit
+                ) {
 
-    function hapusData(button) {
+                    tutupEdit();
 
-        const row = button.closest("tr");
-        const nama = row.cells[0].innerText.trim();
+                }
 
-
-        const konfirmasi =
-            confirm(
-                "Apakah Anda yakin ingin menghapus data:\n\n" +
-                nama +
-                "?"
-            );
+            }
+        );
 
 
-        if (konfirmasi) {
+        modalView.addEventListener(
+            'click',
+            function (event) {
 
-            row.remove();
+                if (
+                    event.target ===
+                    modalView
+                ) {
 
-        }
+                    tutupView();
 
-    }
+                }
+
+            }
+        );
 
 
+        /* =================================================
+           UPDATE TOTAL
+        ================================================= */
 
-    /* =====================================================
-       UPDATE TOTAL DATA
-    ===================================================== */
-
-    table.on(
-        "draw",
-        function() {
+        function updateTotal()
+        {
 
             const info =
                 table.page.info();
 
+
             document.getElementById(
-                "totalData"
+                'totalData'
             ).textContent =
+
                 info.recordsDisplay +
-                " Anak";
+                ' Anak';
 
         }
-    );
 
+
+        table.on(
+            'draw',
+            updateTotal
+        );
+
+
+        updateTotal();
+
+    }
+
+);
 
 </script>
 
-
-</body>
-
-</html>
-```
+@endpush

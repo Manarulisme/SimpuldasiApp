@@ -1,2697 +1,1532 @@
-```html
-<!DOCTYPE html>
-<html lang="id">
+@extends('Admin.Layout.master')
 
-<head>
+@section('title', 'Data UMKM - Kelurahan XXXXX')
+@section('page_title', 'Data UMKM')
+@section('page_subtitle', 'Ekonomi & Pembangunan · Data UMKM')
 
-    <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+@section('content')
 
-    <title>
-        Data BMD - Kelurahan XXXXX
-    </title>
+<style>
 
+    /* =====================================================
+       PAGE HEADER
+    ====================================================== */
 
-    <!-- =====================================================
-         DATATABLES CSS
-    ====================================================== -->
+    .content-header {
 
-    <link
-        rel="stylesheet"
-        href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css"
-    >
+        display: flex;
 
+        align-items: center;
 
-    <style>
+        justify-content: space-between;
 
-        /* =====================================================
-           RESET
-        ===================================================== */
+        gap: 20px;
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        margin-bottom: 22px;
 
+    }
 
-        :root {
 
-            --primary: #087443;
-            --primary-dark: #065c35;
-            --primary-light: #eaf5ef;
+    .content-header h2 {
 
-            --sidebar: #102f47;
-            --sidebar-hover: #173c58;
+        font-family: Georgia, serif;
 
-            --text: #263238;
-            --muted: #7a858d;
+        font-size: 22px;
 
-            --border: #e7ebee;
+        color: #18364d;
 
-            --background: #f5f7f8;
+        margin-bottom: 5px;
 
-            --white: #ffffff;
+    }
 
-            --danger: #c0392b;
 
-            --gold: #d8a600;
+    .content-header p {
 
-        }
+        color: #7a858d;
 
+        font-size: 12px;
 
-        body {
+        line-height: 1.6;
 
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
+    }
 
-            background: var(--background);
 
-            color: var(--text);
+    /* =====================================================
+       BUTTON TAMBAH
+    ====================================================== */
 
-            min-height: 100vh;
+    .btn-add {
 
-        }
+        display: inline-flex;
 
+        align-items: center;
 
-        a {
+        gap: 8px;
 
-            text-decoration: none;
+        background: #087443;
 
-            color: inherit;
+        color: white;
 
-        }
+        border: none;
 
+        border-radius: 7px;
 
-        button,
-        input,
-        select {
+        padding: 11px 16px;
 
-            font-family: inherit;
+        font-size: 12px;
 
-        }
+        font-weight: 600;
 
+        cursor: pointer;
 
+        white-space: nowrap;
 
-        /* =====================================================
-           LAYOUT
-        ===================================================== */
+        transition: 0.2s;
 
-        .dashboard {
+    }
 
-            display: flex;
 
-            min-height: 100vh;
+    .btn-add:hover {
 
-        }
+        background: #065c35;
 
+        color: white;
 
+        transform: translateY(-1px);
 
-        /* =====================================================
-           SIDEBAR
-        ===================================================== */
+    }
 
-        .sidebar {
 
-            width: 270px;
+    .btn-add-icon {
 
-            background: var(--sidebar);
+        font-size: 17px;
 
-            color: white;
+        line-height: 1;
 
-            position: fixed;
+    }
 
-            top: 0;
-            left: 0;
-            bottom: 0;
 
-            z-index: 100;
+    /* =====================================================
+       TABLE PANEL
+    ====================================================== */
 
-            overflow-y: auto;
+    .table-panel {
 
-            transition: 0.3s;
+        background: white;
 
-        }
+        border: 1px solid #e7ebee;
 
+        border-radius: 10px;
 
-        .sidebar::-webkit-scrollbar {
+        overflow: hidden;
 
-            width: 5px;
+    }
 
-        }
 
+    .table-panel-header {
 
-        .sidebar::-webkit-scrollbar-thumb {
+        padding: 19px 22px;
 
-            background:
-                rgba(255,255,255,0.15);
+        border-bottom: 1px solid #e7ebee;
 
-            border-radius: 10px;
+        display: flex;
 
-        }
+        align-items: center;
 
+        justify-content: space-between;
 
+    }
 
-        /* =====================================================
-           SIDEBAR BRAND
-        ===================================================== */
 
-        .sidebar-brand {
+    .table-panel-header h3 {
 
-            height: 82px;
+        font-size: 15px;
 
-            padding: 0 22px;
+        color: #18364d;
 
-            display: flex;
+    }
 
-            align-items: center;
 
-            gap: 12px;
+    .table-panel-header p {
 
-            border-bottom:
-                1px solid
-                rgba(255,255,255,0.08);
+        font-size: 11px;
 
-        }
+        color: #7a858d;
 
+        margin-top: 4px;
 
-        .brand-logo {
+    }
 
-            width: 43px;
 
-            height: 43px;
+    .total-data {
 
-            border-radius: 50%;
+        font-size: 11px;
 
-            background: white;
+        background: #eaf5ef;
 
-            color: var(--primary);
+        color: #087443;
 
-            display: flex;
+        padding: 6px 10px;
 
-            align-items: center;
+        border-radius: 20px;
 
-            justify-content: center;
+        font-weight: 600;
 
-            font-size: 9px;
+    }
 
-            font-weight: bold;
 
-            flex-shrink: 0;
+    .table-wrapper {
 
-        }
+        padding: 0 22px 20px;
 
+        overflow-x: auto;
 
-        .brand-name strong {
+    }
 
-            display: block;
 
-            font-family: Georgia, serif;
+    /* =====================================================
+       DATATABLE
+    ====================================================== */
 
-            font-size: 16px;
+    #umkmTable {
 
-        }
+        width: 100% !important;
 
+        border-collapse: collapse !important;
 
-        .brand-name span {
+        margin-top: 15px !important;
 
-            display: block;
+    }
 
-            font-size: 10px;
 
-            margin-top: 3px;
+    #umkmTable thead th {
 
-            color: #9eb1c0;
+        background: #f8faf9;
 
-            letter-spacing: 0.4px;
+        color: #52616b;
 
-        }
+        font-size: 11px;
 
+        font-weight: 600;
 
+        padding: 13px 12px;
 
-        /* =====================================================
-           SIDEBAR MENU
-        ===================================================== */
+        border-bottom: 1px solid #e7ebee;
 
-        .sidebar-menu {
+        white-space: nowrap;
 
-            padding: 18px 12px 30px;
+    }
 
-        }
 
+    #umkmTable tbody td {
 
-        .menu-title {
+        padding: 14px 12px;
 
-            font-size: 10px;
+        font-size: 12px;
 
-            color: #7590a3;
+        border-bottom: 1px solid #f0f2f3;
 
-            letter-spacing: 0.7px;
+        color: #39474f;
 
-            text-transform: uppercase;
+        vertical-align: middle;
 
-            padding: 16px 12px 8px;
+    }
 
-        }
 
+    #umkmTable tbody tr:hover {
 
-        .menu-item {
+        background: #fafcfb;
 
-            display: flex;
+    }
 
-            align-items: center;
 
-            gap: 12px;
+    #umkmTable tbody tr:last-child td {
 
-            min-height: 42px;
+        border-bottom: none;
 
-            padding: 10px 12px;
+    }
 
-            border-radius: 7px;
 
-            color: #dce6ed;
+    /* =====================================================
+       DATA STYLE
+    ====================================================== */
 
-            font-size: 13px;
+    .business-name {
 
-            margin-bottom: 2px;
+        font-weight: 600;
 
-            transition: 0.2s;
+        color: #18364d;
 
-        }
+    }
 
 
-        .menu-item:hover {
+    .owner-name {
 
-            background: var(--sidebar-hover);
+        font-size: 12px;
 
-            color: white;
+        color: #39474f;
 
-        }
+    }
 
 
-        .menu-item.active {
+    .business-address {
 
-            background: #1d405c;
+        font-size: 11px;
 
-            color: white;
+        color: #65727a;
 
-            font-weight: 600;
+        line-height: 1.5;
 
-            position: relative;
+    }
 
-        }
 
+    .phone-number {
 
-        .menu-item.active::before {
+        font-size: 11px;
 
-            content: "";
+        color: #52616b;
 
-            position: absolute;
+        white-space: nowrap;
 
-            left: -12px;
+    }
 
-            top: 0;
 
-            bottom: 0;
+    /* =====================================================
+       BADGE JENIS USAHA
+    ====================================================== */
 
-            width: 3px;
+    .badge {
 
-            background: var(--gold);
+        display: inline-block;
 
-            border-radius:
-                0 3px 3px 0;
+        padding: 5px 9px;
 
-        }
+        border-radius: 5px;
 
+        font-size: 10px;
 
-        .menu-icon {
+        font-weight: 600;
 
-            width: 19px;
+        white-space: nowrap;
 
-            height: 19px;
+    }
 
-            display: flex;
 
-            align-items: center;
+    .badge-food {
 
-            justify-content: center;
+        background: #fff7df;
 
-            flex-shrink: 0;
+        color: #987500;
 
-            font-size: 15px;
+    }
 
-        }
 
+    .badge-retail {
 
-        .menu-text {
+        background: #eef6fc;
 
-            flex: 1;
+        color: #2d6a9f;
 
-        }
+    }
 
 
+    .badge-service {
 
-        /* =====================================================
-           MAIN
-        ===================================================== */
+        background: #eaf5ef;
 
-        .main {
+        color: #087443;
 
-            margin-left: 270px;
+    }
 
-            width:
-                calc(100% - 270px);
 
-            min-height: 100vh;
+    .badge-fashion {
 
-        }
+        background: #f5effb;
 
+        color: #76519a;
 
+    }
 
-        /* =====================================================
-           TOPBAR
-        ===================================================== */
 
-        .topbar {
+    .badge-agriculture {
 
-            height: 82px;
+        background: #edf6ed;
 
-            background: white;
+        color: #4d7a4d;
 
-            border-bottom:
-                1px solid
-                var(--border);
+    }
 
-            display: flex;
 
-            align-items: center;
+    /* =====================================================
+       ACTION BUTTON
+    ====================================================== */
 
-            justify-content: space-between;
+    .action-buttons {
 
-            padding: 0 30px;
+        display: flex;
 
-            position: sticky;
+        align-items: center;
 
-            top: 0;
+        gap: 6px;
 
-            z-index: 50;
+    }
 
-        }
 
+    .action-btn {
 
-        .topbar-left {
+        width: 31px;
 
-            display: flex;
+        height: 31px;
 
-            align-items: center;
+        border-radius: 6px;
 
-            gap: 15px;
+        border: 1px solid #e7ebee;
 
-        }
+        background: white;
 
+        cursor: pointer;
 
-        .mobile-menu {
+        display: flex;
 
-            display: none;
+        align-items: center;
 
-            border: none;
+        justify-content: center;
 
-            background:
-                var(--primary-light);
+        font-size: 13px;
 
-            color: var(--primary);
+        transition: 0.2s;
 
-            width: 40px;
+    }
 
-            height: 40px;
 
-            border-radius: 7px;
+    .action-view {
 
-            cursor: pointer;
+        color: #2d6a9f;
 
-            font-size: 20px;
+    }
 
-        }
 
+    .action-view:hover {
 
-        .page-title {
+        background: #eef6fc;
 
-            font-family: Georgia, serif;
+        border-color: #c2dced;
 
-            font-size: 25px;
+    }
 
-            color: #18364d;
 
-        }
+    .action-edit {
 
+        color: #087443;
 
-        .page-subtitle {
+    }
 
-            color: var(--muted);
 
-            font-size: 12px;
+    .action-edit:hover {
 
-            margin-top: 3px;
+        background: #eaf5ef;
 
-        }
+        border-color: #b9ddca;
 
+    }
 
 
-        /* =====================================================
-           USER AREA
-        ===================================================== */
+    .action-delete {
 
-        .user-area {
+        color: #c0392b;
 
-            display: flex;
+    }
 
-            align-items: center;
 
-            gap: 14px;
+    .action-delete:hover {
 
-        }
+        background: #fdf0ef;
 
+        border-color: #edc5c1;
 
-        .notification {
+    }
 
-            width: 38px;
 
-            height: 38px;
+    /* =====================================================
+       DATATABLE CONTROLS
+    ====================================================== */
 
-            border:
-                1px solid
-                var(--border);
+    .dt-container {
 
-            border-radius: 7px;
+        font-size: 11px;
 
-            display: flex;
+    }
 
-            align-items: center;
 
-            justify-content: center;
+    .dt-layout-row {
 
-            font-size: 16px;
+        margin-top: 14px !important;
 
-            position: relative;
+    }
 
-            cursor: pointer;
 
-            background: white;
+    .dt-length select,
+    .dt-search input {
 
-        }
+        border: 1px solid #e7ebee !important;
 
+        border-radius: 6px !important;
 
-        .notification-dot {
+        font-size: 11px !important;
 
-            width: 7px;
+        padding: 7px 9px !important;
 
-            height: 7px;
+        outline: none !important;
 
-            background: var(--gold);
+    }
 
-            border-radius: 50%;
 
-            position: absolute;
+    .dt-search input:focus {
 
-            top: 7px;
+        border-color: #087443 !important;
 
-            right: 7px;
+        box-shadow:
+            0 0 0 2px
+            rgba(8,116,67,0.08);
 
-        }
+    }
 
 
-        .user-profile {
+    .dt-info {
 
-            display: flex;
+        color: #7a858d !important;
 
-            align-items: center;
+        font-size: 11px !important;
 
-            gap: 10px;
+    }
 
-            padding-left: 14px;
 
-            border-left:
-                1px solid
-                var(--border);
+    .dt-paging button {
 
-        }
+        border-radius: 5px !important;
 
+        font-size: 11px !important;
 
-        .user-avatar {
+        min-width: 30px;
 
-            width: 39px;
+    }
 
-            height: 39px;
 
-            border-radius: 50%;
+    .dt-paging button.current {
 
-            background:
-                var(--primary-light);
+        background: #087443 !important;
 
-            color: var(--primary);
+        color: white !important;
 
-            display: flex;
+        border-color: #087443 !important;
 
-            align-items: center;
+    }
 
-            justify-content: center;
 
-            font-weight: bold;
+    /* =====================================================
+       MODAL
+    ====================================================== */
 
-            font-size: 13px;
+    .modal-overlay {
 
-        }
+        position: fixed;
 
+        inset: 0;
 
-        .user-info strong {
+        background: rgba(16,47,71,0.48);
 
-            display: block;
+        display: none;
 
-            font-size: 13px;
+        align-items: center;
 
-        }
+        justify-content: center;
 
+        padding: 20px;
 
-        .user-info span {
+        z-index: 500;
 
-            display: block;
+    }
 
-            font-size: 11px;
 
-            color: var(--muted);
+    .modal-overlay.active {
 
-            margin-top: 2px;
+        display: flex;
+
+    }
+
+
+    .modal {
+
+        width: 100%;
+
+        max-width: 680px;
+
+        background: white;
+
+        border-radius: 10px;
+
+        box-shadow:
+            0 20px 60px
+            rgba(0,0,0,0.18);
+
+        overflow: hidden;
+
+        animation: modalShow 0.2s ease;
+
+    }
+
+
+    @keyframes modalShow {
+
+        from {
+
+            opacity: 0;
+
+            transform: translateY(10px);
 
         }
 
+        to {
 
+            opacity: 1;
 
-        /* =====================================================
-           CONTENT
-        ===================================================== */
-
-        .content {
-
-            padding: 30px;
+            transform: translateY(0);
 
         }
 
+    }
 
 
-        /* =====================================================
-           PAGE HEADER
-        ===================================================== */
+    .modal-header {
+
+        padding: 19px 22px;
+
+        border-bottom: 1px solid #e7ebee;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+    }
+
+
+    .modal-header h3 {
+
+        font-family: Georgia, serif;
+
+        font-size: 18px;
+
+        color: #18364d;
+
+    }
+
+
+    .modal-close {
+
+        width: 32px;
+
+        height: 32px;
+
+        border: none;
+
+        background: #f4f6f7;
+
+        color: #69767d;
+
+        border-radius: 6px;
+
+        cursor: pointer;
+
+        font-size: 18px;
+
+    }
+
+
+    .modal-close:hover {
+
+        background: #e9edef;
+
+    }
+
+
+    .modal-body {
+
+        padding: 22px;
+
+    }
+
+
+    .form-grid {
+
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 17px;
+
+    }
+
+
+    .form-group {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 7px;
+
+    }
+
+
+    .form-group.full {
+
+        grid-column: 1 / -1;
+
+    }
+
+
+    .form-label {
+
+        font-size: 11px;
+
+        font-weight: 600;
+
+        color: #52616b;
+
+    }
+
+
+    .form-control {
+
+        width: 100%;
+
+        border: 1px solid #e7ebee;
+
+        border-radius: 6px;
+
+        padding: 10px 11px;
+
+        font-size: 12px;
+
+        color: #263238;
+
+        outline: none;
+
+        background: white;
+
+        transition: 0.2s;
+
+    }
+
+
+    .form-control:focus {
+
+        border-color: #087443;
+
+        box-shadow:
+            0 0 0 2px
+            rgba(8,116,67,0.08);
+
+    }
+
+
+    .modal-footer {
+
+        padding: 16px 22px;
+
+        border-top: 1px solid #e7ebee;
+
+        display: flex;
+
+        justify-content: flex-end;
+
+        gap: 8px;
+
+    }
+
+
+    .btn-cancel {
+
+        border: 1px solid #e7ebee;
+
+        background: white;
+
+        color: #65727a;
+
+        padding: 10px 15px;
+
+        border-radius: 6px;
+
+        font-size: 12px;
+
+        cursor: pointer;
+
+    }
+
+
+    .btn-save {
+
+        border: none;
+
+        background: #087443;
+
+        color: white;
+
+        padding: 10px 16px;
+
+        border-radius: 6px;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        cursor: pointer;
+
+    }
+
+
+    .btn-save:hover {
+
+        background: #065c35;
+
+    }
+
+
+    /* =====================================================
+       VIEW MODAL
+    ====================================================== */
+
+    .detail-grid {
+
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 16px;
+
+    }
+
+
+    .detail-item {
+
+        border: 1px solid #e7ebee;
+
+        border-radius: 7px;
+
+        padding: 12px;
+
+        background: #fafcfb;
+
+    }
+
+
+    .detail-item.full {
+
+        grid-column: 1 / -1;
+
+    }
+
+
+    .detail-label {
+
+        display: block;
+
+        font-size: 10px;
+
+        color: #7a858d;
+
+        margin-bottom: 5px;
+
+    }
+
+
+    .detail-value {
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        color: #18364d;
+
+    }
+
+
+    /* =====================================================
+       FOOTER
+    ====================================================== */
+
+    .dashboard-footer {
+
+        margin-top: 25px;
+
+        text-align: center;
+
+        color: #9aa3a9;
+
+        font-size: 11px;
+
+        padding: 10px;
+
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+    ====================================================== */
+
+    @media (max-width: 768px) {
 
         .content-header {
 
-            display: flex;
+            align-items: flex-start;
 
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 20px;
-
-            margin-bottom: 22px;
+            flex-direction: column;
 
         }
 
-
-        .content-header h2 {
-
-            font-family: Georgia, serif;
-
-            font-size: 22px;
-
-            color: #18364d;
-
-            margin-bottom: 5px;
-
-        }
-
-
-        .content-header p {
-
-            color: var(--muted);
-
-            font-size: 12px;
-
-            line-height: 1.6;
-
-        }
-
-
-        /* =====================================================
-           BUTTON TAMBAH
-        ===================================================== */
 
         .btn-add {
 
-            display: inline-flex;
+            width: 100%;
 
-            align-items: center;
-
-            gap: 8px;
-
-            background: var(--primary);
-
-            color: white;
-
-            border: none;
-
-            border-radius: 7px;
-
-            padding: 11px 16px;
-
-            font-size: 12px;
-
-            font-weight: 600;
-
-            cursor: pointer;
-
-            white-space: nowrap;
-
-            transition: 0.2s;
-
-        }
-
-
-        .btn-add:hover {
-
-            background: var(--primary-dark);
-
-            transform:
-                translateY(-1px);
-
-        }
-
-
-        .btn-add-icon {
-
-            font-size: 17px;
-
-            line-height: 1;
-
-        }
-
-
-
-        /* =====================================================
-           TABLE PANEL
-        ===================================================== */
-
-        .table-panel {
-
-            background: white;
-
-            border:
-                1px solid
-                var(--border);
-
-            border-radius: 10px;
-
-            overflow: hidden;
+            justify-content: center;
 
         }
 
 
         .table-panel-header {
 
-            padding: 19px 22px;
+            align-items: flex-start;
 
-            border-bottom:
-                1px solid
-                var(--border);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-        }
-
-
-        .table-panel-header h3 {
-
-            font-size: 15px;
-
-            color: #18364d;
-
-        }
-
-
-        .table-panel-header p {
-
-            font-size: 11px;
-
-            color: var(--muted);
-
-            margin-top: 4px;
-
-        }
-
-
-        .total-data {
-
-            font-size: 11px;
-
-            color: var(--muted);
-
-            background: var(--primary-light);
-
-            color: var(--primary);
-
-            padding: 6px 10px;
-
-            border-radius: 20px;
-
-            font-weight: 600;
+            gap: 10px;
 
         }
 
 
         .table-wrapper {
 
-            padding: 0 22px 20px;
+            padding-left: 15px;
 
-            overflow-x: auto;
-
-        }
-
-
-
-        /* =====================================================
-           DATATABLE STYLE
-        ===================================================== */
-
-        #dukTable {
-
-            width: 100% !important;
-
-            border-collapse:
-                collapse !important;
-
-            margin-top: 15px !important;
+            padding-right: 15px;
 
         }
 
 
-        #dukTable thead th {
+        .form-grid,
+        .detail-grid {
 
-            background: #f8faf9;
-
-            color: #52616b;
-
-            font-size: 11px;
-
-            font-weight: 600;
-
-            padding: 13px 12px;
-
-            border-bottom:
-                1px solid
-                var(--border);
-
-            white-space: nowrap;
+            grid-template-columns: 1fr;
 
         }
 
 
-        #dukTable tbody td {
+        .form-group.full,
+        .detail-item.full {
 
-            padding: 14px 12px;
+            grid-column: auto;
 
-            font-size: 12px;
+        }
 
-            border-bottom:
-                1px solid
-                #f0f2f3;
+    }
 
-            color: #39474f;
 
-            vertical-align: middle;
+    @media (max-width: 480px) {
+
+        .content-header h2 {
+
+            font-size: 19px;
 
         }
 
 
-        #dukTable tbody tr:hover {
+        .table-panel-header {
 
-            background: #fafcfb;
-
-        }
-
-
-        #dukTable tbody tr:last-child td {
-
-            border-bottom: none;
+            flex-direction: column;
 
         }
 
 
+        .total-data {
 
-        /* =====================================================
-           BADGE
-        ===================================================== */
-
-        .badge {
-
-            display: inline-block;
-
-            padding: 5px 9px;
-
-            border-radius: 5px;
-
-            font-size: 10px;
-
-            font-weight: 600;
-
-        }
-
-
-        .badge-asn {
-
-            background:
-                var(--primary-light);
-
-            color: var(--primary);
-
-        }
-
-
-        .badge-pppk {
-
-            background: #fff7df;
-
-            color: #987500;
-
-        }
-
-
-        .badge-gol {
-
-            background: #f1f3f4;
-
-            color: #58636a;
-
-        }
-
-
-        .employee-name {
-
-            font-weight: 600;
-
-            color: #18364d;
-
-        }
-
-
-        .employee-id {
-
-            font-size: 10px;
-
-            color: #8a969d;
-
-            margin-top: 3px;
-
-        }
-
-
-
-        /* =====================================================
-           ACTION BUTTON
-        ===================================================== */
-
-        .action-buttons {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 6px;
-
-        }
-
-
-        .action-btn {
-
-            width: 31px;
-
-            height: 31px;
-
-            border-radius: 6px;
-
-            border:
-                1px solid
-                var(--border);
-
-            background: white;
-
-            cursor: pointer;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 13px;
-
-            transition: 0.2s;
-
-        }
-
-
-        .action-edit {
-
-            color: var(--primary);
-
-        }
-
-
-        .action-view {
-
-            color: #2d6a9f;
-
-        }
-
-
-        .action-view:hover {
-
-            background: #eef6fc;
-
-            border-color: #c2dced;
-
-        }
-
-
-        .action-edit:hover {
-
-            background:
-                var(--primary-light);
-
-            border-color:
-                #b9ddca;
-
-        }
-
-
-        .action-delete {
-
-            color: var(--danger);
-
-        }
-
-
-        .action-delete:hover {
-
-            background: #fdf0ef;
-
-            border-color: #edc5c1;
-
-        }
-
-
-
-        /* =====================================================
-           DATATABLE CONTROLS
-        ===================================================== */
-
-        .dt-container {
-
-            font-size: 11px;
-
-        }
-
-
-        .dt-layout-row {
-
-            margin-top: 14px !important;
-
-        }
-
-
-        .dt-length select,
-        .dt-search input {
-
-            border:
-                1px solid
-                var(--border) !important;
-
-            border-radius: 6px !important;
-
-            font-size: 11px !important;
-
-            padding: 7px 9px !important;
-
-            outline: none !important;
-
-        }
-
-
-        .dt-search input:focus {
-
-            border-color:
-                var(--primary) !important;
-
-            box-shadow:
-                0 0 0 2px
-                rgba(8,116,67,0.08);
-
-        }
-
-
-        .dt-info {
-
-            color: var(--muted) !important;
-
-            font-size: 11px !important;
-
-        }
-
-
-        .dt-paging button {
-
-            border-radius: 5px !important;
-
-            font-size: 11px !important;
-
-            min-width: 30px;
-
-        }
-
-
-        .dt-paging button.current {
-
-            background:
-                var(--primary) !important;
-
-            color: white !important;
-
-            border-color:
-                var(--primary) !important;
-
-        }
-
-
-
-        /* =====================================================
-           MODAL
-        ===================================================== */
-
-        .modal-overlay {
-
-            position: fixed;
-
-            inset: 0;
-
-            background:
-                rgba(16,47,71,0.48);
-
-            display: none;
-
-            align-items: center;
-
-            justify-content: center;
-
-            padding: 20px;
-
-            z-index: 500;
-
-        }
-
-
-        .modal-overlay.active {
-
-            display: flex;
-
-        }
-
-
-        .modal {
-
-            width: 100%;
-
-            max-width: 680px;
-
-            background: white;
-
-            border-radius: 10px;
-
-            box-shadow:
-                0 20px 60px
-                rgba(0,0,0,0.18);
-
-            overflow: hidden;
-
-            animation:
-                modalShow 0.2s ease;
-
-        }
-
-
-        @keyframes modalShow {
-
-            from {
-
-                opacity: 0;
-
-                transform:
-                    translateY(10px);
-
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform:
-                    translateY(0);
-
-            }
-
-        }
-
-
-        .modal-header {
-
-            padding: 19px 22px;
-
-            border-bottom:
-                1px solid
-                var(--border);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-        }
-
-
-        .modal-header h3 {
-
-            font-family: Georgia, serif;
-
-            font-size: 18px;
-
-            color: #18364d;
-
-        }
-
-
-        .modal-close {
-
-            width: 32px;
-
-            height: 32px;
-
-            border: none;
-
-            background: #f4f6f7;
-
-            color: #69767d;
-
-            border-radius: 6px;
-
-            cursor: pointer;
-
-            font-size: 18px;
-
-        }
-
-
-        .modal-close:hover {
-
-            background: #e9edef;
+            align-self: flex-start;
 
         }
 
 
         .modal-body {
 
-            padding: 22px;
+            padding: 18px;
 
         }
 
+    }
 
-        .form-grid {
+</style>
 
-            display: grid;
 
-            grid-template-columns:
-                repeat(2, 1fr);
+<!-- =====================================================
+     CONTENT
+====================================================== -->
 
-            gap: 17px;
+<div class="content">
 
-        }
 
+    <!-- =================================================
+         PAGE HEADER
+    ================================================== -->
 
-        .form-group {
+    <div class="content-header">
 
-            display: flex;
+        <div>
 
-            flex-direction: column;
+            <h2>
+                Data UMKM
+            </h2>
 
-            gap: 7px;
-
-        }
-
-
-        .form-group.full {
-
-            grid-column:
-                1 / -1;
-
-        }
-
-
-        .form-label {
-
-            font-size: 11px;
-
-            font-weight: 600;
-
-            color: #52616b;
-
-        }
-
-
-        .form-control {
-
-            width: 100%;
-
-            border:
-                1px solid
-                var(--border);
-
-            border-radius: 6px;
-
-            padding: 10px 11px;
-
-            font-size: 12px;
-
-            color: var(--text);
-
-            outline: none;
-
-            background: white;
-
-            transition: 0.2s;
-
-        }
-
-
-        .form-control:focus {
-
-            border-color:
-                var(--primary);
-
-            box-shadow:
-                0 0 0 2px
-                rgba(8,116,67,0.08);
-
-        }
-
-
-        .modal-footer {
-
-            padding: 16px 22px;
-
-            border-top:
-                1px solid
-                var(--border);
-
-            display: flex;
-
-            justify-content: flex-end;
-
-            gap: 8px;
-
-        }
-
-
-        .btn-cancel {
-
-            border:
-                1px solid
-                var(--border);
-
-            background: white;
-
-            color: #65727a;
-
-            padding: 10px 15px;
-
-            border-radius: 6px;
-
-            font-size: 12px;
-
-            cursor: pointer;
-
-        }
-
-
-        .btn-save {
-
-            border: none;
-
-            background: var(--primary);
-
-            color: white;
-
-            padding: 10px 16px;
-
-            border-radius: 6px;
-
-            font-size: 12px;
-
-            font-weight: 600;
-
-            cursor: pointer;
-
-        }
-
-
-        .btn-save:hover {
-
-            background:
-                var(--primary-dark);
-
-        }
-
-
-
-        /* =====================================================
-           FOOTER
-        ===================================================== */
-
-        .dashboard-footer {
-
-            margin-top: 25px;
-
-            text-align: center;
-
-            color: #9aa3a9;
-
-            font-size: 11px;
-
-            padding: 10px;
-
-        }
-
-
-
-        /* =====================================================
-           OVERLAY MOBILE
-        ===================================================== */
-
-        .sidebar-overlay {
-
-            display: none;
-
-        }
-
-
-
-        /* =====================================================
-           RESPONSIVE TABLET
-        ===================================================== */
-
-        @media (max-width: 1100px) {
-
-            .sidebar {
-
-                width: 240px;
-
-            }
-
-
-            .main {
-
-                margin-left: 240px;
-
-                width:
-                    calc(100% - 240px);
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-           RESPONSIVE MOBILE
-        ===================================================== */
-
-        @media (max-width: 768px) {
-
-            .sidebar {
-
-                transform:
-                    translateX(-100%);
-
-                width: 270px;
-
-            }
-
-
-            .sidebar.open {
-
-                transform:
-                    translateX(0);
-
-            }
-
-
-            .main {
-
-                margin-left: 0;
-
-                width: 100%;
-
-            }
-
-
-            .mobile-menu {
-
-                display: flex;
-
-                align-items: center;
-
-                justify-content: center;
-
-            }
-
-
-            .sidebar-overlay {
-
-                position: fixed;
-
-                inset: 0;
-
-                background:
-                    rgba(0,0,0,0.35);
-
-                z-index: 90;
-
-            }
-
-
-            .sidebar-overlay.active {
-
-                display: block;
-
-            }
-
-
-            .topbar {
-
-                height: 70px;
-
-                padding: 0 18px;
-
-            }
-
-
-            .page-title {
-
-                font-size: 20px;
-
-            }
-
-
-            .page-subtitle {
-
-                display: none;
-
-            }
-
-
-            .user-info {
-
-                display: none;
-
-            }
-
-
-            .user-profile {
-
-                padding-left: 8px;
-
-                border-left: none;
-
-            }
-
-
-            .notification {
-
-                display: none;
-
-            }
-
-
-            .content {
-
-                padding: 18px;
-
-            }
-
-
-            .content-header {
-
-                align-items: flex-start;
-
-                flex-direction: column;
-
-            }
-
-
-            .btn-add {
-
-                width: 100%;
-
-                justify-content: center;
-
-            }
-
-
-            .table-panel-header {
-
-                align-items: flex-start;
-
-                gap: 10px;
-
-            }
-
-
-            .table-wrapper {
-
-                padding-left: 15px;
-
-                padding-right: 15px;
-
-            }
-
-
-            .form-grid {
-
-                grid-template-columns: 1fr;
-
-            }
-
-
-            .form-group.full {
-
-                grid-column: auto;
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-           SMALL MOBILE
-        ===================================================== */
-
-        @media (max-width: 480px) {
-
-            .page-title {
-
-                font-size: 18px;
-
-            }
-
-
-            .content-header h2 {
-
-                font-size: 19px;
-
-            }
-
-
-            .table-panel-header {
-
-                flex-direction: column;
-
-            }
-
-
-            .total-data {
-
-                align-self: flex-start;
-
-            }
-
-
-            .modal-body {
-
-                padding: 18px;
-
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-
-<div class="dashboard">
-
-
-    <!-- =====================================================
-         SIDEBAR
-    ===================================================== -->
-
-    <aside
-        class="sidebar"
-        id="sidebar"
-    >
-
-
-        <!-- BRAND -->
-
-        <div class="sidebar-brand">
-
-            <div class="brand-logo">
-                LOGO
-            </div>
-
-            <div class="brand-name">
-
-                <strong>
-                    Kelurahan XXXXX
-                </strong>
-
-                <span>
-                    SISTEM INFORMASI KELURAHAN
-                </span>
-
-            </div>
+            <p>
+                Kelola data UMKM Kelurahan XXXXX.
+            </p>
 
         </div>
 
 
+        <a
+            href="{{ url('/tambah-data-umkm') }}"
+            class="btn-add"
+            id="btnTambah"
+        >
 
-        <!-- MENU -->
+            <span class="btn-add-icon">
+                +
+            </span>
 
-        <nav class="sidebar-menu">
+            Tambah Data
+
+        </a>
+
+    </div>
 
 
-            <!-- BERANDA -->
+    <!-- =================================================
+         TABLE
+    ================================================== -->
 
-            <a
-                href="dashboard.html"
-                class="menu-item"
+    <section class="table-panel">
+
+
+        <div class="table-panel-header">
+
+            <div>
+
+                <h3>
+                    Daftar UMKM
+                </h3>
+
+                <p>
+                    Data UMKM Kelurahan XXXXX
+                </p>
+
+            </div>
+
+
+            <span
+                class="total-data"
+                id="totalData"
             >
-
-                <span class="menu-icon">
-                    ⌂
-                </span>
-
-                <span class="menu-text">
-                    Beranda
-                </span>
-
-            </a>
-
-
-
-            <!-- KESEKRETARIATAN -->
-
-            <div class="menu-title">
-                Kesekretariatan
-            </div>
-
-
-            <!-- ACTIVE -->
-
-            <a
-                href="duk.html"
-                class="menu-item active"
-            >
-
-                <span class="menu-icon">
-                    👤
-                </span>
-
-                <span class="menu-text">
-                    Data Umum Kepegawaian
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▣
-                </span>
-
-                <span class="menu-text">
-                    Data BMD
-                </span>
-
-            </a>
-
-
-
-            <!-- KESEJAHTERAAN SOSIAL -->
-
-            <div class="menu-title">
-                Kesejahteraan Sosial
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♡
-                </span>
-
-                <span class="menu-text">
-                    Posyandu & Posbindu
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♧
-                </span>
-
-                <span class="menu-text">
-                    Data Stunting
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♢
-                </span>
-
-                <span class="menu-text">
-                    KPM / Bantuan Sosial
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◉
-                </span>
-
-                <span class="menu-text">
-                    Anak Putus Sekolah
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▤
-                </span>
-
-                <span class="menu-text">
-                    Data Sekolah
-                </span>
-
-            </a>
-
-
-
-            <!-- EKONOMI & PEMBANGUNAN -->
-
-            <div class="menu-title">
-                Ekonomi & Pembangunan
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♙
-                </span>
-
-                <span class="menu-text">
-                    Data UMKM
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◈
-                </span>
-
-                <span class="menu-text">
-                    Data Rutillahu
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    🌱
-                </span>
-
-                <span class="menu-text">
-                    Data Buruan Sae
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♣
-                </span>
-
-                <span class="menu-text">
-                    Data Pohon
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▦
-                </span>
-
-                <span class="menu-text">
-                    Fasilitas Umum & Sosial
-                </span>
-
-            </a>
-
-
-
-            <!-- PEMERINTAHAN -->
-
-            <div class="menu-title">
-                Pemerintahan
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◫
-                </span>
-
-                <span class="menu-text">
-                    Laporan Kependudukan
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ⚑
-                </span>
-
-                <span class="menu-text">
-                    Linmas & Siskamling
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▥
-                </span>
-
-                <span class="menu-text">
-                    Data RT/RW & Periode
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◉
-                </span>
-
-                <span class="menu-text">
-                    Data PKL
-                </span>
-
-            </a>
-
-
-
-            <!-- SISTEM -->
-
-            <div class="menu-title">
-                Sistem
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ⚙
-                </span>
-
-                <span class="menu-text">
-                    Pengaturan
-                </span>
-
-            </a>
-
-
-            <a
-                href="index.html"
-                class="menu-item"
-            >
-
-                <span class="menu-icon">
-                    ↪
-                </span>
-
-                <span class="menu-text">
-                    Keluar
-                </span>
-
-            </a>
-
-
-        </nav>
-
-    </aside>
-
-
-
-    <!-- OVERLAY MOBILE -->
-
-    <div
-        class="sidebar-overlay"
-        id="sidebarOverlay"
-    ></div>
-
-
-
-    <!-- =====================================================
-         MAIN
-    ===================================================== -->
-
-    <main class="main">
-
-
-        <!-- =================================================
-             TOPBAR
-        ================================================= -->
-
-        <header class="topbar">
-
-
-            <div class="topbar-left">
-
-
-                <button
-                    class="mobile-menu"
-                    id="mobileMenu"
-                >
-                    ☰
-                </button>
-
-
-                <div>
-
-                    <h1 class="page-title">
-                        Data BMD
-                    </h1>
-
-                    <p class="page-subtitle">
-                        Kesekretariatan · Data BMD
-                    </p>
-
-                </div>
-
-
-            </div>
-
-
-
-            <div class="user-area">
-
-
-                <div class="notification">
-
-                    🔔
-
-                    <span
-                        class="notification-dot"
-                    ></span>
-
-                </div>
-
-
-                <div class="user-profile">
-
-                    <div class="user-avatar">
-                        AD
-                    </div>
-
-                    <div class="user-info">
-
-                        <strong>
-                            Administrator
-                        </strong>
-
-                        <span>
-                            Administrator
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-            </div>
-
-        </header>
-
-
-
-        <!-- =================================================
-             CONTENT
-        ================================================= -->
-
-        <div class="content">
-
-
-            <!-- PAGE HEADER -->
-
-            <div class="content-header">
-
-
-                <div>
-
-                    <h2>
-                        Data BMD
-                    </h2>
-
-                    <p>
-                        Kelola data barang milik daerah
-                        Kelurahan XXXXX.
-                    </p>
-
-                </div>
-
-
-                <button
-                    class="btn-add"
-                    id="btnTambah"
-                >
-
-                    <span class="btn-add-icon">
-                        +
-                    </span>
-
-                    Tambah Data
-
-                </button>
-
-
-            </div>
-
-
-
-            <!-- =================================================
-                 TABLE
-            ================================================= -->
-
-            <section class="table-panel">
-
-
-                <div class="table-panel-header">
-
-                    <div>
-
-                        <h3>
-                            Daftar Barang
-                        </h3>
-
-                        <p>
-                            Data BMD Kelurahan XXXXX
-                        </p>
-
-                    </div>
-
-
-                    <span
-                        class="total-data"
-                        id="totalData"
-                    >
-                        5 Barang
-                    </span>
-
-                </div>
-
-
-
-                <div class="table-wrapper">
-
-
-                    <table
-                        id="dukTable"
-                        class="display"
-                    >
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Nama Barang
-                                </th>
-
-                                <th>
-                                    Tipe
-                                </th>
-
-                                <th>
-                                    Tahun Perolehan
-                                </th>
-
-                                <th>
-                                    Sumber Dana
-                                </th>
-
-                                <th>
-                                    Kondisi
-                                </th>
-
-                                <th>
-                                    Keterangan
-                                </th>
-
-                                <th>
-                                    Aksi
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-
-                            <!-- DATA 1 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        Laptop Lenovo ThinkPad
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Elektronik
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        2023
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        APBD
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Baik
-                                </td>
-
-                                <td>
-                                    Untuk administrasi kelurahan
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 2 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        Meja kerja kayu
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Perabot
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        2022
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        APBD
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Baik
-                                </td>
-
-                                <td>
-                                    Ruang pelayanan umum
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 3 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        Printer Epson L3210
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Elektronik
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        2024
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        DAK
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Baik
-                                </td>
-
-                                <td>
-                                    Cetak dokumen dan laporan
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 4 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        Kursi tunggu besi
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Perabot
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        2021
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        APBD
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Cukup Baik
-                                </td>
-
-                                <td>
-                                    Area tunggu masyarakat
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 5 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-pppk"
-                                    >
-                                        Toyota Avanza
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Kendaraan
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        2020
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        APBD
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Baik
-                                </td>
-
-                                <td>
-                                    Operasional kelurahan
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-                        </tbody>
-
-                    </table>
-
-
-                </div>
-
-            </section>
-
-
-
-            <!-- FOOTER -->
-
-            <div class="dashboard-footer">
-
-                © 2026 Kelurahan XXXXX ·
-                Sistem Informasi Kelurahan
-
-            </div>
-
+                5 UMKM
+            </span>
 
         </div>
 
 
-    </main>
+        <div class="table-wrapper">
+
+
+            <table
+                id="umkmTable"
+                class="display"
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Jenis Usaha
+                        </th>
+
+                        <th>
+                            Nama Usaha
+                        </th>
+
+                        <th>
+                            Nama Pelaku
+                        </th>
+
+                        <th>
+                            Alamat
+                        </th>
+
+                        <th>
+                            No. HP
+                        </th>
+
+                        <th>
+                            Aksi
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    <!-- DATA 1 -->
+
+                    <tr>
+
+                        <td>
+
+                            <span class="badge badge-food">
+                                Kuliner
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="business-name">
+                                Warung Makan Berkah
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <div class="owner-name">
+                                Siti Aminah
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <div class="business-address">
+                                Jl. Melati No. 12
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="phone-number">
+                                0812-3456-7890
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- DATA 2 -->
+
+                    <tr>
+
+                        <td>
+
+                            <span class="badge badge-retail">
+                                Perdagangan
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="business-name">
+                                Toko Sumber Rezeki
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <div class="owner-name">
+                                Budi Santoso
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <div class="business-address">
+                                Jl. Mawar No. 25
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="phone-number">
+                                0813-2345-6781
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- DATA 3 -->
+
+                    <tr>
+
+                        <td>
+
+                            <span class="badge badge-service">
+                                Jasa
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="business-name">
+                                Bengkel Maju Motor
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <div class="owner-name">
+                                Andi Wijaya
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <div class="business-address">
+                                Jl. Kenanga No. 8
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="phone-number">
+                                0821-4567-8901
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- DATA 4 -->
+
+                    <tr>
+
+                        <td>
+
+                            <span class="badge badge-fashion">
+                                Fashion
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="business-name">
+                                Butik Cantik Fashion
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <div class="owner-name">
+                                Rina Lestari
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <div class="business-address">
+                                Jl. Anggrek No. 17
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="phone-number">
+                                0857-1234-5678
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- DATA 5 -->
+
+                    <tr>
+
+                        <td>
+
+                            <span class="badge badge-agriculture">
+                                Pertanian
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="business-name">
+                                Tani Makmur
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <div class="owner-name">
+                                Dedi Haryanto
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <div class="business-address">
+                                Jl. Flamboyan No. 5
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="phone-number">
+                                0819-8765-4321
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <div class="dashboard-footer">
+
+        © {{ date('Y') }} Kelurahan XXXXX ·
+        Sistem Informasi Kelurahan
+
+    </div>
 
 
 </div>
 
 
-
 <!-- =====================================================
      MODAL TAMBAH DATA
-===================================================== -->
+====================================================== -->
 
 <div
     class="modal-overlay"
     id="modalOverlay"
 >
-
 
     <div class="modal">
 
@@ -2699,10 +1534,11 @@
         <div class="modal-header">
 
             <h3>
-                Tambah Data BMD
+                Tambah Data UMKM
             </h3>
 
             <button
+                type="button"
                 class="modal-close"
                 id="modalClose"
             >
@@ -2712,46 +1548,64 @@
         </div>
 
 
-
         <div class="modal-body">
 
 
-            <form
-                id="formDUK"
-            >
+            <form id="formUMKM">
 
 
                 <div class="form-grid">
 
 
-                    <!-- JENIS -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
-                            Jenis
+                        <label
+                            class="form-label"
+                            for="jenis_usaha"
+                        >
+                            Jenis Usaha
                         </label>
 
                         <select
                             class="form-control"
-                            id="jenis"
+                            id="jenis_usaha"
                             required
                         >
 
                             <option value="">
-                                Pilih Jenis
+                                Pilih jenis usaha
                             </option>
 
-                            <option value="ASN">
-                                ASN
+                            <option value="Kuliner">
+                                Kuliner
                             </option>
 
-                            <option value="PPPK">
-                                PPPK
+                            <option value="Perdagangan">
+                                Perdagangan
                             </option>
 
-                            <option value="Non-ASN">
-                                Non-ASN
+                            <option value="Jasa">
+                                Jasa
+                            </option>
+
+                            <option value="Fashion">
+                                Fashion
+                            </option>
+
+                            <option value="Pertanian">
+                                Pertanian
+                            </option>
+
+                            <option value="Peternakan">
+                                Peternakan
+                            </option>
+
+                            <option value="Kerajinan">
+                                Kerajinan
+                            </option>
+
+                            <option value="Lainnya">
+                                Lainnya
                             </option>
 
                         </select>
@@ -2759,100 +1613,80 @@
                     </div>
 
 
-
-                    <!-- NIP -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
-                            NIP / NRP / TT
+                        <label
+                            class="form-label"
+                            for="nama_usaha"
+                        >
+                            Nama Usaha
                         </label>
 
                         <input
                             type="text"
                             class="form-control"
-                            id="nomor"
-                            placeholder="Masukkan NIP / NRP / TT"
+                            id="nama_usaha"
+                            placeholder="Masukkan nama usaha"
                             required
                         >
 
                     </div>
 
 
-
-                    <!-- NAMA -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
-                            Nama
+                        <label
+                            class="form-label"
+                            for="nama_pelaku"
+                        >
+                            Nama Pelaku
                         </label>
 
                         <input
                             type="text"
                             class="form-control"
-                            id="nama"
-                            placeholder="Nama lengkap"
+                            id="nama_pelaku"
+                            placeholder="Masukkan nama pelaku usaha"
                             required
                         >
 
                     </div>
 
 
-
-                    <!-- GOLONGAN -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
-                            Golongan
+                        <label
+                            class="form-label"
+                            for="no_hp"
+                        >
+                            No. HP
                         </label>
 
                         <input
-                            type="text"
+                            type="tel"
                             class="form-control"
-                            id="golongan"
-                            placeholder="Contoh: III/d"
+                            id="no_hp"
+                            placeholder="Contoh: 081234567890"
                             required
                         >
 
                     </div>
 
 
+                    <div class="form-group full">
 
-                    <!-- PANGKAT -->
-
-                    <div class="form-group">
-
-                        <label class="form-label">
-                            Pangkat
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="pangkat"
-                            placeholder="Masukkan pangkat"
-                            required
+                        <label
+                            class="form-label"
+                            for="alamat"
                         >
-
-                    </div>
-
-
-
-                    <!-- JABATAN -->
-
-                    <div class="form-group">
-
-                        <label class="form-label">
-                            Jabatan
+                            Alamat
                         </label>
 
                         <input
                             type="text"
                             class="form-control"
-                            id="jabatan"
-                            placeholder="Masukkan jabatan"
+                            id="alamat"
+                            placeholder="Masukkan alamat usaha"
                             required
                         >
 
@@ -2868,10 +1702,10 @@
         </div>
 
 
-
         <div class="modal-footer">
 
             <button
+                type="button"
                 class="btn-cancel"
                 id="btnBatal"
             >
@@ -2879,6 +1713,7 @@
             </button>
 
             <button
+                type="button"
                 class="btn-save"
                 id="btnSimpan"
             >
@@ -2890,502 +1725,916 @@
 
     </div>
 
-
 </div>
-
 
 
 <!-- =====================================================
      MODAL EDIT DATA
-===================================================== -->
+====================================================== -->
 
-<div class="modal-overlay" id="modalEditOverlay">
+<div
+    class="modal-overlay"
+    id="modalEditOverlay"
+>
+
     <div class="modal">
+
+
         <div class="modal-header">
-            <h3>Edit Data BMD</h3>
-            <button type="button" class="modal-close" id="modalEditClose" aria-label="Tutup form edit">×</button>
+
+            <h3>
+                Edit Data UMKM
+            </h3>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="modalEditClose"
+            >
+                ×
+            </button>
+
         </div>
+
 
         <div class="modal-body">
-            <form id="formEditDUK">
+
+
+            <form id="formEdit">
+
                 <div class="form-grid">
+
+
                     <div class="form-group">
-                        <label class="form-label" for="editJenis">Tipe</label>
-                        <select class="form-control" id="editJenis" required>
-                            <option value="">Pilih Jenis</option>
-                            <option value="Elektronik">Elektronik</option>
-                            <option value="Perabot">Perabot</option>
-                            <option value="Kendaraan">Kendaraan</option>
+
+                        <label
+                            class="form-label"
+                            for="editJenisUsaha"
+                        >
+                            Jenis Usaha
+                        </label>
+
+                        <select
+                            class="form-control"
+                            id="editJenisUsaha"
+                            required
+                        >
+
+                            <option value="Kuliner">
+                                Kuliner
+                            </option>
+
+                            <option value="Perdagangan">
+                                Perdagangan
+                            </option>
+
+                            <option value="Jasa">
+                                Jasa
+                            </option>
+
+                            <option value="Fashion">
+                                Fashion
+                            </option>
+
+                            <option value="Pertanian">
+                                Pertanian
+                            </option>
+
+                            <option value="Peternakan">
+                                Peternakan
+                            </option>
+
+                            <option value="Kerajinan">
+                                Kerajinan
+                            </option>
+
+                            <option value="Lainnya">
+                                Lainnya
+                            </option>
+
                         </select>
+
                     </div>
 
+
                     <div class="form-group">
-                        <label class="form-label" for="editNomor">Tahun Perolehan</label>
-                        <input type="text" class="form-control" id="editNomor" required>
+
+                        <label
+                            class="form-label"
+                            for="editNamaUsaha"
+                        >
+                            Nama Usaha
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="editNamaUsaha"
+                            required
+                        >
+
                     </div>
+
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="editNamaPelaku"
+                        >
+                            Nama Pelaku
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="editNamaPelaku"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="editNoHP"
+                        >
+                            No. HP
+                        </label>
+
+                        <input
+                            type="tel"
+                            class="form-control"
+                            id="editNoHP"
+                            required
+                        >
+
+                    </div>
+
 
                     <div class="form-group full">
-                        <label class="form-label" for="editNama">Nama Barang</label>
-                        <input type="text" class="form-control" id="editNama" required>
+
+                        <label
+                            class="form-label"
+                            for="editAlamat"
+                        >
+                            Alamat
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="editAlamat"
+                            required
+                        >
+
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="editGolongan">Sumber Dana</label>
-                        <input type="text" class="form-control" id="editGolongan" required>
-                    </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="editPangkat">Kondisi</label>
-                        <input type="text" class="form-control" id="editPangkat" required>
-                    </div>
-
-                    <div class="form-group full">
-                        <label class="form-label" for="editJabatan">Keterangan</label>
-                        <input type="text" class="form-control" id="editJabatan" required>
-                    </div>
                 </div>
+
             </form>
+
+
         </div>
+
 
         <div class="modal-footer">
-            <button type="button" class="btn-cancel" id="btnEditBatal">Batal</button>
-            <button type="button" class="btn-save" id="btnEditSimpan">Perbarui Data</button>
+
+            <button
+                type="button"
+                class="btn-cancel"
+                id="btnEditBatal"
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="btn-save"
+                id="btnEditSimpan"
+            >
+                Perbarui Data
+            </button>
+
         </div>
+
+
     </div>
+
 </div>
 
 
 <!-- =====================================================
-     JAVASCRIPT DATATABLES
-===================================================== -->
+     MODAL VIEW DATA
+====================================================== -->
 
-<script
-    src="https://code.jquery.com/jquery-3.7.1.min.js">
-</script>
+<div
+    class="modal-overlay"
+    id="modalViewOverlay"
+>
 
+    <div class="modal">
+
+
+        <div class="modal-header">
+
+            <h3>
+                Detail Data UMKM
+            </h3>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="modalViewClose"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+
+            <div class="detail-grid">
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Jenis Usaha
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewJenisUsaha"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Nama Usaha
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewNamaUsaha"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Nama Pelaku
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewNamaPelaku"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        No. HP
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewNoHP"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item full">
+
+                    <span class="detail-label">
+                        Alamat
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewAlamat"
+                    >
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                type="button"
+                class="btn-cancel"
+                id="btnViewTutup"
+            >
+                Tutup
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+@endsection
+
+
+@push('scripts')
 
 <script
     src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js">
 </script>
 
 
-
 <script>
 
-
-    /* =====================================================
-       MOBILE SIDEBAR
-    ===================================================== */
-
-    const mobileMenu =
-        document.getElementById("mobileMenu");
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
 
 
-    const sidebar =
-        document.getElementById("sidebar");
+        /* =====================================================
+           DATATABLE
+        ====================================================== */
+
+        const table =
+            new DataTable(
+                '#umkmTable',
+                {
+
+                    pageLength: 10,
+
+                    lengthMenu: [
+                        [5, 10, 25, 50],
+                        [5, 10, 25, 50]
+                    ],
+
+                    language: {
+
+                        search:
+                            'Cari:',
+
+                        lengthMenu:
+                            'Tampilkan _MENU_ data',
+
+                        info:
+                            'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+
+                        infoEmpty:
+                            'Tidak ada data',
+
+                        zeroRecords:
+                            'Data tidak ditemukan',
+
+                        emptyTable:
+                            'Belum ada data',
+
+                        paginate: {
+
+                            first:
+                                'Awal',
+
+                            last:
+                                'Akhir',
+
+                            next:
+                                '›',
+
+                            previous:
+                                '‹'
+
+                        }
+
+                    },
+
+                    columnDefs: [
+
+                        {
+                            orderable: false,
+                            searchable: false,
+                            targets: 5
+                        }
+
+                    ]
+
+                }
+            );
 
 
-    const overlay =
-        document.getElementById("sidebarOverlay");
+        /* =====================================================
+           MODAL
+        ====================================================== */
+
+        const modalTambah =
+            document.getElementById(
+                'modalOverlay'
+            );
 
 
-    mobileMenu.addEventListener(
-        "click",
-        function () {
+        const modalEdit =
+            document.getElementById(
+                'modalEditOverlay'
+            );
 
-            sidebar.classList.toggle("open");
 
-            overlay.classList.toggle("active");
+        const modalView =
+            document.getElementById(
+                'modalViewOverlay'
+            );
+
+
+        const formUMKM =
+            document.getElementById(
+                'formUMKM'
+            );
+
+
+        const formEdit =
+            document.getElementById(
+                'formEdit'
+            );
+
+
+        let selectedRow = null;
+
+
+        /* =====================================================
+           TAMBAH DATA
+        ====================================================== */
+
+        function tutupTambah()
+        {
+
+            modalTambah.classList.remove(
+                'active'
+            );
+
+            formUMKM.reset();
 
         }
-    );
 
 
-    overlay.addEventListener(
-        "click",
-        function () {
-
-            sidebar.classList.remove("open");
-
-            overlay.classList.remove("active");
-
-        }
-    );
+        document.getElementById(
+            'modalClose'
+        ).addEventListener(
+            'click',
+            tutupTambah
+        );
 
 
+        document.getElementById(
+            'btnBatal'
+        ).addEventListener(
+            'click',
+            tutupTambah
+        );
 
-    /* =====================================================
-       DATATABLE
-    ===================================================== */
 
-    const table =
-        new DataTable(
-            "#dukTable",
+        /* =====================================================
+           VIEW DATA
+        ====================================================== */
+
+        window.viewData =
+            function (button)
             {
 
-                pageLength: 10,
+                const row =
+                    button.closest('tr');
 
-                lengthMenu: [
-                    [5, 10, 25, 50],
-                    [5, 10, 25, 50]
-                ],
 
-                language: {
+                const cells =
+                    row.cells;
 
-                    search:
-                        "Cari:",
 
-                    lengthMenu:
-                        "Tampilkan _MENU_ data",
+                document.getElementById(
+                    'viewJenisUsaha'
+                ).innerText =
+                    cells[0].innerText.trim();
 
-                    info:
-                        "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
 
-                    infoEmpty:
-                        "Tidak ada data",
+                document.getElementById(
+                    'viewNamaUsaha'
+                ).innerText =
+                    cells[1].innerText.trim();
 
-                    zeroRecords:
-                        "Data tidak ditemukan",
 
-                    emptyTable:
-                        "Belum ada data",
+                document.getElementById(
+                    'viewNamaPelaku'
+                ).innerText =
+                    cells[2].innerText.trim();
 
-                    paginate: {
 
-                        first:
-                            "Awal",
+                document.getElementById(
+                    'viewAlamat'
+                ).innerText =
+                    cells[3].innerText.trim();
 
-                        last:
-                            "Akhir",
 
-                        next:
-                            "›",
+                document.getElementById(
+                    'viewNoHP'
+                ).innerText =
+                    cells[4].innerText.trim();
 
-                        previous:
-                            "‹"
 
-                    }
+                modalView.classList.add(
+                    'active'
+                );
 
-                },
+            };
 
-                columnDefs: [
 
-                    {
-                        orderable: false,
-                        searchable: false,
-                        targets: 6
-                    }
+        document.getElementById(
+            'modalViewClose'
+        ).addEventListener(
+            'click',
+            tutupView
+        );
 
-                ]
+
+        document.getElementById(
+            'btnViewTutup'
+        ).addEventListener(
+            'click',
+            tutupView
+        );
+
+
+        function tutupView()
+        {
+
+            modalView.classList.remove(
+                'active'
+            );
+
+        }
+
+
+        /* =====================================================
+           EDIT DATA
+        ====================================================== */
+
+        window.editData =
+            function (button)
+            {
+
+                selectedRow =
+                    button.closest('tr');
+
+
+                const cells =
+                    selectedRow.cells;
+
+
+                document.getElementById(
+                    'editJenisUsaha'
+                ).value =
+                    cells[0].innerText.trim();
+
+
+                document.getElementById(
+                    'editNamaUsaha'
+                ).value =
+                    cells[1].innerText.trim();
+
+
+                document.getElementById(
+                    'editNamaPelaku'
+                ).value =
+                    cells[2].innerText.trim();
+
+
+                document.getElementById(
+                    'editAlamat'
+                ).value =
+                    cells[3].innerText.trim();
+
+
+                document.getElementById(
+                    'editNoHP'
+                ).value =
+                    cells[4].innerText.trim();
+
+
+                modalEdit.classList.add(
+                    'active'
+                );
+
+            };
+
+
+        document.getElementById(
+            'modalEditClose'
+        ).addEventListener(
+            'click',
+            tutupEdit
+        );
+
+
+        document.getElementById(
+            'btnEditBatal'
+        ).addEventListener(
+            'click',
+            tutupEdit
+        );
+
+
+        function tutupEdit()
+        {
+
+            modalEdit.classList.remove(
+                'active'
+            );
+
+            formEdit.reset();
+
+            selectedRow = null;
+
+        }
+
+
+        document.getElementById(
+            'btnEditSimpan'
+        ).addEventListener(
+            'click',
+            function ()
+            {
+
+                if (!formEdit.checkValidity()) {
+
+                    formEdit.reportValidity();
+
+                    return;
+
+                }
+
+
+                if (!selectedRow) {
+
+                    return;
+
+                }
+
+
+                const jenisUsaha =
+                    document.getElementById(
+                        'editJenisUsaha'
+                    ).value;
+
+
+                let badgeClass =
+                    'badge-food';
+
+
+                if (
+                    jenisUsaha ===
+                    'Perdagangan'
+                ) {
+
+                    badgeClass =
+                        'badge-retail';
+
+                }
+                else if (
+                    jenisUsaha ===
+                    'Jasa'
+                ) {
+
+                    badgeClass =
+                        'badge-service';
+
+                }
+                else if (
+                    jenisUsaha ===
+                    'Fashion'
+                ) {
+
+                    badgeClass =
+                        'badge-fashion';
+
+                }
+                else if (
+                    jenisUsaha ===
+                    'Pertanian'
+                ) {
+
+                    badgeClass =
+                        'badge-agriculture';
+
+                }
+
+
+                selectedRow.cells[0].innerHTML =
+
+                    '<span class="badge ' +
+                    badgeClass +
+                    '">' +
+                    jenisUsaha +
+                    '</span>';
+
+
+                selectedRow.cells[1].innerHTML =
+
+                    '<div class="business-name">' +
+                    document.getElementById(
+                        'editNamaUsaha'
+                    ).value +
+                    '</div>';
+
+
+                selectedRow.cells[2].innerHTML =
+
+                    '<div class="owner-name">' +
+                    document.getElementById(
+                        'editNamaPelaku'
+                    ).value +
+                    '</div>';
+
+
+                selectedRow.cells[3].innerHTML =
+
+                    '<div class="business-address">' +
+                    document.getElementById(
+                        'editAlamat'
+                    ).value +
+                    '</div>';
+
+
+                selectedRow.cells[4].innerHTML =
+
+                    '<span class="phone-number">' +
+                    document.getElementById(
+                        'editNoHP'
+                    ).value +
+                    '</span>';
+
+
+                alert(
+                    'Data UMKM berhasil diperbarui.'
+                );
+
+
+                tutupEdit();
+
+                table.draw();
 
             }
         );
 
 
+        /* =====================================================
+           HAPUS DATA
+        ====================================================== */
 
-    /* =====================================================
-       MODAL
-    ===================================================== */
+        window.hapusData =
+            function (button)
+            {
 
-    const btnTambah =
-        document.getElementById("btnTambah");
-
-
-    const modalOverlay =
-        document.getElementById("modalOverlay");
-
-
-    const modalClose =
-        document.getElementById("modalClose");
+                const row =
+                    button.closest('tr');
 
 
-    const btnBatal =
-        document.getElementById("btnBatal");
+                const nama =
+                    row.cells[1]
+                    .innerText
+                    .trim();
 
 
-    const btnSimpan =
-        document.getElementById("btnSimpan");
+                const konfirmasi =
+                    confirm(
+
+                        'Apakah Anda yakin ingin menghapus data:\n\n' +
+                        nama +
+                        '?'
+
+                    );
 
 
-    const formDUK =
-        document.getElementById("formDUK");
+                if (konfirmasi) {
+
+                    table
+                        .row(row)
+                        .remove()
+                        .draw();
+
+                }
+
+            };
 
 
-    const modalEditOverlay =
-        document.getElementById("modalEditOverlay");
+        /* =====================================================
+           MODAL OVERLAY
+        ====================================================== */
 
+        modalTambah.addEventListener(
+            'click',
+            function (event) {
 
-    const modalEditClose =
-        document.getElementById("modalEditClose");
+                if (
+                    event.target ===
+                    modalTambah
+                ) {
 
+                    tutupTambah();
 
-    const btnEditBatal =
-        document.getElementById("btnEditBatal");
-
-
-    const btnEditSimpan =
-        document.getElementById("btnEditSimpan");
-
-
-    const formEditDUK =
-        document.getElementById("formEditDUK");
-
-
-    let selectedEditRow = null;
-
-
-
-    function bukaModal() {
-
-        modalOverlay.classList.add("active");
-
-    }
-
-
-    function tutupModal() {
-
-        modalOverlay.classList.remove("active");
-
-        formDUK.reset();
-
-    }
-
-
-    function tutupModalEdit() {
-
-        modalEditOverlay.classList.remove("active");
-
-        formEditDUK.reset();
-
-    }
-
-
-    btnTambah.addEventListener(
-        "click",
-        bukaModal
-    );
-
-
-    modalClose.addEventListener(
-        "click",
-        tutupModal
-    );
-
-
-    btnBatal.addEventListener(
-        "click",
-        tutupModal
-    );
-
-
-    modalOverlay.addEventListener(
-        "click",
-        function(event) {
-
-            if (
-                event.target ===
-                modalOverlay
-            ) {
-
-                tutupModal();
+                }
 
             }
-
-        }
-    );
-
-
-    modalEditClose.addEventListener(
-        "click",
-        tutupModalEdit
-    );
-
-
-    btnEditBatal.addEventListener(
-        "click",
-        tutupModalEdit
-    );
-
-
-    modalEditOverlay.addEventListener(
-        "click",
-        function(event) {
-
-            if (event.target === modalEditOverlay) {
-
-                tutupModalEdit();
-
-            }
-
-        }
-    );
-
-
-
-    /* =====================================================
-       SIMPAN DATA DUMMY
-    ===================================================== */
-
-    btnSimpan.addEventListener(
-        "click",
-        function() {
-
-
-            if (
-                !formDUK.checkValidity()
-            ) {
-
-                formDUK.reportValidity();
-
-                return;
-
-            }
-
-
-            alert(
-                "Data berhasil disimpan.\n\n" +
-                "Pada tahap Laravel, data ini akan " +
-                "disimpan ke database."
-            );
-
-
-            tutupModal();
-
-
-        }
-    );
-
-
-
-    /* =====================================================
-       VIEW DATA
-    ===================================================== */
-
-    function viewData(button) {
-
-        const cells = button.closest("tr").cells;
-
-        alert(
-            "Detail Data BMD\n\n" +
-            "Nama Barang: " + cells[0].innerText.trim() + "\n" +
-            "Tipe: " + cells[1].innerText.trim() + "\n" +
-            "Tahun Perolehan: " + cells[2].innerText.trim() + "\n" +
-            "Sumber Dana: " + cells[3].innerText.trim() + "\n" +
-            "Kondisi: " + cells[4].innerText.trim() + "\n" +
-            "Keterangan: " + cells[5].innerText.trim()
         );
 
-    }
 
+        modalEdit.addEventListener(
+            'click',
+            function (event) {
 
-    /* =====================================================
-       EDIT DATA
-    ===================================================== */
+                if (
+                    event.target ===
+                    modalEdit
+                ) {
 
-    function editData(button) {
+                    tutupEdit();
 
-        selectedEditRow = button.closest("tr");
-
-        const cells = selectedEditRow.cells;
-
-        document.getElementById("editNama").value = cells[0].innerText.trim();
-        document.getElementById("editJenis").value = cells[1].innerText.trim();
-        document.getElementById("editNomor").value = cells[2].innerText.trim();
-        document.getElementById("editGolongan").value = cells[3].innerText.trim();
-        document.getElementById("editPangkat").value = cells[4].innerText.trim();
-        document.getElementById("editJabatan").value = cells[5].innerText.trim();
-
-        modalEditOverlay.classList.add("active");
-
-    }
-
-
-    btnEditSimpan.addEventListener(
-        "click",
-        function() {
-
-            if (!formEditDUK.checkValidity()) {
-
-                formEditDUK.reportValidity();
-
-                return;
+                }
 
             }
-
-            alert(
-                "Data BMD berhasil diperbarui.\n\n" +
-                "Nama: " + document.getElementById("editNama").value
-            );
-
-            const cells = selectedEditRow.cells;
-
-            cells[0].innerText = document.getElementById("editNama").value;
-            cells[1].innerText = document.getElementById("editJenis").value;
-            cells[2].innerText = document.getElementById("editNomor").value;
-            cells[3].innerText = document.getElementById("editGolongan").value;
-            cells[4].innerText = document.getElementById("editPangkat").value;
-            cells[5].innerText = document.getElementById("editJabatan").value;
-
-            tutupModalEdit();
-
-        }
-    );
+        );
 
 
+        modalView.addEventListener(
+            'click',
+            function (event) {
 
-    /* =====================================================
-       HAPUS DATA
-    ===================================================== */
+                if (
+                    event.target ===
+                    modalView
+                ) {
 
-    function hapusData(button) {
+                    tutupView();
 
-        const row = button.closest("tr");
-        const nama = row.cells[0].innerText.trim();
+                }
 
-
-        const konfirmasi =
-            confirm(
-                "Apakah Anda yakin ingin menghapus data:\n\n" +
-                nama +
-                "?"
-            );
+            }
+        );
 
 
-        if (konfirmasi) {
+        /* =====================================================
+           UPDATE TOTAL
+        ====================================================== */
 
-            row.remove();
-
-        }
-
-    }
-
-
-
-    /* =====================================================
-       UPDATE TOTAL DATA
-    ===================================================== */
-
-    table.on(
-        "draw",
-        function() {
+        function updateTotal()
+        {
 
             const info =
                 table.page.info();
 
+
             document.getElementById(
-                "totalData"
+                'totalData'
             ).textContent =
+
                 info.recordsDisplay +
-                " Barang";
+                ' UMKM';
 
         }
-    );
 
+
+        table.on(
+            'draw',
+            updateTotal
+        );
+
+
+        updateTotal();
+
+
+    }
+
+);
 
 </script>
 
-
-</body>
-
-</html>
-```
+@endpush

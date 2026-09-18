@@ -59,7 +59,7 @@
                     rgba(0, 82, 43, 0.82),
                     rgba(0, 82, 43, 0.82)
                 ),
-                url("assets/hero.jpg")
+                url({{ asset('Assets/Image/logo_simpuldasi.png') }})
                 center center / cover no-repeat;
 
             color: white;
@@ -146,6 +146,7 @@
         /* =========================
            RIGHT SIDE
         ========================= */
+
 
         .login-right {
 
@@ -481,9 +482,9 @@
 
             <div class="logo-area">
 
-                <div class="logo-icon">
-                    LOGO
-                </div>
+                <img src="{{ asset('Assets/Image/logo_simpuldasi.png') }}" alt="" width="40px" height="auto">
+                {{-- <div class="logo-icon">
+                </div> --}}
 
                 <div class="logo-text">
 
@@ -506,7 +507,7 @@
 
 
             <p>
-                Selamat datang di sistem internal Kelurahan XXXXX.
+                Selamat datang di sistem internal Kelurahan Binong.
                 Silakan masuk menggunakan akun pegawai untuk
                 mengakses sistem pelayanan dan administrasi.
             </p>
@@ -528,7 +529,36 @@
 
         <div class="login-right">
 
+@if(session('success'))
 
+    <div style="
+        background:#e8f7ee;
+        color:#087443;
+        padding:12px 15px;
+        border-radius:7px;
+        margin-bottom:20px;
+        font-size:13px;
+    ">
+        {{ session('success') }}
+    </div>
+
+@endif
+
+
+@if($errors->any())
+
+    <div style="
+        background:#fff1f1;
+        color:#c62828;
+        padding:12px 15px;
+        border-radius:7px;
+        margin-bottom:20px;
+        font-size:13px;
+    ">
+        {{ $errors->first() }}
+    </div>
+
+@endif
             <div class="login-header">
 
                 <h2>
@@ -547,97 +577,107 @@
                  LOGIN FORM
             ========================= -->
 
-            <form action="#" method="POST">
+          <form action="{{ route('login.process') }}" method="POST">
+
+    @csrf
+
+    <div class="form-group">
+
+        <label for="email">
+            Email / Username
+        </label>
+
+        <input
+            type="text"
+            id="email"
+            name="email"
+            class="form-control"
+            placeholder="Masukkan email atau username"
+            autocomplete="username"
+            value="{{ old('email') }}"
+            required
+        >
+
+        @error('email')
+            <small style="display:block; color:#dc3545; margin-top:6px;">
+                {{ $message }}
+            </small>
+        @enderror
+
+    </div>
 
 
-                <div class="form-group">
+    <div class="form-group">
 
-                    <label for="email">
-                        Email / Username
-                    </label>
+        <label for="password">
+            Password
+        </label>
 
-                    <input
-                        type="text"
-                        id="email"
-                        name="email"
-                        class="form-control"
-                        placeholder="Masukkan email atau username"
-                        autocomplete="username"
-                        required
-                    >
+        <div class="password-wrapper">
 
-                </div>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                class="form-control"
+                placeholder="Masukkan password"
+                autocomplete="current-password"
+                required
+            >
 
+            <button
+                type="button"
+                class="toggle-password"
+                onclick="togglePassword()"
+            >
+                Lihat
+            </button>
 
+        </div>
 
-                <div class="form-group">
+        @error('password')
+            <small style="display:block; color:#dc3545; margin-top:6px;">
+                {{ $message }}
+            </small>
+        @enderror
 
-                    <label for="password">
-                        Password
-                    </label>
-
-
-                    <div class="password-wrapper">
-
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            class="form-control"
-                            placeholder="Masukkan password"
-                            autocomplete="current-password"
-                            required
-                        >
+    </div>
 
 
-                        <button
-                            type="button"
-                            class="toggle-password"
-                            onclick="togglePassword()"
-                        >
-                            Lihat
-                        </button>
+    <div class="form-options">
 
-                    </div>
+        <label class="remember">
 
-                </div>
+            <input
+                type="checkbox"
+                name="remember"
+                value="1"
+                {{ old('remember') ? 'checked' : '' }}
+            >
 
+            Ingat saya
 
-
-                <div class="form-options">
-
-                    <label class="remember">
-
-                        <input
-                            type="checkbox"
-                            name="remember"
-                        >
-
-                        Ingat saya
-
-                    </label>
+        </label>
 
 
-                    <a
-                        href="#"
-                        class="forgot-password"
-                    >
-                        Lupa password?
-                    </a>
+        <a
+            href="#"
+            class="forgot-password"
+        >
+            Lupa password?
+        </a>
 
-                </div>
-
-
-
-                <button
-                    type="submit"
-                    class="login-button"
-                >
-                    Masuk ke Portal
-                </button>
+    </div>
 
 
-            </form>
+    <button
+        type="submit"
+        class="login-button"
+    >
+        Masuk ke Portal
+    </button>
+
+</form>
 
 
 
@@ -661,7 +701,7 @@
 
             <div class="security-note">
 
-                🔒 Akses ini khusus untuk pegawai Kelurahan XXXXX.
+                🔒 Akses ini khusus untuk pegawai Kelurahan Binong.
 
             </div>
 

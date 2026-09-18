@@ -1,2650 +1,1471 @@
-```html
-<!DOCTYPE html>
-<html lang="id">
+@extends('Admin.Layout.master')
 
-<head>
+@section('title', 'Data Sekolah - Kelurahan XXXXX')
+@section('page_title', 'Data Sekolah')
+@section('page_subtitle', 'Kesejahteraan Sosial · Data Sekolah')
 
-    <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+@section('content')
 
-    <title>
-        Data Sekolah - Kelurahan XXXXX
-    </title>
+<style>
 
+    /* =====================================================
+       PAGE HEADER
+    ====================================================== */
 
-    <!-- =====================================================
-         DATATABLES CSS
-    ====================================================== -->
+    .content-header {
 
-    <link
-        rel="stylesheet"
-        href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css"
-    >
+        display: flex;
 
+        align-items: center;
 
-    <style>
+        justify-content: space-between;
 
-        /* =====================================================
-           RESET
-        ===================================================== */
+        gap: 20px;
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        margin-bottom: 22px;
 
+    }
 
-        :root {
 
-            --primary: #087443;
-            --primary-dark: #065c35;
-            --primary-light: #eaf5ef;
+    .content-header h2 {
 
-            --sidebar: #102f47;
-            --sidebar-hover: #173c58;
+        font-family: Georgia, serif;
 
-            --text: #263238;
-            --muted: #7a858d;
+        font-size: 22px;
 
-            --border: #e7ebee;
+        color: #18364d;
 
-            --background: #f5f7f8;
+        margin-bottom: 5px;
 
-            --white: #ffffff;
+    }
 
-            --danger: #c0392b;
 
-            --gold: #d8a600;
+    .content-header p {
 
-        }
+        color: #7a858d;
 
+        font-size: 12px;
 
-        body {
+        line-height: 1.6;
 
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
+    }
 
-            background: var(--background);
 
-            color: var(--text);
+    /* =====================================================
+       BUTTON TAMBAH
+    ====================================================== */
 
-            min-height: 100vh;
+    .btn-add {
 
-        }
+        display: inline-flex;
 
+        align-items: center;
 
-        a {
+        gap: 8px;
 
-            text-decoration: none;
+        background: #087443;
 
-            color: inherit;
+        color: white;
 
-        }
+        border: none;
 
+        border-radius: 7px;
 
-        button,
-        input,
-        select {
+        padding: 11px 16px;
 
-            font-family: inherit;
+        font-size: 12px;
 
-        }
+        font-weight: 600;
 
+        cursor: pointer;
 
+        white-space: nowrap;
 
-        /* =====================================================
-           LAYOUT
-        ===================================================== */
+        transition: 0.2s;
 
-        .dashboard {
+    }
 
-            display: flex;
 
-            min-height: 100vh;
+    .btn-add:hover {
 
-        }
+        background: #065c35;
 
+        color: white;
 
+        transform: translateY(-1px);
 
-        /* =====================================================
-           SIDEBAR
-        ===================================================== */
+    }
 
-        .sidebar {
 
-            width: 270px;
+    .btn-add-icon {
 
-            background: var(--sidebar);
+        font-size: 17px;
 
-            color: white;
+        line-height: 1;
 
-            position: fixed;
+    }
 
-            top: 0;
-            left: 0;
-            bottom: 0;
 
-            z-index: 100;
+    /* =====================================================
+       TABLE PANEL
+    ====================================================== */
 
-            overflow-y: auto;
+    .table-panel {
 
-            transition: 0.3s;
+        background: white;
 
-        }
+        border: 1px solid #e7ebee;
 
+        border-radius: 10px;
 
-        .sidebar::-webkit-scrollbar {
+        overflow: hidden;
 
-            width: 5px;
+    }
 
-        }
 
+    .table-panel-header {
 
-        .sidebar::-webkit-scrollbar-thumb {
+        padding: 19px 22px;
 
-            background:
-                rgba(255,255,255,0.15);
+        border-bottom: 1px solid #e7ebee;
 
-            border-radius: 10px;
+        display: flex;
 
-        }
+        align-items: center;
 
+        justify-content: space-between;
 
+    }
 
-        /* =====================================================
-           SIDEBAR BRAND
-        ===================================================== */
 
-        .sidebar-brand {
+    .table-panel-header h3 {
 
-            height: 82px;
+        font-size: 15px;
 
-            padding: 0 22px;
+        color: #18364d;
 
-            display: flex;
+    }
 
-            align-items: center;
 
-            gap: 12px;
+    .table-panel-header p {
 
-            border-bottom:
-                1px solid
-                rgba(255,255,255,0.08);
+        font-size: 11px;
 
-        }
+        color: #7a858d;
 
+        margin-top: 4px;
 
-        .brand-logo {
+    }
 
-            width: 43px;
 
-            height: 43px;
+    .total-data {
 
-            border-radius: 50%;
+        font-size: 11px;
 
-            background: white;
+        background: #eaf5ef;
 
-            color: var(--primary);
+        color: #087443;
 
-            display: flex;
+        padding: 6px 10px;
 
-            align-items: center;
+        border-radius: 20px;
 
-            justify-content: center;
+        font-weight: 600;
 
-            font-size: 9px;
+    }
 
-            font-weight: bold;
 
-            flex-shrink: 0;
+    .table-wrapper {
 
-        }
+        padding: 0 22px 20px;
 
+        overflow-x: auto;
 
-        .brand-name strong {
+    }
 
-            display: block;
 
-            font-family: Georgia, serif;
+    /* =====================================================
+       DATATABLE
+    ====================================================== */
 
-            font-size: 16px;
+    #sekolahTable {
 
-        }
+        width: 100% !important;
 
+        border-collapse: collapse !important;
 
-        .brand-name span {
+        margin-top: 15px !important;
 
-            display: block;
+    }
 
-            font-size: 10px;
 
-            margin-top: 3px;
+    #sekolahTable thead th {
 
-            color: #9eb1c0;
+        background: #f8faf9;
 
-            letter-spacing: 0.4px;
+        color: #52616b;
 
-        }
+        font-size: 11px;
 
+        font-weight: 600;
 
+        padding: 13px 12px;
 
-        /* =====================================================
-           SIDEBAR MENU
-        ===================================================== */
+        border-bottom: 1px solid #e7ebee;
 
-        .sidebar-menu {
+        white-space: nowrap;
 
-            padding: 18px 12px 30px;
+    }
 
-        }
 
+    #sekolahTable tbody td {
 
-        .menu-title {
+        padding: 14px 12px;
 
-            font-size: 10px;
+        font-size: 12px;
 
-            color: #7590a3;
+        border-bottom: 1px solid #f0f2f3;
 
-            letter-spacing: 0.7px;
+        color: #39474f;
 
-            text-transform: uppercase;
+        vertical-align: middle;
 
-            padding: 16px 12px 8px;
+    }
 
-        }
 
+    #sekolahTable tbody tr:hover {
 
-        .menu-item {
+        background: #fafcfb;
 
-            display: flex;
+    }
 
-            align-items: center;
 
-            gap: 12px;
+    #sekolahTable tbody tr:last-child td {
 
-            min-height: 42px;
+        border-bottom: none;
 
-            padding: 10px 12px;
+    }
 
-            border-radius: 7px;
 
-            color: #dce6ed;
+    /* =====================================================
+       DATA STYLE
+    ====================================================== */
 
-            font-size: 13px;
+    .school-name {
 
-            margin-bottom: 2px;
+        font-weight: 600;
 
-            transition: 0.2s;
+        color: #18364d;
 
-        }
+    }
 
 
-        .menu-item:hover {
+    .school-address {
 
-            background: var(--sidebar-hover);
+        font-size: 11px;
 
-            color: white;
+        color: #65727a;
 
-        }
+        line-height: 1.5;
 
+    }
 
-        .menu-item.active {
 
-            background: #1d405c;
+    .badge {
 
-            color: white;
+        display: inline-block;
 
-            font-weight: 600;
+        padding: 5px 9px;
 
-            position: relative;
+        border-radius: 5px;
 
-        }
+        font-size: 10px;
 
+        font-weight: 600;
 
-        .menu-item.active::before {
+    }
 
-            content: "";
 
-            position: absolute;
+    .badge-sd {
 
-            left: -12px;
+        background: #eaf5ef;
 
-            top: 0;
+        color: #087443;
 
-            bottom: 0;
+    }
 
-            width: 3px;
 
-            background: var(--gold);
+    .badge-smp {
 
-            border-radius:
-                0 3px 3px 0;
+        background: #eef6fc;
 
-        }
+        color: #2d6a9f;
 
+    }
 
-        .menu-icon {
 
-            width: 19px;
+    .badge-sma {
 
-            height: 19px;
+        background: #fff7df;
 
-            display: flex;
+        color: #987500;
 
-            align-items: center;
+    }
 
-            justify-content: center;
 
-            flex-shrink: 0;
+    .badge-tk {
 
-            font-size: 15px;
+        background: #f1f3f4;
 
-        }
+        color: #58636a;
 
+    }
 
-        .menu-text {
 
-            flex: 1;
+    .badge-siswa {
 
-        }
+        background: #f1f3f4;
 
+        color: #58636a;
 
+    }
 
-        /* =====================================================
-           MAIN
-        ===================================================== */
 
-        .main {
+    /* =====================================================
+       ACTION BUTTON
+    ====================================================== */
 
-            margin-left: 270px;
+    .action-buttons {
 
-            width:
-                calc(100% - 270px);
+        display: flex;
 
-            min-height: 100vh;
+        align-items: center;
 
-        }
+        gap: 6px;
 
+    }
 
 
-        /* =====================================================
-           TOPBAR
-        ===================================================== */
+    .action-btn {
 
-        .topbar {
+        width: 31px;
 
-            height: 82px;
+        height: 31px;
 
-            background: white;
+        border-radius: 6px;
 
-            border-bottom:
-                1px solid
-                var(--border);
+        border: 1px solid #e7ebee;
 
-            display: flex;
+        background: white;
 
-            align-items: center;
+        cursor: pointer;
 
-            justify-content: space-between;
+        display: flex;
 
-            padding: 0 30px;
+        align-items: center;
 
-            position: sticky;
+        justify-content: center;
 
-            top: 0;
+        font-size: 13px;
 
-            z-index: 50;
+        transition: 0.2s;
 
-        }
+    }
 
 
-        .topbar-left {
+    .action-view {
 
-            display: flex;
+        color: #2d6a9f;
 
-            align-items: center;
+    }
 
-            gap: 15px;
 
-        }
+    .action-view:hover {
 
+        background: #eef6fc;
 
-        .mobile-menu {
+        border-color: #c2dced;
 
-            display: none;
+    }
 
-            border: none;
 
-            background:
-                var(--primary-light);
+    .action-edit {
 
-            color: var(--primary);
+        color: #087443;
 
-            width: 40px;
+    }
 
-            height: 40px;
 
-            border-radius: 7px;
+    .action-edit:hover {
 
-            cursor: pointer;
+        background: #eaf5ef;
 
-            font-size: 20px;
+        border-color: #b9ddca;
 
-        }
+    }
 
 
-        .page-title {
+    .action-delete {
 
-            font-family: Georgia, serif;
+        color: #c0392b;
 
-            font-size: 25px;
+    }
 
-            color: #18364d;
 
-        }
+    .action-delete:hover {
 
+        background: #fdf0ef;
 
-        .page-subtitle {
+        border-color: #edc5c1;
 
-            color: var(--muted);
+    }
 
-            font-size: 12px;
 
-            margin-top: 3px;
+    /* =====================================================
+       DATATABLE CONTROLS
+    ====================================================== */
 
-        }
+    .dt-container {
 
+        font-size: 11px;
 
+    }
 
-        /* =====================================================
-           USER AREA
-        ===================================================== */
 
-        .user-area {
+    .dt-layout-row {
 
-            display: flex;
+        margin-top: 14px !important;
 
-            align-items: center;
+    }
 
-            gap: 14px;
 
-        }
+    .dt-length select,
+    .dt-search input {
 
+        border: 1px solid #e7ebee !important;
 
-        .notification {
+        border-radius: 6px !important;
 
-            width: 38px;
+        font-size: 11px !important;
 
-            height: 38px;
+        padding: 7px 9px !important;
 
-            border:
-                1px solid
-                var(--border);
+        outline: none !important;
 
-            border-radius: 7px;
+    }
 
-            display: flex;
 
-            align-items: center;
+    .dt-search input:focus {
 
-            justify-content: center;
+        border-color: #087443 !important;
 
-            font-size: 16px;
+        box-shadow:
+            0 0 0 2px
+            rgba(8,116,67,0.08);
 
-            position: relative;
+    }
 
-            cursor: pointer;
 
-            background: white;
+    .dt-info {
 
-        }
+        color: #7a858d !important;
 
+        font-size: 11px !important;
 
-        .notification-dot {
+    }
 
-            width: 7px;
 
-            height: 7px;
+    .dt-paging button {
 
-            background: var(--gold);
+        border-radius: 5px !important;
 
-            border-radius: 50%;
+        font-size: 11px !important;
 
-            position: absolute;
+        min-width: 30px;
 
-            top: 7px;
+    }
 
-            right: 7px;
 
-        }
+    .dt-paging button.current {
 
+        background: #087443 !important;
 
-        .user-profile {
+        color: white !important;
 
-            display: flex;
+        border-color: #087443 !important;
 
-            align-items: center;
+    }
 
-            gap: 10px;
 
-            padding-left: 14px;
+    /* =====================================================
+       MODAL
+    ====================================================== */
 
-            border-left:
-                1px solid
-                var(--border);
+    .modal-overlay {
 
-        }
+        position: fixed;
 
+        inset: 0;
 
-        .user-avatar {
+        background: rgba(16,47,71,0.48);
 
-            width: 39px;
+        display: none;
 
-            height: 39px;
+        align-items: center;
 
-            border-radius: 50%;
+        justify-content: center;
 
-            background:
-                var(--primary-light);
+        padding: 20px;
 
-            color: var(--primary);
+        z-index: 500;
 
-            display: flex;
+    }
 
-            align-items: center;
 
-            justify-content: center;
+    .modal-overlay.active {
 
-            font-weight: bold;
+        display: flex;
 
-            font-size: 13px;
+    }
+
+
+    .modal {
+
+        width: 100%;
+
+        max-width: 680px;
+
+        background: white;
+
+        border-radius: 10px;
+
+        box-shadow:
+            0 20px 60px
+            rgba(0,0,0,0.18);
+
+        overflow: hidden;
+
+        animation: modalShow 0.2s ease;
+
+    }
+
+
+    @keyframes modalShow {
+
+        from {
+
+            opacity: 0;
+
+            transform: translateY(10px);
 
         }
 
+        to {
 
-        .user-info strong {
+            opacity: 1;
 
-            display: block;
-
-            font-size: 13px;
-
-        }
-
-
-        .user-info span {
-
-            display: block;
-
-            font-size: 11px;
-
-            color: var(--muted);
-
-            margin-top: 2px;
+            transform: translateY(0);
 
         }
 
+    }
 
 
-        /* =====================================================
-           CONTENT
-        ===================================================== */
+    .modal-header {
 
-        .content {
+        padding: 19px 22px;
 
-            padding: 30px;
+        border-bottom: 1px solid #e7ebee;
 
-        }
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+    }
 
 
+    .modal-header h3 {
 
-        /* =====================================================
-           PAGE HEADER
-        ===================================================== */
+        font-family: Georgia, serif;
+
+        font-size: 18px;
+
+        color: #18364d;
+
+    }
+
+
+    .modal-close {
+
+        width: 32px;
+
+        height: 32px;
+
+        border: none;
+
+        background: #f4f6f7;
+
+        color: #69767d;
+
+        border-radius: 6px;
+
+        cursor: pointer;
+
+        font-size: 18px;
+
+    }
+
+
+    .modal-close:hover {
+
+        background: #e9edef;
+
+    }
+
+
+    .modal-body {
+
+        padding: 22px;
+
+    }
+
+
+    .form-grid {
+
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 17px;
+
+    }
+
+
+    .form-group {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 7px;
+
+    }
+
+
+    .form-group.full {
+
+        grid-column: 1 / -1;
+
+    }
+
+
+    .form-label {
+
+        font-size: 11px;
+
+        font-weight: 600;
+
+        color: #52616b;
+
+    }
+
+
+    .form-control {
+
+        width: 100%;
+
+        border: 1px solid #e7ebee;
+
+        border-radius: 6px;
+
+        padding: 10px 11px;
+
+        font-size: 12px;
+
+        color: #263238;
+
+        outline: none;
+
+        background: white;
+
+        transition: 0.2s;
+
+    }
+
+
+    .form-control:focus {
+
+        border-color: #087443;
+
+        box-shadow:
+            0 0 0 2px
+            rgba(8,116,67,0.08);
+
+    }
+
+
+    textarea.form-control {
+
+        min-height: 85px;
+
+        resize: vertical;
+
+    }
+
+
+    .modal-footer {
+
+        padding: 16px 22px;
+
+        border-top: 1px solid #e7ebee;
+
+        display: flex;
+
+        justify-content: flex-end;
+
+        gap: 8px;
+
+    }
+
+
+    .btn-cancel {
+
+        border: 1px solid #e7ebee;
+
+        background: white;
+
+        color: #65727a;
+
+        padding: 10px 15px;
+
+        border-radius: 6px;
+
+        font-size: 12px;
+
+        cursor: pointer;
+
+    }
+
+
+    .btn-save {
+
+        border: none;
+
+        background: #087443;
+
+        color: white;
+
+        padding: 10px 16px;
+
+        border-radius: 6px;
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        cursor: pointer;
+
+    }
+
+
+    .btn-save:hover {
+
+        background: #065c35;
+
+    }
+
+
+    /* =====================================================
+       VIEW MODAL
+    ====================================================== */
+
+    .detail-grid {
+
+        display: grid;
+
+        grid-template-columns: repeat(2, 1fr);
+
+        gap: 16px;
+
+    }
+
+
+    .detail-item {
+
+        border: 1px solid #e7ebee;
+
+        border-radius: 7px;
+
+        padding: 12px;
+
+        background: #fafcfb;
+
+    }
+
+
+    .detail-item.full {
+
+        grid-column: 1 / -1;
+
+    }
+
+
+    .detail-label {
+
+        display: block;
+
+        font-size: 10px;
+
+        color: #7a858d;
+
+        margin-bottom: 5px;
+
+    }
+
+
+    .detail-value {
+
+        font-size: 12px;
+
+        font-weight: 600;
+
+        color: #18364d;
+
+    }
+
+
+    /* =====================================================
+       FOOTER
+    ====================================================== */
+
+    .dashboard-footer {
+
+        margin-top: 25px;
+
+        text-align: center;
+
+        color: #9aa3a9;
+
+        font-size: 11px;
+
+        padding: 10px;
+
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+    ====================================================== */
+
+    @media (max-width: 768px) {
 
         .content-header {
 
-            display: flex;
+            align-items: flex-start;
 
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 20px;
-
-            margin-bottom: 22px;
+            flex-direction: column;
 
         }
 
-
-        .content-header h2 {
-
-            font-family: Georgia, serif;
-
-            font-size: 22px;
-
-            color: #18364d;
-
-            margin-bottom: 5px;
-
-        }
-
-
-        .content-header p {
-
-            color: var(--muted);
-
-            font-size: 12px;
-
-            line-height: 1.6;
-
-        }
-
-
-        /* =====================================================
-           BUTTON TAMBAH
-        ===================================================== */
 
         .btn-add {
 
-            display: inline-flex;
+            width: 100%;
 
-            align-items: center;
-
-            gap: 8px;
-
-            background: var(--primary);
-
-            color: white;
-
-            border: none;
-
-            border-radius: 7px;
-
-            padding: 11px 16px;
-
-            font-size: 12px;
-
-            font-weight: 600;
-
-            cursor: pointer;
-
-            white-space: nowrap;
-
-            transition: 0.2s;
-
-        }
-
-
-        .btn-add:hover {
-
-            background: var(--primary-dark);
-
-            transform:
-                translateY(-1px);
-
-        }
-
-
-        .btn-add-icon {
-
-            font-size: 17px;
-
-            line-height: 1;
-
-        }
-
-
-
-        /* =====================================================
-           TABLE PANEL
-        ===================================================== */
-
-        .table-panel {
-
-            background: white;
-
-            border:
-                1px solid
-                var(--border);
-
-            border-radius: 10px;
-
-            overflow: hidden;
+            justify-content: center;
 
         }
 
 
         .table-panel-header {
 
-            padding: 19px 22px;
+            align-items: flex-start;
 
-            border-bottom:
-                1px solid
-                var(--border);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-        }
-
-
-        .table-panel-header h3 {
-
-            font-size: 15px;
-
-            color: #18364d;
-
-        }
-
-
-        .table-panel-header p {
-
-            font-size: 11px;
-
-            color: var(--muted);
-
-            margin-top: 4px;
-
-        }
-
-
-        .total-data {
-
-            font-size: 11px;
-
-            color: var(--muted);
-
-            background: var(--primary-light);
-
-            color: var(--primary);
-
-            padding: 6px 10px;
-
-            border-radius: 20px;
-
-            font-weight: 600;
+            gap: 10px;
 
         }
 
 
         .table-wrapper {
 
-            padding: 0 22px 20px;
+            padding-left: 15px;
 
-            overflow-x: auto;
-
-        }
-
-
-
-        /* =====================================================
-           DATATABLE STYLE
-        ===================================================== */
-
-        #dukTable {
-
-            width: 100% !important;
-
-            border-collapse:
-                collapse !important;
-
-            margin-top: 15px !important;
+            padding-right: 15px;
 
         }
 
 
-        #dukTable thead th {
+        .form-grid,
+        .detail-grid {
 
-            background: #f8faf9;
-
-            color: #52616b;
-
-            font-size: 11px;
-
-            font-weight: 600;
-
-            padding: 13px 12px;
-
-            border-bottom:
-                1px solid
-                var(--border);
-
-            white-space: nowrap;
+            grid-template-columns: 1fr;
 
         }
 
 
-        #dukTable tbody td {
+        .form-group.full,
+        .detail-item.full {
 
-            padding: 14px 12px;
+            grid-column: auto;
 
-            font-size: 12px;
+        }
 
-            border-bottom:
-                1px solid
-                #f0f2f3;
+    }
 
-            color: #39474f;
 
-            vertical-align: middle;
+    @media (max-width: 480px) {
+
+        .content-header h2 {
+
+            font-size: 19px;
 
         }
 
 
-        #dukTable tbody tr:hover {
+        .table-panel-header {
 
-            background: #fafcfb;
-
-        }
-
-
-        #dukTable tbody tr:last-child td {
-
-            border-bottom: none;
+            flex-direction: column;
 
         }
 
 
+        .total-data {
 
-        /* =====================================================
-           BADGE
-        ===================================================== */
-
-        .badge {
-
-            display: inline-block;
-
-            padding: 5px 9px;
-
-            border-radius: 5px;
-
-            font-size: 10px;
-
-            font-weight: 600;
-
-        }
-
-
-        .badge-asn {
-
-            background:
-                var(--primary-light);
-
-            color: var(--primary);
-
-        }
-
-
-        .badge-pppk {
-
-            background: #fff7df;
-
-            color: #987500;
-
-        }
-
-
-        .badge-gol {
-
-            background: #f1f3f4;
-
-            color: #58636a;
-
-        }
-
-
-        .employee-name {
-
-            font-weight: 600;
-
-            color: #18364d;
-
-        }
-
-
-        .employee-id {
-
-            font-size: 10px;
-
-            color: #8a969d;
-
-            margin-top: 3px;
-
-        }
-
-
-
-        /* =====================================================
-           ACTION BUTTON
-        ===================================================== */
-
-        .action-buttons {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 6px;
-
-        }
-
-
-        .action-btn {
-
-            width: 31px;
-
-            height: 31px;
-
-            border-radius: 6px;
-
-            border:
-                1px solid
-                var(--border);
-
-            background: white;
-
-            cursor: pointer;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 13px;
-
-            transition: 0.2s;
-
-        }
-
-
-        .action-edit {
-
-            color: var(--primary);
-
-        }
-
-
-        .action-view {
-
-            color: #2d6a9f;
-
-        }
-
-
-        .action-view:hover {
-
-            background: #eef6fc;
-
-            border-color: #c2dced;
-
-        }
-
-
-        .action-edit:hover {
-
-            background:
-                var(--primary-light);
-
-            border-color:
-                #b9ddca;
-
-        }
-
-
-        .action-delete {
-
-            color: var(--danger);
-
-        }
-
-
-        .action-delete:hover {
-
-            background: #fdf0ef;
-
-            border-color: #edc5c1;
-
-        }
-
-
-
-        /* =====================================================
-           DATATABLE CONTROLS
-        ===================================================== */
-
-        .dt-container {
-
-            font-size: 11px;
-
-        }
-
-
-        .dt-layout-row {
-
-            margin-top: 14px !important;
-
-        }
-
-
-        .dt-length select,
-        .dt-search input {
-
-            border:
-                1px solid
-                var(--border) !important;
-
-            border-radius: 6px !important;
-
-            font-size: 11px !important;
-
-            padding: 7px 9px !important;
-
-            outline: none !important;
-
-        }
-
-
-        .dt-search input:focus {
-
-            border-color:
-                var(--primary) !important;
-
-            box-shadow:
-                0 0 0 2px
-                rgba(8,116,67,0.08);
-
-        }
-
-
-        .dt-info {
-
-            color: var(--muted) !important;
-
-            font-size: 11px !important;
-
-        }
-
-
-        .dt-paging button {
-
-            border-radius: 5px !important;
-
-            font-size: 11px !important;
-
-            min-width: 30px;
-
-        }
-
-
-        .dt-paging button.current {
-
-            background:
-                var(--primary) !important;
-
-            color: white !important;
-
-            border-color:
-                var(--primary) !important;
-
-        }
-
-
-
-        /* =====================================================
-           MODAL
-        ===================================================== */
-
-        .modal-overlay {
-
-            position: fixed;
-
-            inset: 0;
-
-            background:
-                rgba(16,47,71,0.48);
-
-            display: none;
-
-            align-items: center;
-
-            justify-content: center;
-
-            padding: 20px;
-
-            z-index: 500;
-
-        }
-
-
-        .modal-overlay.active {
-
-            display: flex;
-
-        }
-
-
-        .modal {
-
-            width: 100%;
-
-            max-width: 680px;
-
-            background: white;
-
-            border-radius: 10px;
-
-            box-shadow:
-                0 20px 60px
-                rgba(0,0,0,0.18);
-
-            overflow: hidden;
-
-            animation:
-                modalShow 0.2s ease;
-
-        }
-
-
-        @keyframes modalShow {
-
-            from {
-
-                opacity: 0;
-
-                transform:
-                    translateY(10px);
-
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform:
-                    translateY(0);
-
-            }
-
-        }
-
-
-        .modal-header {
-
-            padding: 19px 22px;
-
-            border-bottom:
-                1px solid
-                var(--border);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-        }
-
-
-        .modal-header h3 {
-
-            font-family: Georgia, serif;
-
-            font-size: 18px;
-
-            color: #18364d;
-
-        }
-
-
-        .modal-close {
-
-            width: 32px;
-
-            height: 32px;
-
-            border: none;
-
-            background: #f4f6f7;
-
-            color: #69767d;
-
-            border-radius: 6px;
-
-            cursor: pointer;
-
-            font-size: 18px;
-
-        }
-
-
-        .modal-close:hover {
-
-            background: #e9edef;
+            align-self: flex-start;
 
         }
 
 
         .modal-body {
 
-            padding: 22px;
+            padding: 18px;
 
         }
 
+    }
 
-        .form-grid {
+</style>
 
-            display: grid;
 
-            grid-template-columns:
-                repeat(2, 1fr);
+<!-- =====================================================
+     CONTENT
+====================================================== -->
 
-            gap: 17px;
+<div class="content">
 
-        }
 
+    <!-- =================================================
+         PAGE HEADER
+    ================================================== -->
 
-        .form-group {
+    <div class="content-header">
 
-            display: flex;
+        <div>
 
-            flex-direction: column;
+            <h2>
+                Data Sekolah
+            </h2>
 
-            gap: 7px;
-
-        }
-
-
-        .form-group.full {
-
-            grid-column:
-                1 / -1;
-
-        }
-
-
-        .form-label {
-
-            font-size: 11px;
-
-            font-weight: 600;
-
-            color: #52616b;
-
-        }
-
-
-        .form-control {
-
-            width: 100%;
-
-            border:
-                1px solid
-                var(--border);
-
-            border-radius: 6px;
-
-            padding: 10px 11px;
-
-            font-size: 12px;
-
-            color: var(--text);
-
-            outline: none;
-
-            background: white;
-
-            transition: 0.2s;
-
-        }
-
-
-        .form-control:focus {
-
-            border-color:
-                var(--primary);
-
-            box-shadow:
-                0 0 0 2px
-                rgba(8,116,67,0.08);
-
-        }
-
-
-        .modal-footer {
-
-            padding: 16px 22px;
-
-            border-top:
-                1px solid
-                var(--border);
-
-            display: flex;
-
-            justify-content: flex-end;
-
-            gap: 8px;
-
-        }
-
-
-        .btn-cancel {
-
-            border:
-                1px solid
-                var(--border);
-
-            background: white;
-
-            color: #65727a;
-
-            padding: 10px 15px;
-
-            border-radius: 6px;
-
-            font-size: 12px;
-
-            cursor: pointer;
-
-        }
-
-
-        .btn-save {
-
-            border: none;
-
-            background: var(--primary);
-
-            color: white;
-
-            padding: 10px 16px;
-
-            border-radius: 6px;
-
-            font-size: 12px;
-
-            font-weight: 600;
-
-            cursor: pointer;
-
-        }
-
-
-        .btn-save:hover {
-
-            background:
-                var(--primary-dark);
-
-        }
-
-
-
-        /* =====================================================
-           FOOTER
-        ===================================================== */
-
-        .dashboard-footer {
-
-            margin-top: 25px;
-
-            text-align: center;
-
-            color: #9aa3a9;
-
-            font-size: 11px;
-
-            padding: 10px;
-
-        }
-
-
-
-        /* =====================================================
-           OVERLAY MOBILE
-        ===================================================== */
-
-        .sidebar-overlay {
-
-            display: none;
-
-        }
-
-
-
-        /* =====================================================
-           RESPONSIVE TABLET
-        ===================================================== */
-
-        @media (max-width: 1100px) {
-
-            .sidebar {
-
-                width: 240px;
-
-            }
-
-
-            .main {
-
-                margin-left: 240px;
-
-                width:
-                    calc(100% - 240px);
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-           RESPONSIVE MOBILE
-        ===================================================== */
-
-        @media (max-width: 768px) {
-
-            .sidebar {
-
-                transform:
-                    translateX(-100%);
-
-                width: 270px;
-
-            }
-
-
-            .sidebar.open {
-
-                transform:
-                    translateX(0);
-
-            }
-
-
-            .main {
-
-                margin-left: 0;
-
-                width: 100%;
-
-            }
-
-
-            .mobile-menu {
-
-                display: flex;
-
-                align-items: center;
-
-                justify-content: center;
-
-            }
-
-
-            .sidebar-overlay {
-
-                position: fixed;
-
-                inset: 0;
-
-                background:
-                    rgba(0,0,0,0.35);
-
-                z-index: 90;
-
-            }
-
-
-            .sidebar-overlay.active {
-
-                display: block;
-
-            }
-
-
-            .topbar {
-
-                height: 70px;
-
-                padding: 0 18px;
-
-            }
-
-
-            .page-title {
-
-                font-size: 20px;
-
-            }
-
-
-            .page-subtitle {
-
-                display: none;
-
-            }
-
-
-            .user-info {
-
-                display: none;
-
-            }
-
-
-            .user-profile {
-
-                padding-left: 8px;
-
-                border-left: none;
-
-            }
-
-
-            .notification {
-
-                display: none;
-
-            }
-
-
-            .content {
-
-                padding: 18px;
-
-            }
-
-
-            .content-header {
-
-                align-items: flex-start;
-
-                flex-direction: column;
-
-            }
-
-
-            .btn-add {
-
-                width: 100%;
-
-                justify-content: center;
-
-            }
-
-
-            .table-panel-header {
-
-                align-items: flex-start;
-
-                gap: 10px;
-
-            }
-
-
-            .table-wrapper {
-
-                padding-left: 15px;
-
-                padding-right: 15px;
-
-            }
-
-
-            .form-grid {
-
-                grid-template-columns: 1fr;
-
-            }
-
-
-            .form-group.full {
-
-                grid-column: auto;
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-           SMALL MOBILE
-        ===================================================== */
-
-        @media (max-width: 480px) {
-
-            .page-title {
-
-                font-size: 18px;
-
-            }
-
-
-            .content-header h2 {
-
-                font-size: 19px;
-
-            }
-
-
-            .table-panel-header {
-
-                flex-direction: column;
-
-            }
-
-
-            .total-data {
-
-                align-self: flex-start;
-
-            }
-
-
-            .modal-body {
-
-                padding: 18px;
-
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-
-<div class="dashboard">
-
-
-    <!-- =====================================================
-         SIDEBAR
-    ===================================================== -->
-
-    <aside
-        class="sidebar"
-        id="sidebar"
-    >
-
-
-        <!-- BRAND -->
-
-        <div class="sidebar-brand">
-
-            <div class="brand-logo">
-                LOGO
-            </div>
-
-            <div class="brand-name">
-
-                <strong>
-                    Kelurahan XXXXX
-                </strong>
-
-                <span>
-                    SISTEM INFORMASI KELURAHAN
-                </span>
-
-            </div>
+            <p>
+                Kelola data sekolah Kelurahan XXXXX.
+            </p>
 
         </div>
 
 
+        <a
+            href="{{ url('/tambah-data-sekolah') }}"
+            class="btn-add"
+            id="btnTambah"
+        >
 
-        <!-- MENU -->
+            <span class="btn-add-icon">
+                +
+            </span>
 
-        <nav class="sidebar-menu">
+            Tambah Data
+
+        </a>
+
+    </div>
 
 
-            <!-- BERANDA -->
+    <!-- =================================================
+         TABLE
+    ================================================== -->
 
-            <a
-                href="dashboard.html"
-                class="menu-item"
+    <section class="table-panel">
+
+
+        <div class="table-panel-header">
+
+            <div>
+
+                <h3>
+                    Daftar Sekolah
+                </h3>
+
+                <p>
+                    Data sekolah Kelurahan XXXXX
+                </p>
+
+            </div>
+
+
+            <span
+                class="total-data"
+                id="totalData"
             >
-
-                <span class="menu-icon">
-                    ⌂
-                </span>
-
-                <span class="menu-text">
-                    Beranda
-                </span>
-
-            </a>
-
-
-
-            <!-- KESEKRETARIATAN -->
-
-            <div class="menu-title">
-                Kesekretariatan
-            </div>
-
-
-            <!-- ACTIVE -->
-
-            <a
-                href="duk.html"
-                class="menu-item active"
-            >
-
-                <span class="menu-icon">
-                    👤
-                </span>
-
-                <span class="menu-text">
-                    Data Umum Kepegawaian
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▣
-                </span>
-
-                <span class="menu-text">
-                    Data BMD
-                </span>
-
-            </a>
-
-
-
-            <!-- KESEJAHTERAAN SOSIAL -->
-
-            <div class="menu-title">
-                Kesejahteraan Sosial
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♡
-                </span>
-
-                <span class="menu-text">
-                    Posyandu & Posbindu
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♧
-                </span>
-
-                <span class="menu-text">
-                    Data Stunting
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♢
-                </span>
-
-                <span class="menu-text">
-                    KPM / Bantuan Sosial
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◉
-                </span>
-
-                <span class="menu-text">
-                    Anak Putus Sekolah
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▤
-                </span>
-
-                <span class="menu-text">
-                    Data Sekolah
-                </span>
-
-            </a>
-
-
-
-            <!-- EKONOMI & PEMBANGUNAN -->
-
-            <div class="menu-title">
-                Ekonomi & Pembangunan
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♙
-                </span>
-
-                <span class="menu-text">
-                    Data UMKM
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◈
-                </span>
-
-                <span class="menu-text">
-                    Data Rutillahu
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    🌱
-                </span>
-
-                <span class="menu-text">
-                    Data Buruan Sae
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♣
-                </span>
-
-                <span class="menu-text">
-                    Data Pohon
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▦
-                </span>
-
-                <span class="menu-text">
-                    Fasilitas Umum & Sosial
-                </span>
-
-            </a>
-
-
-
-            <!-- PEMERINTAHAN -->
-
-            <div class="menu-title">
-                Pemerintahan
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◫
-                </span>
-
-                <span class="menu-text">
-                    Laporan Kependudukan
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ⚑
-                </span>
-
-                <span class="menu-text">
-                    Linmas & Siskamling
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▥
-                </span>
-
-                <span class="menu-text">
-                    Data RT/RW & Periode
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◉
-                </span>
-
-                <span class="menu-text">
-                    Data PKL
-                </span>
-
-            </a>
-
-
-
-            <!-- SISTEM -->
-
-            <div class="menu-title">
-                Sistem
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ⚙
-                </span>
-
-                <span class="menu-text">
-                    Pengaturan
-                </span>
-
-            </a>
-
-
-            <a
-                href="index.html"
-                class="menu-item"
-            >
-
-                <span class="menu-icon">
-                    ↪
-                </span>
-
-                <span class="menu-text">
-                    Keluar
-                </span>
-
-            </a>
-
-
-        </nav>
-
-    </aside>
-
-
-
-    <!-- OVERLAY MOBILE -->
-
-    <div
-        class="sidebar-overlay"
-        id="sidebarOverlay"
-    ></div>
-
-
-
-    <!-- =====================================================
-         MAIN
-    ===================================================== -->
-
-    <main class="main">
-
-
-        <!-- =================================================
-             TOPBAR
-        ================================================= -->
-
-        <header class="topbar">
-
-
-            <div class="topbar-left">
-
-
-                <button
-                    class="mobile-menu"
-                    id="mobileMenu"
-                >
-                    ☰
-                </button>
-
-
-                <div>
-
-                    <h1 class="page-title">
-                        Data Sekolah
-                    </h1>
-
-                    <p class="page-subtitle">
-                        Kesejahteraan Sosial · Data Sekolah
-                    </p>
-
-                </div>
-
-
-            </div>
-
-
-
-            <div class="user-area">
-
-
-                <div class="notification">
-
-                    🔔
-
-                    <span
-                        class="notification-dot"
-                    ></span>
-
-                </div>
-
-
-                <div class="user-profile">
-
-                    <div class="user-avatar">
-                        AD
-                    </div>
-
-                    <div class="user-info">
-
-                        <strong>
-                            Administrator
-                        </strong>
-
-                        <span>
-                            Administrator
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-            </div>
-
-        </header>
-
-
-
-        <!-- =================================================
-             CONTENT
-        ================================================= -->
-
-        <div class="content">
-
-
-            <!-- PAGE HEADER -->
-
-            <div class="content-header">
-
-
-                <div>
-
-                    <h2>
-                        Data Sekolah
-                    </h2>
-
-                    <p>
-                        Kelola data sekolah Kelurahan XXXXX
-                        Kelurahan XXXXX.
-                    </p>
-
-                </div>
-
-
-                <a
-                    href="{{ url('/tambah-data-sekolah') }}"
-                    class="btn-add"
-                    id="btnTambah"
-                >
-
-                    <span class="btn-add-icon">
-                        +
-                    </span>
-
-                    Tambah Data
-
-                </a>
-
-
-            </div>
-
-
-
-            <!-- =================================================
-                 TABLE
-            ================================================= -->
-
-            <section class="table-panel">
-
-
-                <div class="table-panel-header">
-
-                    <div>
-
-                        <h3>
-                            Daftar Sekolah
-                        </h3>
-
-                        <p>
-                            Data Sekolah Kelurahan XXXXX
-                        </p>
-
-                    </div>
-
-
-                    <span
-                        class="total-data"
-                        id="totalData"
-                    >
-                        5 Sekolah
-                    </span>
-
-                </div>
-
-
-
-                <div class="table-wrapper">
-
-
-                    <table
-                        id="dukTable"
-                        class="display"
-                    >
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Nama Sekolah
-                                </th>
-
-                                <th>
-                                    Jenjang
-                                </th>
-
-                                <th>
-                                    Alamat
-                                </th>
-
-                                <th>
-                                    Jumlah Siswa
-                                </th>
-
-                                <th>
-                                    Aksi
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-
-                            <!-- DATA 1 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        SDN XXXXX 01
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    SD
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        Jl. Melati No. 1
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        245
-                                    </span>
-
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 2 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        SMPN XXXXX 02
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    SMP
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        Jl. Mawar No. 2
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        318
-                                    </span>
-
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 3 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        SDN XXXXX 03
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    SD
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        Jl. Kenanga No. 3
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        198
-                                    </span>
-
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 4 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        TK Melati
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    TK
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        Jl. Anggrek No. 4
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        86
-                                    </span>
-
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 5 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-pppk"
-                                    >
-                                        SMA XXXXX 01
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    SMA
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        Jl. Flamboyan No. 5
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        412
-                                    </span>
-
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-                        </tbody>
-
-                    </table>
-
-
-                </div>
-
-            </section>
-
-
-
-            <!-- FOOTER -->
-
-            <div class="dashboard-footer">
-
-                © 2026 Kelurahan XXXXX ·
-                Sistem Informasi Kelurahan
-
-            </div>
-
+                5 Sekolah
+            </span>
 
         </div>
 
 
-    </main>
+        <div class="table-wrapper">
+
+
+            <table
+                id="sekolahTable"
+                class="display"
+            >
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Nama Sekolah
+                        </th>
+
+                        <th>
+                            Jenjang
+                        </th>
+
+                        <th>
+                            Alamat
+                        </th>
+
+                        <th>
+                            Jumlah Siswa
+                        </th>
+
+                        <th>
+                            Aksi
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    <!-- DATA 1 -->
+
+                    <tr>
+
+                        <td>
+
+                            <div class="school-name">
+                                SDN XXXXX 01
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-sd">
+                                SD
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="school-address">
+                                Jl. Melati No. 1
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-siswa">
+                                245
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- DATA 2 -->
+
+                    <tr>
+
+                        <td>
+
+                            <div class="school-name">
+                                SMPN XXXXX 02
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-smp">
+                                SMP
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="school-address">
+                                Jl. Mawar No. 2
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-siswa">
+                                318
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- DATA 3 -->
+
+                    <tr>
+
+                        <td>
+
+                            <div class="school-name">
+                                SDN XXXXX 03
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-sd">
+                                SD
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="school-address">
+                                Jl. Kenanga No. 3
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-siswa">
+                                198
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- DATA 4 -->
+
+                    <tr>
+
+                        <td>
+
+                            <div class="school-name">
+                                TK Melati
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-tk">
+                                TK
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="school-address">
+                                Jl. Anggrek No. 4
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-siswa">
+                                86
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    <!-- DATA 5 -->
+
+                    <tr>
+
+                        <td>
+
+                            <div class="school-name">
+                                SMA XXXXX 01
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-sma">
+                                SMA
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="school-address">
+                                Jl. Flamboyan No. 5
+                            </div>
+
+                        </td>
+
+                        <td>
+
+                            <span class="badge badge-siswa">
+                                412
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-view"
+                                    onclick="viewData(this)"
+                                    title="Lihat Data"
+                                >
+                                    ◉
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-edit"
+                                    onclick="editData(this)"
+                                    title="Ubah Data"
+                                >
+                                    ✎
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="action-btn action-delete"
+                                    onclick="hapusData(this)"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <div class="dashboard-footer">
+
+        © {{ date('Y') }} Kelurahan XXXXX ·
+        Sistem Informasi Kelurahan
+
+    </div>
 
 
 </div>
 
 
-
 <!-- =====================================================
      MODAL TAMBAH DATA
-===================================================== -->
+====================================================== -->
 
 <div
     class="modal-overlay"
     id="modalOverlay"
 >
-
 
     <div class="modal">
 
@@ -2656,6 +1477,7 @@
             </h3>
 
             <button
+                type="button"
                 class="modal-close"
                 id="modalClose"
             >
@@ -2665,23 +1487,21 @@
         </div>
 
 
-
         <div class="modal-body">
 
 
-            <form
-                id="formDUK"
-            >
+            <form id="formSekolah">
 
 
                 <div class="form-grid">
 
 
-                    <!-- JENIS -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
+                        <label
+                            class="form-label"
+                            for="nama_sekolah"
+                        >
                             Nama Sekolah
                         </label>
 
@@ -2692,7 +1512,7 @@
                         >
 
                             <option value="">
-                                Pilih Jenis
+                                Pilih nama sekolah
                             </option>
 
                             <option value="SDN XXXXX 01">
@@ -2701,6 +1521,14 @@
 
                             <option value="SMPN XXXXX 02">
                                 SMPN XXXXX 02
+                            </option>
+
+                            <option value="SDN XXXXX 03">
+                                SDN XXXXX 03
+                            </option>
+
+                            <option value="TK Melati">
+                                TK Melati
                             </option>
 
                             <option value="SMA XXXXX 01">
@@ -2712,32 +1540,56 @@
                     </div>
 
 
-
-                    <!-- NIP -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
+                        <label
+                            class="form-label"
+                            for="jenjang"
+                        >
                             Jenjang
                         </label>
 
-                        <input
-                            type="text"
+                        <select
                             class="form-control"
                             id="jenjang"
-                            placeholder="Contoh: SD"
                             required
                         >
+
+                            <option value="">
+                                Pilih jenjang
+                            </option>
+
+                            <option value="TK">
+                                TK
+                            </option>
+
+                            <option value="SD">
+                                SD
+                            </option>
+
+                            <option value="SMP">
+                                SMP
+                            </option>
+
+                            <option value="SMA">
+                                SMA
+                            </option>
+
+                            <option value="SMK">
+                                SMK
+                            </option>
+
+                        </select>
 
                     </div>
 
 
+                    <div class="form-group full">
 
-                    <!-- NAMA -->
-
-                    <div class="form-group">
-
-                        <label class="form-label">
+                        <label
+                            class="form-label"
+                            for="alamat"
+                        >
                             Alamat
                         </label>
 
@@ -2745,39 +1597,40 @@
                             type="text"
                             class="form-control"
                             id="alamat"
-                            placeholder="Alamat sekolah"
+                            placeholder="Masukkan alamat sekolah"
                             required
                         >
 
                     </div>
 
 
-
-                    <!-- GOLONGAN -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
+                        <label
+                            class="form-label"
+                            for="jumlah_siswa"
+                        >
                             Jumlah Siswa
                         </label>
 
                         <input
-                            type="text"
+                            type="number"
                             class="form-control"
                             id="jumlah_siswa"
                             placeholder="Contoh: 245"
+                            min="0"
                             required
                         >
 
                     </div>
 
 
-
-                    <!-- PANGKAT -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
+                        <label
+                            class="form-label"
+                            for="keterangan"
+                        >
                             Keterangan
                         </label>
 
@@ -2786,13 +1639,9 @@
                             class="form-control"
                             id="keterangan"
                             placeholder="Keterangan sekolah"
-                            required
                         >
 
                     </div>
-
-
-
 
 
                 </div>
@@ -2804,10 +1653,10 @@
         </div>
 
 
-
         <div class="modal-footer">
 
             <button
+                type="button"
                 class="btn-cancel"
                 id="btnBatal"
             >
@@ -2815,6 +1664,7 @@
             </button>
 
             <button
+                type="button"
                 class="btn-save"
                 id="btnSimpan"
             >
@@ -2826,478 +1676,891 @@
 
     </div>
 
-
 </div>
-
 
 
 <!-- =====================================================
      MODAL EDIT DATA
-===================================================== -->
+====================================================== -->
 
-<div class="modal-overlay" id="modalEditOverlay">
+<div
+    class="modal-overlay"
+    id="modalEditOverlay"
+>
+
     <div class="modal">
+
+
         <div class="modal-header">
-            <h3>Edit Data Sekolah</h3>
-            <button type="button" class="modal-close" id="modalEditClose" aria-label="Tutup form edit">×</button>
+
+            <h3>
+                Edit Data Sekolah
+            </h3>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="modalEditClose"
+            >
+                ×
+            </button>
+
         </div>
+
 
         <div class="modal-body">
-            <form id="formEditDUK">
+
+
+            <form id="formEdit">
+
                 <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label" for="editNama">Nama Sekolah</label>
-                        <input type="text" class="form-control" id="editNama" required>
-                    </div>
+
 
                     <div class="form-group">
-                        <label class="form-label" for="editJenjang">Jenjang</label>
-                        <input type="text" class="form-control" id="editJenjang" required>
+
+                        <label
+                            class="form-label"
+                            for="editNama"
+                        >
+                            Nama Sekolah
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="editNama"
+                            required
+                        >
+
                     </div>
+
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="editJenjang"
+                        >
+                            Jenjang
+                        </label>
+
+                        <select
+                            class="form-control"
+                            id="editJenjang"
+                            required
+                        >
+
+                            <option value="TK">
+                                TK
+                            </option>
+
+                            <option value="SD">
+                                SD
+                            </option>
+
+                            <option value="SMP">
+                                SMP
+                            </option>
+
+                            <option value="SMA">
+                                SMA
+                            </option>
+
+                            <option value="SMK">
+                                SMK
+                            </option>
+
+                        </select>
+
+                    </div>
+
 
                     <div class="form-group full">
-                        <label class="form-label" for="editAlamat">Alamat</label>
-                        <input type="text" class="form-control" id="editAlamat" required>
+
+                        <label
+                            class="form-label"
+                            for="editAlamat"
+                        >
+                            Alamat
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="editAlamat"
+                            required
+                        >
+
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="editSiswa">Jumlah Siswa</label>
-                        <input type="number" class="form-control" id="editSiswa" required>
-                    </div>
 
                     <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="editSiswa"
+                        >
+                            Jumlah Siswa
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="editSiswa"
+                            min="0"
+                            required
+                        >
+
                     </div>
+
+
+                    <div class="form-group">
+
+                        <label
+                            class="form-label"
+                            for="editKeterangan"
+                        >
+                            Keterangan
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="editKeterangan"
+                        >
+
+                    </div>
+
+
                 </div>
+
             </form>
+
+
         </div>
+
 
         <div class="modal-footer">
-            <button type="button" class="btn-cancel" id="btnEditBatal">Batal</button>
-            <button type="button" class="btn-save" id="btnEditSimpan">Perbarui Data</button>
+
+            <button
+                type="button"
+                class="btn-cancel"
+                id="btnEditBatal"
+            >
+                Batal
+            </button>
+
+            <button
+                type="button"
+                class="btn-save"
+                id="btnEditSimpan"
+            >
+                Perbarui Data
+            </button>
+
         </div>
+
+
     </div>
+
 </div>
 
 
 <!-- =====================================================
-     JAVASCRIPT DATATABLES
-===================================================== -->
+     MODAL VIEW DATA
+====================================================== -->
 
-<script
-    src="https://code.jquery.com/jquery-3.7.1.min.js">
-</script>
+<div
+    class="modal-overlay"
+    id="modalViewOverlay"
+>
 
+    <div class="modal">
+
+
+        <div class="modal-header">
+
+            <h3>
+                Detail Data Sekolah
+            </h3>
+
+            <button
+                type="button"
+                class="modal-close"
+                id="modalViewClose"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <div class="modal-body">
+
+
+            <div class="detail-grid">
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Nama Sekolah
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewNama"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Jenjang
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewJenjang"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item full">
+
+                    <span class="detail-label">
+                        Alamat
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewAlamat"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Jumlah Siswa
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewSiswa"
+                    >
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Keterangan
+                    </span>
+
+                    <span
+                        class="detail-value"
+                        id="viewKeterangan"
+                    >
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                type="button"
+                class="btn-cancel"
+                id="btnViewTutup"
+            >
+                Tutup
+            </button>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+@endsection
+
+
+@push('scripts')
 
 <script
     src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js">
 </script>
 
 
-
 <script>
 
-
-    /* =====================================================
-       MOBILE SIDEBAR
-    ===================================================== */
-
-    const mobileMenu =
-        document.getElementById("mobileMenu");
+document.addEventListener(
+    'DOMContentLoaded',
+    function () {
 
 
-    const sidebar =
-        document.getElementById("sidebar");
+        /* =====================================================
+           DATATABLE
+        ====================================================== */
+
+        const table =
+            new DataTable(
+                '#sekolahTable',
+                {
+
+                    pageLength: 10,
+
+                    lengthMenu: [
+                        [5, 10, 25, 50],
+                        [5, 10, 25, 50]
+                    ],
+
+                    language: {
+
+                        search:
+                            'Cari:',
+
+                        lengthMenu:
+                            'Tampilkan _MENU_ data',
+
+                        info:
+                            'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+
+                        infoEmpty:
+                            'Tidak ada data',
+
+                        zeroRecords:
+                            'Data tidak ditemukan',
+
+                        emptyTable:
+                            'Belum ada data',
+
+                        paginate: {
+
+                            first:
+                                'Awal',
+
+                            last:
+                                'Akhir',
+
+                            next:
+                                '›',
+
+                            previous:
+                                '‹'
+
+                        }
+
+                    },
+
+                    columnDefs: [
+
+                        {
+                            orderable: false,
+                            searchable: false,
+                            targets: 4
+                        }
+
+                    ]
+
+                }
+            );
 
 
-    const overlay =
-        document.getElementById("sidebarOverlay");
+        /* =====================================================
+           MODAL
+        ====================================================== */
+
+        const modalTambah =
+            document.getElementById(
+                'modalOverlay'
+            );
 
 
-    mobileMenu.addEventListener(
-        "click",
-        function () {
+        const modalEdit =
+            document.getElementById(
+                'modalEditOverlay'
+            );
 
-            sidebar.classList.toggle("open");
 
-            overlay.classList.toggle("active");
+        const modalView =
+            document.getElementById(
+                'modalViewOverlay'
+            );
+
+
+        const formSekolah =
+            document.getElementById(
+                'formSekolah'
+            );
+
+
+        const formEdit =
+            document.getElementById(
+                'formEdit'
+            );
+
+
+        let selectedRow = null;
+
+
+        /* =====================================================
+           TAMBAH DATA
+        ====================================================== */
+
+        document.getElementById(
+            'btnTambah'
+        ).addEventListener(
+            'click',
+            function (event) {
+
+                /*
+                 * Karena tombol sekarang berupa link,
+                 * biarkan menuju halaman tambah data.
+                 */
+
+            }
+        );
+
+
+        function tutupTambah()
+        {
+
+            modalTambah.classList.remove(
+                'active'
+            );
+
+            formSekolah.reset();
 
         }
-    );
 
 
-    overlay.addEventListener(
-        "click",
-        function () {
-
-            sidebar.classList.remove("open");
-
-            overlay.classList.remove("active");
-
-        }
-    );
+        document.getElementById(
+            'modalClose'
+        ).addEventListener(
+            'click',
+            tutupTambah
+        );
 
 
+        document.getElementById(
+            'btnBatal'
+        ).addEventListener(
+            'click',
+            tutupTambah
+        );
 
-    /* =====================================================
-       DATATABLE
-    ===================================================== */
 
-    const table =
-        new DataTable(
-            "#dukTable",
+        /* =====================================================
+           VIEW DATA
+        ====================================================== */
+
+        window.viewData =
+            function (button)
             {
 
-                pageLength: 10,
+                const row =
+                    button.closest('tr');
 
-                lengthMenu: [
-                    [5, 10, 25, 50],
-                    [5, 10, 25, 50]
-                ],
 
-                language: {
+                const cells =
+                    row.cells;
 
-                    search:
-                        "Cari:",
 
-                    lengthMenu:
-                        "Tampilkan _MENU_ data",
+                document.getElementById(
+                    'viewNama'
+                ).innerText =
+                    cells[0].innerText.trim();
 
-                    info:
-                        "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
 
-                    infoEmpty:
-                        "Tidak ada data",
+                document.getElementById(
+                    'viewJenjang'
+                ).innerText =
+                    cells[1].innerText.trim();
 
-                    zeroRecords:
-                        "Data tidak ditemukan",
 
-                    emptyTable:
-                        "Belum ada data",
+                document.getElementById(
+                    'viewAlamat'
+                ).innerText =
+                    cells[2].innerText.trim();
 
-                    paginate: {
 
-                        first:
-                            "Awal",
+                document.getElementById(
+                    'viewSiswa'
+                ).innerText =
+                    cells[3].innerText.trim() +
+                    ' Siswa';
 
-                        last:
-                            "Akhir",
 
-                        next:
-                            "›",
+                document.getElementById(
+                    'viewKeterangan'
+                ).innerText =
+                    '-';
 
-                        previous:
-                            "‹"
 
-                    }
+                modalView.classList.add(
+                    'active'
+                );
 
-                },
+            };
 
-                columnDefs: [
 
-                    {
-                        orderable: false,
-                        searchable: false,
-                        targets: 6
-                    }
+        document.getElementById(
+            'modalViewClose'
+        ).addEventListener(
+            'click',
+            tutupView
+        );
 
-                ]
+
+        document.getElementById(
+            'btnViewTutup'
+        ).addEventListener(
+            'click',
+            tutupView
+        );
+
+
+        function tutupView()
+        {
+
+            modalView.classList.remove(
+                'active'
+            );
+
+        }
+
+
+        /* =====================================================
+           EDIT DATA
+        ====================================================== */
+
+        window.editData =
+            function (button)
+            {
+
+                selectedRow =
+                    button.closest('tr');
+
+
+                const cells =
+                    selectedRow.cells;
+
+
+                document.getElementById(
+                    'editNama'
+                ).value =
+                    cells[0].innerText.trim();
+
+
+                document.getElementById(
+                    'editJenjang'
+                ).value =
+                    cells[1].innerText.trim();
+
+
+                document.getElementById(
+                    'editAlamat'
+                ).value =
+                    cells[2].innerText.trim();
+
+
+                document.getElementById(
+                    'editSiswa'
+                ).value =
+                    cells[3].innerText.trim();
+
+
+                document.getElementById(
+                    'editKeterangan'
+                ).value =
+                    '';
+
+
+                modalEdit.classList.add(
+                    'active'
+                );
+
+            };
+
+
+        document.getElementById(
+            'modalEditClose'
+        ).addEventListener(
+            'click',
+            tutupEdit
+        );
+
+
+        document.getElementById(
+            'btnEditBatal'
+        ).addEventListener(
+            'click',
+            tutupEdit
+        );
+
+
+        function tutupEdit()
+        {
+
+            modalEdit.classList.remove(
+                'active'
+            );
+
+            formEdit.reset();
+
+            selectedRow = null;
+
+        }
+
+
+        document.getElementById(
+            'btnEditSimpan'
+        ).addEventListener(
+            'click',
+            function ()
+            {
+
+                if (!formEdit.checkValidity()) {
+
+                    formEdit.reportValidity();
+
+                    return;
+
+                }
+
+
+                if (!selectedRow) {
+
+                    return;
+
+                }
+
+
+                selectedRow.cells[0].innerHTML =
+
+                    '<div class="school-name">' +
+                    document.getElementById(
+                        'editNama'
+                    ).value +
+                    '</div>';
+
+
+                const jenjang =
+                    document.getElementById(
+                        'editJenjang'
+                    ).value;
+
+
+                let badgeClass =
+                    'badge-sd';
+
+
+                if (jenjang === 'SMP') {
+
+                    badgeClass =
+                        'badge-smp';
+
+                }
+                else if (jenjang === 'SMA') {
+
+                    badgeClass =
+                        'badge-sma';
+
+                }
+                else if (jenjang === 'TK') {
+
+                    badgeClass =
+                        'badge-tk';
+
+                }
+
+
+                selectedRow.cells[1].innerHTML =
+
+                    '<span class="badge ' +
+                    badgeClass +
+                    '">' +
+                    jenjang +
+                    '</span>';
+
+
+                selectedRow.cells[2].innerHTML =
+
+                    '<div class="school-address">' +
+                    document.getElementById(
+                        'editAlamat'
+                    ).value +
+                    '</div>';
+
+
+                selectedRow.cells[3].innerHTML =
+
+                    '<span class="badge badge-siswa">' +
+                    document.getElementById(
+                        'editSiswa'
+                    ).value +
+                    '</span>';
+
+
+                alert(
+                    'Data Sekolah berhasil diperbarui.'
+                );
+
+
+                tutupEdit();
 
             }
         );
 
 
+        /* =====================================================
+           HAPUS DATA
+        ====================================================== */
 
-    /* =====================================================
-       MODAL
-    ===================================================== */
+        window.hapusData =
+            function (button)
+            {
 
-    const btnTambah =
-        document.getElementById("btnTambah");
-
-
-    const modalOverlay =
-        document.getElementById("modalOverlay");
-
-
-    const modalClose =
-        document.getElementById("modalClose");
+                const row =
+                    button.closest('tr');
 
 
-    const btnBatal =
-        document.getElementById("btnBatal");
+                const nama =
+                    row.cells[0]
+                    .innerText
+                    .trim();
 
 
-    const btnSimpan =
-        document.getElementById("btnSimpan");
+                const konfirmasi =
+                    confirm(
+
+                        'Apakah Anda yakin ingin menghapus data:\n\n' +
+                        nama +
+                        '?'
+
+                    );
 
 
-    const formDUK =
-        document.getElementById("formDUK");
+                if (konfirmasi) {
+
+                    table
+                        .row(row)
+                        .remove()
+                        .draw();
+
+                }
+
+            };
 
 
-    const modalEditOverlay =
-        document.getElementById("modalEditOverlay");
+        /* =====================================================
+           MODAL OVERLAY
+        ====================================================== */
 
+        modalEdit.addEventListener(
+            'click',
+            function (event) {
 
-    const modalEditClose =
-        document.getElementById("modalEditClose");
+                if (
+                    event.target ===
+                    modalEdit
+                ) {
 
+                    tutupEdit();
 
-    const btnEditBatal =
-        document.getElementById("btnEditBatal");
-
-
-    const btnEditSimpan =
-        document.getElementById("btnEditSimpan");
-
-
-    const formEditDUK =
-        document.getElementById("formEditDUK");
-
-
-    let selectedEditRow = null;
-
-
-
-    function bukaModal() {
-
-        modalOverlay.classList.add("active");
-
-    }
-
-
-    function tutupModal() {
-
-        modalOverlay.classList.remove("active");
-
-        formDUK.reset();
-
-    }
-
-
-    function tutupModalEdit() {
-
-        modalEditOverlay.classList.remove("active");
-
-        formEditDUK.reset();
-
-    }
-
-
-    modalClose.addEventListener(
-        "click",
-        tutupModal
-    );
-
-
-    btnBatal.addEventListener(
-        "click",
-        tutupModal
-    );
-
-
-    modalOverlay.addEventListener(
-        "click",
-        function(event) {
-
-            if (
-                event.target ===
-                modalOverlay
-            ) {
-
-                tutupModal();
+                }
 
             }
-
-        }
-    );
-
-
-    modalEditClose.addEventListener(
-        "click",
-        tutupModalEdit
-    );
-
-
-    btnEditBatal.addEventListener(
-        "click",
-        tutupModalEdit
-    );
-
-
-    modalEditOverlay.addEventListener(
-        "click",
-        function(event) {
-
-            if (event.target === modalEditOverlay) {
-
-                tutupModalEdit();
-
-            }
-
-        }
-    );
-
-
-
-    /* =====================================================
-       SIMPAN DATA DUMMY
-    ===================================================== */
-
-    btnSimpan.addEventListener(
-        "click",
-        function() {
-
-
-            if (
-                !formDUK.checkValidity()
-            ) {
-
-                formDUK.reportValidity();
-
-                return;
-
-            }
-
-
-            alert(
-                "Data berhasil disimpan.\n\n" +
-                "Pada tahap Laravel, data ini akan " +
-                "disimpan ke database."
-            );
-
-
-            tutupModal();
-
-
-        }
-    );
-
-
-
-    /* =====================================================
-       VIEW DATA
-    ===================================================== */
-
-    function viewData(button) {
-
-        const cells = button.closest("tr").cells;
-
-        alert(
-            "Detail Data Sekolah\n\n" +
-            "Nama Sekolah: " + cells[0].innerText.trim() + "\n" +
-            "Jenjang: " + cells[1].innerText.trim() + "\n" +
-            "Alamat: " + cells[2].innerText.trim() + "\n" +
-            "Jumlah Siswa: " + cells[3].innerText.trim()
         );
 
-    }
 
+        modalView.addEventListener(
+            'click',
+            function (event) {
 
-    /* =====================================================
-       EDIT DATA
-    ===================================================== */
+                if (
+                    event.target ===
+                    modalView
+                ) {
 
-    function editData(button) {
+                    tutupView();
 
-        selectedEditRow = button.closest("tr");
-
-        const cells = selectedEditRow.cells;
-
-        document.getElementById("editNama").value = cells[0].innerText.trim();
-        document.getElementById("editJenjang").value = cells[1].innerText.trim();
-        document.getElementById("editAlamat").value = cells[2].innerText.trim();
-        document.getElementById("editSiswa").value = cells[3].innerText.trim();
-
-        modalEditOverlay.classList.add("active");
-
-    }
-
-
-    btnEditSimpan.addEventListener(
-        "click",
-        function() {
-
-            if (!formEditDUK.checkValidity()) {
-
-                formEditDUK.reportValidity();
-
-                return;
+                }
 
             }
-
-            alert(
-                "Data Sekolah berhasil diperbarui.\n\n" +
-                "Nama Sekolah: " + document.getElementById("editNama").value
-            );
-
-            const cells = selectedEditRow.cells;
-
-            cells[0].innerText = document.getElementById("editNama").value;
-            cells[1].innerText = document.getElementById("editJenjang").value;
-            cells[2].innerText = document.getElementById("editAlamat").value;
-            cells[3].innerText = document.getElementById("editSiswa").value;
-
-            tutupModalEdit();
-
-        }
-    );
+        );
 
 
+        modalTambah.addEventListener(
+            'click',
+            function (event) {
 
-    /* =====================================================
-       HAPUS DATA
-    ===================================================== */
+                if (
+                    event.target ===
+                    modalTambah
+                ) {
 
-    function hapusData(button) {
+                    tutupTambah();
 
-        const row = button.closest("tr");
-        const nama = row.cells[0].innerText.trim();
+                }
 
-
-        const konfirmasi =
-            confirm(
-                "Apakah Anda yakin ingin menghapus data:\n\n" +
-                nama +
-                "?"
-            );
+            }
+        );
 
 
-        if (konfirmasi) {
+        /* =====================================================
+           UPDATE TOTAL
+        ====================================================== */
 
-            row.remove();
-
-        }
-
-    }
-
-
-
-    /* =====================================================
-       UPDATE TOTAL DATA
-    ===================================================== */
-
-    table.on(
-        "draw",
-        function() {
+        function updateTotal()
+        {
 
             const info =
                 table.page.info();
 
+
             document.getElementById(
-                "totalData"
+                'totalData'
             ).textContent =
+
                 info.recordsDisplay +
-                " Sekolah";
+                ' Sekolah';
 
         }
-    );
 
+
+        table.on(
+            'draw',
+            updateTotal
+        );
+
+
+        updateTotal();
+
+
+    }
+
+);
 
 </script>
 
-
-</body>
-
-</html>
-```
+@endpush

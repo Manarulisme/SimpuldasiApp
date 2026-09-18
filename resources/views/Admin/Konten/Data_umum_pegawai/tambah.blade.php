@@ -56,9 +56,21 @@
         <h3>{{ $isEdit ? 'Edit Data Pegawai' : 'Form Data Pegawai' }}</h3>
         <p>{{ $isEdit ? 'Perbarui informasi pegawai pada kolom yang tersedia.' : 'Silakan lengkapi informasi pegawai pada kolom yang tersedia.' }}</p>
     </div>
-    <form id="pegawaiForm" method="POST" action="{{ url()->current() }}">
-        @csrf
-        @if ($isEdit) @method('PUT') @endif
+
+<form
+    id="pegawaiForm"
+    method="POST"
+    action="{{ $isEdit
+        ? route('dataumumpegawai.update', $pegawai->id)
+        : route('dataumumpegawai.store')
+    }}"
+>
+    @csrf
+
+    @if ($isEdit)
+        @method('PUT')
+    @endif
+
         <div class="form-body">
             <div class="form-section">
                 <div class="section-title"><span class="section-number">1</span>Data Identitas Pegawai</div>
@@ -87,14 +99,4 @@
 </div>
 @endsection
 
-@push('scripts')
-@if (!$isEdit)
-<script>
-    document.getElementById('pegawaiForm')?.addEventListener('submit', function (event) {
-        event.preventDefault();
-        alert('Data pegawai berhasil disimpan!\n\nNama: ' + document.getElementById('nama').value);
-        window.location.href = '{{ url('/dataumumpegawai') }}';
-    });
-</script>
-@endif
-@endpush
+

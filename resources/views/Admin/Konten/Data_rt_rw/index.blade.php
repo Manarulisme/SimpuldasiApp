@@ -1,2757 +1,1032 @@
-```html
-<!DOCTYPE html>
-<html lang="id">
-
-<head>
-
-    <meta charset="UTF-8">
-
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>
-        Data BMD - Kelurahan XXXXX
-    </title>
-
-
-    <!-- =====================================================
-         DATATABLES CSS
-    ====================================================== -->
-
-    <link
-        rel="stylesheet"
-        href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css"
-    >
-
-
-    <style>
-
-        /* =====================================================
-           RESET
-        ===================================================== */
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-
-        :root {
-
-            --primary: #087443;
-            --primary-dark: #065c35;
-            --primary-light: #eaf5ef;
-
-            --sidebar: #102f47;
-            --sidebar-hover: #173c58;
-
-            --text: #263238;
-            --muted: #7a858d;
-
-            --border: #e7ebee;
-
-            --background: #f5f7f8;
-
-            --white: #ffffff;
-
-            --danger: #c0392b;
-
-            --gold: #d8a600;
-
-        }
-
-
-        body {
-
-            font-family:
-                Arial,
-                Helvetica,
-                sans-serif;
-
-            background: var(--background);
-
-            color: var(--text);
-
-            min-height: 100vh;
-
-        }
-
-
-        a {
-
-            text-decoration: none;
-
-            color: inherit;
-
-        }
-
-
-        button,
-        input,
-        select {
-
-            font-family: inherit;
-
-        }
-
-
-
-        /* =====================================================
-           LAYOUT
-        ===================================================== */
-
-        .dashboard {
-
-            display: flex;
-
-            min-height: 100vh;
-
-        }
-
-
-
-        /* =====================================================
-           SIDEBAR
-        ===================================================== */
-
-        .sidebar {
-
-            width: 270px;
-
-            background: var(--sidebar);
-
-            color: white;
-
-            position: fixed;
-
-            top: 0;
-            left: 0;
-            bottom: 0;
-
-            z-index: 100;
-
-            overflow-y: auto;
-
-            transition: 0.3s;
-
-        }
-
-
-        .sidebar::-webkit-scrollbar {
-
-            width: 5px;
-
-        }
-
-
-        .sidebar::-webkit-scrollbar-thumb {
-
-            background:
-                rgba(255,255,255,0.15);
-
-            border-radius: 10px;
-
-        }
-
-
-
-        /* =====================================================
-           SIDEBAR BRAND
-        ===================================================== */
-
-        .sidebar-brand {
-
-            height: 82px;
-
-            padding: 0 22px;
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 12px;
-
-            border-bottom:
-                1px solid
-                rgba(255,255,255,0.08);
-
-        }
-
-
-        .brand-logo {
-
-            width: 43px;
-
-            height: 43px;
-
-            border-radius: 50%;
-
-            background: white;
-
-            color: var(--primary);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 9px;
-
-            font-weight: bold;
-
-            flex-shrink: 0;
-
-        }
-
-
-        .brand-name strong {
-
-            display: block;
-
-            font-family: Georgia, serif;
-
-            font-size: 16px;
-
-        }
-
-
-        .brand-name span {
-
-            display: block;
-
-            font-size: 10px;
-
-            margin-top: 3px;
-
-            color: #9eb1c0;
-
-            letter-spacing: 0.4px;
-
-        }
-
-
-
-        /* =====================================================
-           SIDEBAR MENU
-        ===================================================== */
-
-        .sidebar-menu {
-
-            padding: 18px 12px 30px;
-
-        }
-
-
-        .menu-title {
-
-            font-size: 10px;
-
-            color: #7590a3;
-
-            letter-spacing: 0.7px;
-
-            text-transform: uppercase;
-
-            padding: 16px 12px 8px;
-
-        }
-
-
-        .menu-item {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 12px;
-
-            min-height: 42px;
-
-            padding: 10px 12px;
-
-            border-radius: 7px;
-
-            color: #dce6ed;
-
-            font-size: 13px;
-
-            margin-bottom: 2px;
-
-            transition: 0.2s;
-
-        }
-
-
-        .menu-item:hover {
-
-            background: var(--sidebar-hover);
-
-            color: white;
-
-        }
-
-
-        .menu-item.active {
-
-            background: #1d405c;
-
-            color: white;
-
-            font-weight: 600;
-
-            position: relative;
-
-        }
-
-
-        .menu-item.active::before {
-
-            content: "";
-
-            position: absolute;
-
-            left: -12px;
-
-            top: 0;
-
-            bottom: 0;
-
-            width: 3px;
-
-            background: var(--gold);
-
-            border-radius:
-                0 3px 3px 0;
-
-        }
-
-
-        .menu-icon {
-
-            width: 19px;
-
-            height: 19px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            flex-shrink: 0;
-
-            font-size: 15px;
-
-        }
-
-
-        .menu-text {
-
-            flex: 1;
-
-        }
-
-
-
-        /* =====================================================
-           MAIN
-        ===================================================== */
-
-        .main {
-
-            margin-left: 270px;
-
-            width:
-                calc(100% - 270px);
-
-            min-height: 100vh;
-
-        }
-
-
-
-        /* =====================================================
-           TOPBAR
-        ===================================================== */
-
-        .topbar {
-
-            height: 82px;
-
-            background: white;
-
-            border-bottom:
-                1px solid
-                var(--border);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            padding: 0 30px;
-
-            position: sticky;
-
-            top: 0;
-
-            z-index: 50;
-
-        }
-
-
-        .topbar-left {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 15px;
-
-        }
-
-
-        .mobile-menu {
-
-            display: none;
-
-            border: none;
-
-            background:
-                var(--primary-light);
-
-            color: var(--primary);
-
-            width: 40px;
-
-            height: 40px;
-
-            border-radius: 7px;
-
-            cursor: pointer;
-
-            font-size: 20px;
-
-        }
-
-
-        .page-title {
-
-            font-family: Georgia, serif;
-
-            font-size: 25px;
-
-            color: #18364d;
-
-        }
-
-
-        .page-subtitle {
-
-            color: var(--muted);
-
-            font-size: 12px;
-
-            margin-top: 3px;
-
-        }
-
-
-
-        /* =====================================================
-           USER AREA
-        ===================================================== */
-
-        .user-area {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 14px;
-
-        }
-
-
-        .notification {
-
-            width: 38px;
-
-            height: 38px;
-
-            border:
-                1px solid
-                var(--border);
-
-            border-radius: 7px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 16px;
-
-            position: relative;
-
-            cursor: pointer;
-
-            background: white;
-
-        }
-
-
-        .notification-dot {
-
-            width: 7px;
-
-            height: 7px;
-
-            background: var(--gold);
-
-            border-radius: 50%;
-
-            position: absolute;
-
-            top: 7px;
-
-            right: 7px;
-
-        }
-
-
-        .user-profile {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 10px;
-
-            padding-left: 14px;
-
-            border-left:
-                1px solid
-                var(--border);
-
-        }
-
-
-        .user-avatar {
-
-            width: 39px;
-
-            height: 39px;
-
-            border-radius: 50%;
-
-            background:
-                var(--primary-light);
-
-            color: var(--primary);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-weight: bold;
-
-            font-size: 13px;
-
-        }
-
-
-        .user-info strong {
-
-            display: block;
-
-            font-size: 13px;
-
-        }
-
-
-        .user-info span {
-
-            display: block;
-
-            font-size: 11px;
-
-            color: var(--muted);
-
-            margin-top: 2px;
-
-        }
-
-
-
-        /* =====================================================
-           CONTENT
-        ===================================================== */
+@extends('Admin.Layout.master')
+
+@section('title', 'Data RT & RW - Kelurahan XXXXX')
+@section('page_title', 'Data RT & RW')
+@section('page_subtitle', 'Pemerintahan · RT & RW')
+
+@section('content')
+
+<style>
+    .content {
+        padding: 24px;
+    }
+
+    .content-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+
+    .content-header h2 {
+        margin: 0 0 5px;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 22px;
+        color: #24332b;
+    }
+
+    .content-header p {
+        margin: 0;
+        color: #7a8580;
+        font-size: 13px;
+    }
+
+    .btn-add {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: none;
+        background: #2f6b4f;
+        color: #fff;
+        padding: 10px 16px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s ease;
+        white-space: nowrap;
+    }
+
+    .btn-add:hover {
+        background: #24563f;
+    }
+
+    .btn-add-icon {
+        font-size: 18px;
+        line-height: 1;
+    }
+
+    .table-panel {
+        background: #fff;
+        border: 1px solid #e7ebee;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .table-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 19px 22px;
+        border-bottom: 1px solid #eef1f3;
+    }
+
+    .table-panel-header h3 {
+        margin: 0 0 4px;
+        font-size: 16px;
+        color: #27352d;
+    }
+
+    .table-panel-header p {
+        margin: 0;
+        color: #8a9490;
+        font-size: 12px;
+    }
+
+    .total-data {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 11px;
+        border-radius: 20px;
+        background: #eef7f1;
+        color: #2f6b4f;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .table-wrapper {
+        padding: 0 22px 20px;
+        overflow-x: auto;
+    }
+
+    #rtRwTable {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+        font-size: 13px;
+    }
+
+    #rtRwTable thead th {
+        background: #f7f9f8;
+        color: #52605a;
+        font-weight: 600;
+        padding: 13px 12px;
+        border-bottom: 1px solid #e5e9e7;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    #rtRwTable tbody td {
+        padding: 14px 12px;
+        border-bottom: 1px solid #eef1f0;
+        color: #56625c;
+        vertical-align: middle;
+    }
+
+    #rtRwTable tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    #rtRwTable tbody tr:hover {
+        background: #fafcfb;
+    }
+
+    .jenis {
+        color: #27352d;
+        font-weight: 600;
+    }
+
+    .nomor {
+        color: #59655f;
+        white-space: nowrap;
+    }
+
+    .rw-name {
+        color: #59655f;
+        white-space: nowrap;
+    }
+
+    .leader-name {
+        color: #27352d;
+        font-weight: 600;
+        min-width: 160px;
+    }
+
+    .date {
+        color: #59655f;
+        white-space: nowrap;
+    }
+
+    .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 5px 9px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .badge-rt {
+        background: #eef6ff;
+        color: #3971a9;
+    }
+
+    .badge-rw {
+        background: #edf8f1;
+        color: #34734e;
+    }
+
+    .action-buttons {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+    }
+
+    .btn-action {
+        width: 31px;
+        height: 31px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        font-size: 14px;
+        transition: 0.2s ease;
+    }
+
+    .btn-view {
+        background: #eef6ff;
+        color: #3675ad;
+        border-color: #dcecfb;
+    }
+
+    .btn-view:hover {
+        background: #dcecff;
+    }
+
+    .btn-edit {
+        background: #edf8f1;
+        color: #34734e;
+        border-color: #dcefe3;
+    }
+
+    .btn-edit:hover {
+        background: #dff1e5;
+    }
+
+    .btn-delete {
+        background: #fff0f0;
+        color: #c44d4d;
+        border-color: #f7dddd;
+    }
+
+    .btn-delete:hover {
+        background: #ffe0e0;
+    }
+
+    .dashboard-footer {
+        text-align: center;
+        padding: 22px 0 5px;
+        color: #98a19d;
+        font-size: 11px;
+    }
+
+    /* DATATABLES */
+
+    .dt-container {
+        font-size: 12px;
+        color: #68736e;
+    }
+
+    .dt-layout-row {
+        margin-top: 15px;
+        margin-bottom: 10px;
+    }
+
+    .dt-search input,
+    .dt-length select {
+        border: 1px solid #dfe5e2 !important;
+        border-radius: 6px !important;
+        padding: 7px 10px !important;
+        outline: none;
+        color: #52605a;
+        background: #fff;
+    }
+
+    .dt-search input:focus,
+    .dt-length select:focus {
+        border-color: #9dbdac !important;
+        box-shadow: 0 0 0 2px rgba(47, 107, 79, 0.08);
+    }
+
+    .dt-paging-button {
+        border-radius: 5px !important;
+        border: 1px solid transparent !important;
+        color: #5d6963 !important;
+        padding: 5px 9px !important;
+    }
+
+    .dt-paging-button:hover {
+        background: #eef6f1 !important;
+        border-color: #dcebe1 !important;
+        color: #2f6b4f !important;
+    }
+
+    .dt-paging-button.current {
+        background: #2f6b4f !important;
+        color: #fff !important;
+        border-color: #2f6b4f !important;
+    }
+
+    /* MODAL */
+
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(25, 35, 30, 0.48);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 9999;
+    }
+
+    .modal-overlay.show {
+        display: flex;
+    }
+
+    .modal {
+        width: 100%;
+        max-width: 680px;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 17px 20px;
+        border-bottom: 1px solid #edf0ef;
+    }
+
+    .modal-header h3 {
+        margin: 0;
+        color: #27352d;
+        font-size: 16px;
+    }
+
+    .modal-close {
+        width: 30px;
+        height: 30px;
+        border: none;
+        border-radius: 6px;
+        background: #f3f5f4;
+        color: #68736e;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    .modal-close:hover {
+        background: #e9edeb;
+    }
+
+    .modal-body {
+        padding: 20px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #53605a;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #dfe5e2;
+        border-radius: 7px;
+        padding: 10px 11px;
+        font-family: inherit;
+        font-size: 13px;
+        color: #4f5d56;
+        outline: none;
+        background: #fff;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+        border-color: #8eae9d;
+        box-shadow: 0 0 0 2px rgba(47, 107, 79, 0.08);
+    }
+
+    .modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 15px 20px;
+        border-top: 1px solid #edf0ef;
+        background: #fafbfa;
+    }
+
+    .btn-cancel,
+    .btn-save {
+        border: none;
+        border-radius: 6px;
+        padding: 9px 15px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .btn-cancel {
+        background: #eef1ef;
+        color: #5f6b65;
+    }
+
+    .btn-cancel:hover {
+        background: #e3e8e5;
+    }
+
+    .btn-save {
+        background: #2f6b4f;
+        color: #fff;
+    }
+
+    .btn-save:hover {
+        background: #24563f;
+    }
+
+    /* DETAIL */
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    .detail-item {
+        padding: 13px 14px;
+        border: 1px solid #edf0ef;
+        border-radius: 7px;
+        background: #fafcfb;
+    }
+
+    .detail-label {
+        display: block;
+        margin-bottom: 5px;
+        color: #8a9490;
+        font-size: 11px;
+    }
+
+    .detail-value {
+        color: #34413a;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
 
         .content {
-
-            padding: 30px;
-
+            padding: 18px;
         }
-
-
-
-        /* =====================================================
-           PAGE HEADER
-        ===================================================== */
 
         .content-header {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 20px;
-
-            margin-bottom: 22px;
-
+            align-items: flex-start;
+            flex-direction: column;
         }
-
-
-        .content-header h2 {
-
-            font-family: Georgia, serif;
-
-            font-size: 22px;
-
-            color: #18364d;
-
-            margin-bottom: 5px;
-
-        }
-
-
-        .content-header p {
-
-            color: var(--muted);
-
-            font-size: 12px;
-
-            line-height: 1.6;
-
-        }
-
-
-        /* =====================================================
-           BUTTON TAMBAH
-        ===================================================== */
 
         .btn-add {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            gap: 8px;
-
-            background: var(--primary);
-
-            color: white;
-
-            border: none;
-
-            border-radius: 7px;
-
-            padding: 11px 16px;
-
-            font-size: 12px;
-
-            font-weight: 600;
-
-            cursor: pointer;
-
-            white-space: nowrap;
-
-            transition: 0.2s;
-
+            width: 100%;
+            justify-content: center;
         }
-
-
-        .btn-add:hover {
-
-            background: var(--primary-dark);
-
-            transform:
-                translateY(-1px);
-
-        }
-
-
-        .btn-add-icon {
-
-            font-size: 17px;
-
-            line-height: 1;
-
-        }
-
-
-
-        /* =====================================================
-           TABLE PANEL
-        ===================================================== */
-
-        .table-panel {
-
-            background: white;
-
-            border:
-                1px solid
-                var(--border);
-
-            border-radius: 10px;
-
-            overflow: hidden;
-
-        }
-
 
         .table-panel-header {
-
-            padding: 19px 22px;
-
-            border-bottom:
-                1px solid
-                var(--border);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-        }
-
-
-        .table-panel-header h3 {
-
-            font-size: 15px;
-
-            color: #18364d;
-
-        }
-
-
-        .table-panel-header p {
-
-            font-size: 11px;
-
-            color: var(--muted);
-
-            margin-top: 4px;
-
-        }
-
-
-        .total-data {
-
-            font-size: 11px;
-
-            color: var(--muted);
-
-            background: var(--primary-light);
-
-            color: var(--primary);
-
-            padding: 6px 10px;
-
-            border-radius: 20px;
-
-            font-weight: 600;
-
-        }
-
-
-        .table-wrapper {
-
-            padding: 0 22px 20px;
-
-            overflow-x: auto;
-
-        }
-
-
-
-        /* =====================================================
-           DATATABLE STYLE
-        ===================================================== */
-
-        #dukTable {
-
-            width: 100% !important;
-
-            border-collapse:
-                collapse !important;
-
-            margin-top: 15px !important;
-
-        }
-
-
-        #dukTable thead th {
-
-            background: #f8faf9;
-
-            color: #52616b;
-
-            font-size: 11px;
-
-            font-weight: 600;
-
-            padding: 13px 12px;
-
-            border-bottom:
-                1px solid
-                var(--border);
-
-            white-space: nowrap;
-
-        }
-
-
-        #dukTable tbody td {
-
-            padding: 14px 12px;
-
-            font-size: 12px;
-
-            border-bottom:
-                1px solid
-                #f0f2f3;
-
-            color: #39474f;
-
-            vertical-align: middle;
-
-        }
-
-
-        #dukTable tbody tr:hover {
-
-            background: #fafcfb;
-
-        }
-
-
-        #dukTable tbody tr:last-child td {
-
-            border-bottom: none;
-
-        }
-
-
-
-        /* =====================================================
-           BADGE
-        ===================================================== */
-
-        .badge {
-
-            display: inline-block;
-
-            padding: 5px 9px;
-
-            border-radius: 5px;
-
-            font-size: 10px;
-
-            font-weight: 600;
-
-        }
-
-
-        .badge-asn {
-
-            background:
-                var(--primary-light);
-
-            color: var(--primary);
-
-        }
-
-
-        .badge-pppk {
-
-            background: #fff7df;
-
-            color: #987500;
-
-        }
-
-
-        .badge-gol {
-
-            background: #f1f3f4;
-
-            color: #58636a;
-
-        }
-
-
-        .employee-name {
-
-            font-weight: 600;
-
-            color: #18364d;
-
-        }
-
-
-        .employee-id {
-
-            font-size: 10px;
-
-            color: #8a969d;
-
-            margin-top: 3px;
-
-        }
-
-
-
-        /* =====================================================
-           ACTION BUTTON
-        ===================================================== */
-
-        .action-buttons {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 6px;
-
-        }
-
-
-        .action-btn {
-
-            width: 31px;
-
-            height: 31px;
-
-            border-radius: 6px;
-
-            border:
-                1px solid
-                var(--border);
-
-            background: white;
-
-            cursor: pointer;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 13px;
-
-            transition: 0.2s;
-
-        }
-
-
-        .action-edit {
-
-            color: var(--primary);
-
-        }
-
-
-        .action-view {
-
-            color: #2d6a9f;
-
-        }
-
-
-        .action-view:hover {
-
-            background: #eef6fc;
-
-            border-color: #c2dced;
-
-        }
-
-
-        .action-edit:hover {
-
-            background:
-                var(--primary-light);
-
-            border-color:
-                #b9ddca;
-
-        }
-
-
-        .action-delete {
-
-            color: var(--danger);
-
-        }
-
-
-        .action-delete:hover {
-
-            background: #fdf0ef;
-
-            border-color: #edc5c1;
-
-        }
-
-
-
-        /* =====================================================
-           DATATABLE CONTROLS
-        ===================================================== */
-
-        .dt-container {
-
-            font-size: 11px;
-
-        }
-
-
-        .dt-layout-row {
-
-            margin-top: 14px !important;
-
-        }
-
-
-        .dt-length select,
-        .dt-search input {
-
-            border:
-                1px solid
-                var(--border) !important;
-
-            border-radius: 6px !important;
-
-            font-size: 11px !important;
-
-            padding: 7px 9px !important;
-
-            outline: none !important;
-
-        }
-
-
-        .dt-search input:focus {
-
-            border-color:
-                var(--primary) !important;
-
-            box-shadow:
-                0 0 0 2px
-                rgba(8,116,67,0.08);
-
-        }
-
-
-        .dt-info {
-
-            color: var(--muted) !important;
-
-            font-size: 11px !important;
-
-        }
-
-
-        .dt-paging button {
-
-            border-radius: 5px !important;
-
-            font-size: 11px !important;
-
-            min-width: 30px;
-
-        }
-
-
-        .dt-paging button.current {
-
-            background:
-                var(--primary) !important;
-
-            color: white !important;
-
-            border-color:
-                var(--primary) !important;
-
-        }
-
-
-
-        /* =====================================================
-           MODAL
-        ===================================================== */
-
-        .modal-overlay {
-
-            position: fixed;
-
-            inset: 0;
-
-            background:
-                rgba(16,47,71,0.48);
-
-            display: none;
-
-            align-items: center;
-
-            justify-content: center;
-
-            padding: 20px;
-
-            z-index: 500;
-
-        }
-
-
-        .modal-overlay.active {
-
-            display: flex;
-
-        }
-
-
-        .modal {
-
-            width: 100%;
-
-            max-width: 680px;
-
-            background: white;
-
-            border-radius: 10px;
-
-            box-shadow:
-                0 20px 60px
-                rgba(0,0,0,0.18);
-
-            overflow: hidden;
-
-            animation:
-                modalShow 0.2s ease;
-
-        }
-
-
-        @keyframes modalShow {
-
-            from {
-
-                opacity: 0;
-
-                transform:
-                    translateY(10px);
-
-            }
-
-            to {
-
-                opacity: 1;
-
-                transform:
-                    translateY(0);
-
-            }
-
-        }
-
-
-        .modal-header {
-
-            padding: 19px 22px;
-
-            border-bottom:
-                1px solid
-                var(--border);
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-        }
-
-
-        .modal-header h3 {
-
-            font-family: Georgia, serif;
-
-            font-size: 18px;
-
-            color: #18364d;
-
-        }
-
-
-        .modal-close {
-
-            width: 32px;
-
-            height: 32px;
-
-            border: none;
-
-            background: #f4f6f7;
-
-            color: #69767d;
-
-            border-radius: 6px;
-
-            cursor: pointer;
-
-            font-size: 18px;
-
-        }
-
-
-        .modal-close:hover {
-
-            background: #e9edef;
-
-        }
-
-
-        .modal-body {
-
-            padding: 22px;
-
-        }
-
-
-        .form-grid {
-
-            display: grid;
-
-            grid-template-columns:
-                repeat(2, 1fr);
-
-            gap: 17px;
-
-        }
-
-
-        .form-group {
-
-            display: flex;
-
+            align-items: flex-start;
             flex-direction: column;
-
-            gap: 7px;
-
         }
 
+        .form-grid,
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
 
         .form-group.full {
-
-            grid-column:
-                1 / -1;
-
+            grid-column: auto;
         }
 
-
-        .form-label {
-
-            font-size: 11px;
-
-            font-weight: 600;
-
-            color: #52616b;
-
+        .modal-overlay {
+            padding: 12px;
         }
 
-
-        .form-control {
-
-            width: 100%;
-
-            border:
-                1px solid
-                var(--border);
-
-            border-radius: 6px;
-
-            padding: 10px 11px;
-
-            font-size: 12px;
-
-            color: var(--text);
-
-            outline: none;
-
-            background: white;
-
-            transition: 0.2s;
-
+        .modal {
+            max-height: 94vh;
         }
+    }
+</style>
 
 
-        .form-control:focus {
+<div class="content">
 
-            border-color:
-                var(--primary);
+    <div class="content-header">
 
-            box-shadow:
-                0 0 0 2px
-                rgba(8,116,67,0.08);
+        <div>
+            <h2>Data RT &amp; RW</h2>
+            <p>Kelola data RT dan RW Kelurahan XXXXX.</p>
+        </div>
 
-        }
+        <button type="button"
+            class="btn-add"
+            id="btnTambah">
 
+            <span class="btn-add-icon">+</span>
+            Tambah Data
 
-        .modal-footer {
+        </button>
 
-            padding: 16px 22px;
+    </div>
 
-            border-top:
-                1px solid
-                var(--border);
 
-            display: flex;
+    <section class="table-panel">
 
-            justify-content: flex-end;
+        <div class="table-panel-header">
 
-            gap: 8px;
-
-        }
-
-
-        .btn-cancel {
-
-            border:
-                1px solid
-                var(--border);
-
-            background: white;
-
-            color: #65727a;
-
-            padding: 10px 15px;
-
-            border-radius: 6px;
-
-            font-size: 12px;
-
-            cursor: pointer;
-
-        }
-
-
-        .btn-save {
-
-            border: none;
-
-            background: var(--primary);
-
-            color: white;
-
-            padding: 10px 16px;
-
-            border-radius: 6px;
-
-            font-size: 12px;
-
-            font-weight: 600;
-
-            cursor: pointer;
-
-        }
-
-
-        .btn-save:hover {
-
-            background:
-                var(--primary-dark);
-
-        }
-
-
-
-        /* =====================================================
-           FOOTER
-        ===================================================== */
-
-        .dashboard-footer {
-
-            margin-top: 25px;
-
-            text-align: center;
-
-            color: #9aa3a9;
-
-            font-size: 11px;
-
-            padding: 10px;
-
-        }
-
-
-
-        /* =====================================================
-           OVERLAY MOBILE
-        ===================================================== */
-
-        .sidebar-overlay {
-
-            display: none;
-
-        }
-
-
-
-        /* =====================================================
-           RESPONSIVE TABLET
-        ===================================================== */
-
-        @media (max-width: 1100px) {
-
-            .sidebar {
-
-                width: 240px;
-
-            }
-
-
-            .main {
-
-                margin-left: 240px;
-
-                width:
-                    calc(100% - 240px);
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-           RESPONSIVE MOBILE
-        ===================================================== */
-
-        @media (max-width: 768px) {
-
-            .sidebar {
-
-                transform:
-                    translateX(-100%);
-
-                width: 270px;
-
-            }
-
-
-            .sidebar.open {
-
-                transform:
-                    translateX(0);
-
-            }
-
-
-            .main {
-
-                margin-left: 0;
-
-                width: 100%;
-
-            }
-
-
-            .mobile-menu {
-
-                display: flex;
-
-                align-items: center;
-
-                justify-content: center;
-
-            }
-
-
-            .sidebar-overlay {
-
-                position: fixed;
-
-                inset: 0;
-
-                background:
-                    rgba(0,0,0,0.35);
-
-                z-index: 90;
-
-            }
-
-
-            .sidebar-overlay.active {
-
-                display: block;
-
-            }
-
-
-            .topbar {
-
-                height: 70px;
-
-                padding: 0 18px;
-
-            }
-
-
-            .page-title {
-
-                font-size: 20px;
-
-            }
-
-
-            .page-subtitle {
-
-                display: none;
-
-            }
-
-
-            .user-info {
-
-                display: none;
-
-            }
-
-
-            .user-profile {
-
-                padding-left: 8px;
-
-                border-left: none;
-
-            }
-
-
-            .notification {
-
-                display: none;
-
-            }
-
-
-            .content {
-
-                padding: 18px;
-
-            }
-
-
-            .content-header {
-
-                align-items: flex-start;
-
-                flex-direction: column;
-
-            }
-
-
-            .btn-add {
-
-                width: 100%;
-
-                justify-content: center;
-
-            }
-
-
-            .table-panel-header {
-
-                align-items: flex-start;
-
-                gap: 10px;
-
-            }
-
-
-            .table-wrapper {
-
-                padding-left: 15px;
-
-                padding-right: 15px;
-
-            }
-
-
-            .form-grid {
-
-                grid-template-columns: 1fr;
-
-            }
-
-
-            .form-group.full {
-
-                grid-column: auto;
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-           SMALL MOBILE
-        ===================================================== */
-
-        @media (max-width: 480px) {
-
-            .page-title {
-
-                font-size: 18px;
-
-            }
-
-
-            .content-header h2 {
-
-                font-size: 19px;
-
-            }
-
-
-            .table-panel-header {
-
-                flex-direction: column;
-
-            }
-
-
-            .total-data {
-
-                align-self: flex-start;
-
-            }
-
-
-            .modal-body {
-
-                padding: 18px;
-
-            }
-
-        }
-
-    </style>
-
-</head>
-
-
-<body>
-
-
-<div class="dashboard">
-
-
-    <!-- =====================================================
-         SIDEBAR
-    ===================================================== -->
-
-    <aside
-        class="sidebar"
-        id="sidebar"
-    >
-
-
-        <!-- BRAND -->
-
-        <div class="sidebar-brand">
-
-            <div class="brand-logo">
-                LOGO
+            <div>
+                <h3>Daftar RT &amp; RW</h3>
+                <p>Data kepengurusan RT dan RW Kelurahan XXXXX</p>
             </div>
 
-            <div class="brand-name">
-
-                <strong>
-                    Kelurahan XXXXX
-                </strong>
-
-                <span>
-                    SISTEM INFORMASI KELURAHAN
-                </span>
-
-            </div>
+            <span class="total-data"
+                id="totalData">
+                6 Data
+            </span>
 
         </div>
 
 
-
-        <!-- MENU -->
-
-        <nav class="sidebar-menu">
-
-
-            <!-- BERANDA -->
-
-            <a
-                href="dashboard.html"
-                class="menu-item"
-            >
-
-                <span class="menu-icon">
-                    ⌂
-                </span>
-
-                <span class="menu-text">
-                    Beranda
-                </span>
-
-            </a>
-
-
-
-            <!-- KESEKRETARIATAN -->
-
-            <div class="menu-title">
-                Kesekretariatan
-            </div>
-
-
-            <!-- ACTIVE -->
-
-            <a
-                href="duk.html"
-                class="menu-item active"
-            >
-
-                <span class="menu-icon">
-                    👤
-                </span>
-
-                <span class="menu-text">
-                    Data Umum Kepegawaian
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▣
-                </span>
-
-                <span class="menu-text">
-                    Data BMD
-                </span>
-
-            </a>
-
-
-
-            <!-- KESEJAHTERAAN SOSIAL -->
-
-            <div class="menu-title">
-                Kesejahteraan Sosial
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♡
-                </span>
-
-                <span class="menu-text">
-                    Posyandu & Posbindu
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♧
-                </span>
-
-                <span class="menu-text">
-                    Data Stunting
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♢
-                </span>
-
-                <span class="menu-text">
-                    KPM / Bantuan Sosial
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◉
-                </span>
-
-                <span class="menu-text">
-                    Anak Putus Sekolah
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▤
-                </span>
-
-                <span class="menu-text">
-                    Data Sekolah
-                </span>
-
-            </a>
-
-
-
-            <!-- EKONOMI & PEMBANGUNAN -->
-
-            <div class="menu-title">
-                Ekonomi & Pembangunan
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♙
-                </span>
-
-                <span class="menu-text">
-                    Data UMKM
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◈
-                </span>
-
-                <span class="menu-text">
-                    Data Rutillahu
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    🌱
-                </span>
-
-                <span class="menu-text">
-                    Data Buruan Sae
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ♣
-                </span>
-
-                <span class="menu-text">
-                    Data Pohon
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▦
-                </span>
-
-                <span class="menu-text">
-                    Fasilitas Umum & Sosial
-                </span>
-
-            </a>
-
-
-
-            <!-- PEMERINTAHAN -->
-
-            <div class="menu-title">
-                Pemerintahan
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◫
-                </span>
-
-                <span class="menu-text">
-                    Laporan Kependudukan
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ⚑
-                </span>
-
-                <span class="menu-text">
-                    Linmas & Siskamling
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ▥
-                </span>
-
-                <span class="menu-text">
-                    Data RT/RW & Periode
-                </span>
-
-            </a>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ◉
-                </span>
-
-                <span class="menu-text">
-                    Data PKL
-                </span>
-
-            </a>
-
-
-
-            <!-- SISTEM -->
-
-            <div class="menu-title">
-                Sistem
-            </div>
-
-
-            <a href="#" class="menu-item">
-
-                <span class="menu-icon">
-                    ⚙
-                </span>
-
-                <span class="menu-text">
-                    Pengaturan
-                </span>
-
-            </a>
-
-
-            <a
-                href="index.html"
-                class="menu-item"
-            >
-
-                <span class="menu-icon">
-                    ↪
-                </span>
-
-                <span class="menu-text">
-                    Keluar
-                </span>
-
-            </a>
-
-
-        </nav>
-
-    </aside>
-
-
-
-    <!-- OVERLAY MOBILE -->
-
-    <div
-        class="sidebar-overlay"
-        id="sidebarOverlay"
-    ></div>
-
-
-
-    <!-- =====================================================
-         MAIN
-    ===================================================== -->
-
-    <main class="main">
-
-
-        <!-- =================================================
-             TOPBAR
-        ================================================= -->
-
-        <header class="topbar">
-
-
-            <div class="topbar-left">
-
-
-                <button
-                    class="mobile-menu"
-                    id="mobileMenu"
-                >
-                    ☰
-                </button>
-
-
-                <div>
-
-                    <h1 class="page-title">
-                        Data BMD
-                    </h1>
-
-                    <p class="page-subtitle">
-                        Kesekretariatan · Data BMD
-                    </p>
-
-                </div>
-
-
-            </div>
-
-
-
-            <div class="user-area">
-
-
-                <div class="notification">
-
-                    🔔
-
-                    <span
-                        class="notification-dot"
-                    ></span>
-
-                </div>
-
-
-                <div class="user-profile">
-
-                    <div class="user-avatar">
-                        AD
-                    </div>
-
-                    <div class="user-info">
-
-                        <strong>
-                            Administrator
-                        </strong>
-
-                        <span>
-                            Administrator
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-            </div>
-
-        </header>
-
-
-
-        <!-- =================================================
-             CONTENT
-        ================================================= -->
-
-        <div class="content">
-
-
-            <!-- PAGE HEADER -->
-
-            <div class="content-header">
-
-
-                <div>
-
-                    <h2>
-                        Data BMD
-                    </h2>
-
-                    <p>
-                        Kelola data barang milik daerah
-                        Kelurahan XXXXX.
-                    </p>
-
-                </div>
-
-
-                <button
-                    class="btn-add"
-                    id="btnTambah"
-                >
-
-                    <span class="btn-add-icon">
-                        +
-                    </span>
-
-                    Tambah Data
-
-                </button>
-
-
-            </div>
-
-
-
-            <!-- =================================================
-                 TABLE
-            ================================================= -->
-
-            <section class="table-panel">
-
-
-                <div class="table-panel-header">
-
-                    <div>
-
-                        <h3>
-                            Daftar Barang
-                        </h3>
-
-                        <p>
-                            Data BMD Kelurahan XXXXX
-                        </p>
-
-                    </div>
-
-
-                    <span
-                        class="total-data"
-                        id="totalData"
-                    >
-                        5 Barang
-                    </span>
-
-                </div>
-
-
-
-                <div class="table-wrapper">
-
-
-                    <table
-                        id="dukTable"
-                        class="display"
-                    >
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    Nama Barang
-                                </th>
-
-                                <th>
-                                    Tipe
-                                </th>
-
-                                <th>
-                                    Tahun Perolehan
-                                </th>
-
-                                <th>
-                                    Sumber Dana
-                                </th>
-
-                                <th>
-                                    Kondisi
-                                </th>
-
-                                <th>
-                                    Keterangan
-                                </th>
-
-                                <th>
-                                    Aksi
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody>
-
-
-                            <!-- DATA 1 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        Laptop Lenovo ThinkPad
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Elektronik
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        2023
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        APBD
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Baik
-                                </td>
-
-                                <td>
-                                    Untuk administrasi kelurahan
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 2 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        Meja kerja kayu
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Perabot
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        2022
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        APBD
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Baik
-                                </td>
-
-                                <td>
-                                    Ruang pelayanan umum
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 3 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        Printer Epson L3210
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Elektronik
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        2024
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        DAK
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Baik
-                                </td>
-
-                                <td>
-                                    Cetak dokumen dan laporan
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 4 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-asn"
-                                    >
-                                        Kursi tunggu besi
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Perabot
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        2021
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        APBD
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Cukup Baik
-                                </td>
-
-                                <td>
-                                    Area tunggu masyarakat
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-
-                            <!-- DATA 5 -->
-
-                            <tr>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-pppk"
-                                    >
-                                        Toyota Avanza
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Kendaraan
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="employee-name"
-                                    >
-                                        2020
-                                    </div>
-
-                                </td>
-
-                                <td>
-
-                                    <span
-                                        class="badge badge-gol"
-                                    >
-                                        APBD
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    Baik
-                                </td>
-
-                                <td>
-                                    Operasional kelurahan
-                                </td>
-
-                                <td>
-
-                                    <div
-                                        class="action-buttons"
-                                    >
-
-                                        <button
-                                            class="action-btn action-view"
-                                            onclick="viewData(this)"
-                                            title="Lihat Data"
-                                        >
-                                            ◉
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-edit"
-                                            onclick="editData(this)"
-                                            title="Ubah Data"
-                                        >
-                                            ✎
-                                        </button>
-
-                                        <button
-                                            class="action-btn action-delete"
-                                            onclick="hapusData(this)"
-                                            title="Hapus Data"
-                                        >
-                                            ×
-                                        </button>
-
-                                    </div>
-
-                                </td>
-
-                            </tr>
-
-
-                        </tbody>
-
-                    </table>
-
-
-                </div>
-
-            </section>
-
-
-
-            <!-- FOOTER -->
-
-            <div class="dashboard-footer">
-
-                © 2026 Kelurahan XXXXX ·
-                Sistem Informasi Kelurahan
-
-            </div>
-
+        <div class="table-wrapper">
+
+            <table id="rtRwTable"
+                class="display">
+
+                <thead>
+
+                    <tr>
+                        <th>Jenis</th>
+                        <th>Nomor</th>
+                        <th>RW</th>
+                        <th>Nama Ketua</th>
+                        <th>Tanggal Mulai</th>
+                        <th>Tanggal Berakhir</th>
+                        <th>Aksi</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    <tr>
+
+                        <td>
+                            <span class="badge badge-rt">
+                                RT
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="nomor">
+                                RT 01
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="rw-name">
+                                RW 01
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="leader-name">
+                                Budi Santoso
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="date">
+                                01 Januari 2025
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="date">
+                                31 Desember 2029
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="action-buttons">
+
+                                <button type="button"
+                                    class="btn-action btn-view"
+                                    title="Lihat"
+                                    data-action="view">
+                                    👁
+                                </button>
+
+                                <button type="button"
+                                    class="btn-action btn-edit"
+                                    title="Edit"
+                                    data-action="edit">
+                                    ✏
+                                </button>
+
+                                <button type="button"
+                                    class="btn-action btn-delete"
+                                    title="Hapus"
+                                    data-action="delete">
+                                    🗑
+                                </button>
+
+                            </div>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            <span class="badge badge-rt">
+                                RT
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="nomor">
+                                RT 02
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="rw-name">
+                                RW 01
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="leader-name">
+                                Ahmad Hidayat
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="date">
+                                01 Januari 2025
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="date">
+                                31 Desember 2029
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="action-buttons">
+
+                                <button type="button"
+                                    class="btn-action btn-view"
+                                    title="Lihat"
+                                    data-action="view">
+                                    👁
+                                </button>
+
+                                <button type="button"
+                                    class="btn-action btn-edit"
+                                    title="Edit"
+                                    data-action="edit">
+                                    ✏
+                                </button>
+
+                                <button type="button"
+                                    class="btn-action btn-delete"
+                                    title="Hapus"
+                                    data-action="delete">
+                                    🗑
+                                </button>
+
+                            </div>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            <span class="badge badge-rt">
+                                RT
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="nomor">
+                                RT 03
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="rw-name">
+                                RW 02
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="leader-name">
+                                Dedi Kurniawan
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="date">
+                                15 Februari 2025
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="date">
+                                14 Februari 2030
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="action-buttons">
+
+                                <button type="button"
+                                    class="btn-action btn-view"
+                                    title="Lihat"
+                                    data-action="view">
+                                    👁
+                                </button>
+
+                                <button type="button"
+                                    class="btn-action btn-edit"
+                                    title="Edit"
+                                    data-action="edit">
+                                    ✏
+                                </button>
+
+                                <button type="button"
+                                    class="btn-action btn-delete"
+                                    title="Hapus"
+                                    data-action="delete">
+                                    🗑
+                                </button>
+
+                            </div>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            <span class="badge badge-rt">
+                                RT
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="nomor">
+                                RT 04
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="rw-name">
+                                RW 02
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="leader-name">
+                                Eko Prasetyo
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="date">
+                                15 Februari 2025
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="date">
+                                14 Februari 2030
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="action-buttons">
+
+                                <button type="button"
+                                    class="btn-action btn-view"
+                                    title="Lihat"
+                                    data-action="view">
+                                    👁
+                                </button>
+
+                                <button type="button"
+                                    class="btn-action btn-edit"
+                                    title="Edit"
+                                    data-action="edit">
+                                    ✏
+                                </button>
+
+                                <button type="button"
+                                    class="btn-action btn-delete"
+                                    title="Hapus"
+                                    data-action="delete">
+                                    🗑
+                                </button>
+
+                            </div>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            <span class="badge badge-rw">
+                                RW
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="nomor">
+                                RW 01
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="rw-name">
+                                -
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="leader-name">
+                                Hendra Wijaya
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="date">
+                                01 Januari 2025
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="date">
+                                31 Desember 2029
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="action-buttons">
+
+                                <button type="button"
+                                    class="btn-action btn-view"
+                                    title="Lihat"
+                                    data-action="view">
+                                    👁
+                                </button>
+
+                                <button type="button"
+                                    class="btn-action btn-edit"
+                                    title="Edit"
+                                    data-action="edit">
+                                    ✏
+                                </button>
+
+                                <button type="button"
+                                    class="btn-action btn-delete"
+                                    title="Hapus"
+                                    data-action="delete">
+                                    🗑
+                                </button>
+
+                            </div>
+                        </td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>
+                            <span class="badge badge-rw">
+                                RW
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="nomor">
+                                RW 02
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="rw-name">
+                                -
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="leader-name">
+                                Agus Setiawan
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="date">
+                                15 Februari 2025
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="date">
+                                14 Februari 2030
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="action-buttons">
+
+                                <button type="button"
+                                    class="btn-action btn-view"
+                                    title="Lihat"
+                                    data-action="view">
+                                    👁
+                                </button>
+
+                                <button type="button"
+                                    class="btn-action btn-edit"
+                                    title="Edit"
+                                    data-action="edit">
+                                    ✏
+                                </button>
+
+                                <button type="button"
+                                    class="btn-action btn-delete"
+                                    title="Hapus"
+                                    data-action="delete">
+                                    🗑
+                                </button>
+
+                            </div>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
 
         </div>
 
+    </section>
 
-    </main>
 
+    <div class="dashboard-footer">
+        © {{ date('Y') }} Kelurahan XXXXX · Sistem Informasi Kelurahan
+    </div>
 
 </div>
 
 
+<!-- ========================= -->
+<!-- MODAL TAMBAH -->
+<!-- ========================= -->
 
-<!-- =====================================================
-     MODAL TAMBAH DATA
-===================================================== -->
-
-<div
-    class="modal-overlay"
-    id="modalOverlay"
->
-
+<div class="modal-overlay"
+    id="modalOverlay">
 
     <div class="modal">
-
 
         <div class="modal-header">
 
             <h3>
-                Tambah Data BMD
+                Tambah Data RT &amp; RW
             </h3>
 
-            <button
+            <button type="button"
                 class="modal-close"
-                id="modalClose"
-            >
+                data-close="modalOverlay">
                 ×
             </button>
 
         </div>
 
 
+        <form id="formData">
 
-        <div class="modal-body">
-
-
-            <form
-                id="formDUK"
-            >
-
+            <div class="modal-body">
 
                 <div class="form-grid">
 
-
-                    <!-- JENIS -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
+                        <label for="jenis">
                             Jenis
                         </label>
 
-                        <select
-                            class="form-control"
-                            id="jenis"
-                            required
-                        >
+                        <select id="jenis" required>
 
                             <option value="">
                                 Pilih Jenis
                             </option>
 
-                            <option value="ASN">
-                                ASN
+                            <option value="RT">
+                                RT
                             </option>
 
-                            <option value="PPPK">
-                                PPPK
-                            </option>
-
-                            <option value="Non-ASN">
-                                Non-ASN
+                            <option value="RW">
+                                RW
                             </option>
 
                         </select>
@@ -2759,633 +1034,1189 @@
                     </div>
 
 
-
-                    <!-- NIP -->
-
                     <div class="form-group">
 
-                        <label class="form-label">
-                            NIP / NRP / TT
+                        <label for="nomor">
+                            Nomor
                         </label>
 
                         <input
                             type="text"
-                            class="form-control"
                             id="nomor"
-                            placeholder="Masukkan NIP / NRP / TT"
+                            placeholder="Contoh: RT 01 / RW 01"
                             required
                         >
 
                     </div>
 
 
+                    <div class="form-group">
 
-                    <!-- NAMA -->
+                        <label for="rw">
+                            RW
+                        </label>
+
+                        <select id="rw">
+
+                            <option value="">
+                                Pilih RW
+                            </option>
+
+                            <option value="RW 01">
+                                RW 01
+                            </option>
+
+                            <option value="RW 02">
+                                RW 02
+                            </option>
+
+                            <option value="RW 03">
+                                RW 03
+                            </option>
+
+                            <option value="RW 04">
+                                RW 04
+                            </option>
+
+                            <option value="RW 05">
+                                RW 05
+                            </option>
+
+                        </select>
+
+                    </div>
+
 
                     <div class="form-group">
 
-                        <label class="form-label">
-                            Nama
+                        <label for="namaKetua">
+                            Nama Ketua
                         </label>
 
                         <input
                             type="text"
-                            class="form-control"
-                            id="nama"
-                            placeholder="Nama lengkap"
+                            id="namaKetua"
+                            placeholder="Masukkan nama ketua"
                             required
                         >
 
                     </div>
 
-
-
-                    <!-- GOLONGAN -->
 
                     <div class="form-group">
 
-                        <label class="form-label">
-                            Golongan
+                        <label for="tanggalMulai">
+                            Tanggal Mulai
                         </label>
 
                         <input
-                            type="text"
-                            class="form-control"
-                            id="golongan"
-                            placeholder="Contoh: III/d"
+                            type="date"
+                            id="tanggalMulai"
                             required
                         >
 
                     </div>
 
-
-
-                    <!-- PANGKAT -->
 
                     <div class="form-group">
 
-                        <label class="form-label">
-                            Pangkat
+                        <label for="tanggalBerakhir">
+                            Tanggal Berakhir
                         </label>
 
                         <input
-                            type="text"
-                            class="form-control"
-                            id="pangkat"
-                            placeholder="Masukkan pangkat"
+                            type="date"
+                            id="tanggalBerakhir"
                             required
                         >
 
                     </div>
-
-
-
-                    <!-- JABATAN -->
-
-                    <div class="form-group">
-
-                        <label class="form-label">
-                            Jabatan
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="jabatan"
-                            placeholder="Masukkan jabatan"
-                            required
-                        >
-
-                    </div>
-
 
                 </div>
 
-
-            </form>
-
-
-        </div>
+            </div>
 
 
+            <div class="modal-footer">
 
-        <div class="modal-footer">
+                <button type="button"
+                    class="btn-cancel"
+                    data-close="modalOverlay">
+                    Batal
+                </button>
 
-            <button
-                class="btn-cancel"
-                id="btnBatal"
-            >
-                Batal
-            </button>
+                <button type="submit"
+                    class="btn-save">
+                    Simpan Data
+                </button>
 
-            <button
-                class="btn-save"
-                id="btnSimpan"
-            >
-                Simpan Data
-            </button>
+            </div>
 
-        </div>
-
+        </form>
 
     </div>
-
 
 </div>
 
 
+<!-- ========================= -->
+<!-- MODAL EDIT -->
+<!-- ========================= -->
 
-<!-- =====================================================
-     MODAL EDIT DATA
-===================================================== -->
+<div class="modal-overlay"
+    id="modalEditOverlay">
 
-<div class="modal-overlay" id="modalEditOverlay">
     <div class="modal">
+
         <div class="modal-header">
-            <h3>Edit Data BMD</h3>
-            <button type="button" class="modal-close" id="modalEditClose" aria-label="Tutup form edit">×</button>
+
+            <h3>
+                Edit Data RT &amp; RW
+            </h3>
+
+            <button type="button"
+                class="modal-close"
+                data-close="modalEditOverlay">
+                ×
+            </button>
+
         </div>
+
+
+        <form id="formEdit">
+
+            <div class="modal-body">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+
+                        <label for="editJenis">
+                            Jenis
+                        </label>
+
+                        <select id="editJenis" required>
+
+                            <option value="RT">
+                                RT
+                            </option>
+
+                            <option value="RW">
+                                RW
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="editNomor">
+                            Nomor
+                        </label>
+
+                        <input
+                            type="text"
+                            id="editNomor"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="editRw">
+                            RW
+                        </label>
+
+                        <select id="editRw">
+
+                            <option value="">
+                                -
+                            </option>
+
+                            <option value="RW 01">
+                                RW 01
+                            </option>
+
+                            <option value="RW 02">
+                                RW 02
+                            </option>
+
+                            <option value="RW 03">
+                                RW 03
+                            </option>
+
+                            <option value="RW 04">
+                                RW 04
+                            </option>
+
+                            <option value="RW 05">
+                                RW 05
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="editNamaKetua">
+                            Nama Ketua
+                        </label>
+
+                        <input
+                            type="text"
+                            id="editNamaKetua"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="editTanggalMulai">
+                            Tanggal Mulai
+                        </label>
+
+                        <input
+                            type="date"
+                            id="editTanggalMulai"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="editTanggalBerakhir">
+                            Tanggal Berakhir
+                        </label>
+
+                        <input
+                            type="date"
+                            id="editTanggalBerakhir"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button type="button"
+                    class="btn-cancel"
+                    data-close="modalEditOverlay">
+                    Batal
+                </button>
+
+                <button type="submit"
+                    class="btn-save">
+                    Simpan Perubahan
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- MODAL VIEW -->
+<!-- ========================= -->
+
+<div class="modal-overlay"
+    id="modalViewOverlay">
+
+    <div class="modal">
+
+        <div class="modal-header">
+
+            <h3>
+                Detail Data RT &amp; RW
+            </h3>
+
+            <button type="button"
+                class="modal-close"
+                data-close="modalViewOverlay">
+                ×
+            </button>
+
+        </div>
+
 
         <div class="modal-body">
-            <form id="formEditDUK">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label class="form-label" for="editJenis">Tipe</label>
-                        <select class="form-control" id="editJenis" required>
-                            <option value="">Pilih Jenis</option>
-                            <option value="Elektronik">Elektronik</option>
-                            <option value="Perabot">Perabot</option>
-                            <option value="Kendaraan">Kendaraan</option>
-                        </select>
-                    </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="editNomor">Tahun Perolehan</label>
-                        <input type="text" class="form-control" id="editNomor" required>
-                    </div>
+            <div class="detail-grid">
 
-                    <div class="form-group full">
-                        <label class="form-label" for="editNama">Nama Barang</label>
-                        <input type="text" class="form-control" id="editNama" required>
-                    </div>
+                <div class="detail-item">
 
-                    <div class="form-group">
-                        <label class="form-label" for="editGolongan">Sumber Dana</label>
-                        <input type="text" class="form-control" id="editGolongan" required>
-                    </div>
+                    <span class="detail-label">
+                        Jenis
+                    </span>
 
-                    <div class="form-group">
-                        <label class="form-label" for="editPangkat">Kondisi</label>
-                        <input type="text" class="form-control" id="editPangkat" required>
-                    </div>
+                    <span class="detail-value"
+                        id="viewJenis">
+                        -
+                    </span>
 
-                    <div class="form-group full">
-                        <label class="form-label" for="editJabatan">Keterangan</label>
-                        <input type="text" class="form-control" id="editJabatan" required>
-                    </div>
                 </div>
-            </form>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Nomor
+                    </span>
+
+                    <span class="detail-value"
+                        id="viewNomor">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        RW
+                    </span>
+
+                    <span class="detail-value"
+                        id="viewRw">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Nama Ketua
+                    </span>
+
+                    <span class="detail-value"
+                        id="viewNamaKetua">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Tanggal Mulai
+                    </span>
+
+                    <span class="detail-value"
+                        id="viewTanggalMulai">
+                        -
+                    </span>
+
+                </div>
+
+
+                <div class="detail-item">
+
+                    <span class="detail-label">
+                        Tanggal Berakhir
+                    </span>
+
+                    <span class="detail-value"
+                        id="viewTanggalBerakhir">
+                        -
+                    </span>
+
+                </div>
+
+            </div>
+
         </div>
+
 
         <div class="modal-footer">
-            <button type="button" class="btn-cancel" id="btnEditBatal">Batal</button>
-            <button type="button" class="btn-save" id="btnEditSimpan">Perbarui Data</button>
+
+            <button type="button"
+                class="btn-cancel"
+                data-close="modalViewOverlay">
+                Tutup
+            </button>
+
         </div>
+
     </div>
+
 </div>
 
 
-<!-- =====================================================
-     JAVASCRIPT DATATABLES
-===================================================== -->
-
-<script
-    src="https://code.jquery.com/jquery-3.7.1.min.js">
-</script>
+@endsection
 
 
-<script
-    src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js">
-</script>
+@push('scripts')
 
-
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 
 <script>
 
+document.addEventListener('DOMContentLoaded', function () {
 
-    /* =====================================================
-       MOBILE SIDEBAR
-    ===================================================== */
+    const table = new DataTable('#rtRwTable', {
 
-    const mobileMenu =
-        document.getElementById("mobileMenu");
+        pageLength: 10,
 
+        lengthMenu: [
+            [5, 10, 25, 50],
+            [5, 10, 25, 50]
+        ],
 
-    const sidebar =
-        document.getElementById("sidebar");
+        language: {
 
+            search: 'Cari:',
 
-    const overlay =
-        document.getElementById("sidebarOverlay");
+            lengthMenu: 'Tampilkan _MENU_ data',
 
+            info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
 
-    mobileMenu.addEventListener(
-        "click",
-        function () {
+            infoEmpty: 'Tidak ada data',
 
-            sidebar.classList.toggle("open");
+            zeroRecords: 'Data tidak ditemukan',
 
-            overlay.classList.toggle("active");
+            emptyTable: 'Belum ada data',
 
-        }
-    );
-
-
-    overlay.addEventListener(
-        "click",
-        function () {
-
-            sidebar.classList.remove("open");
-
-            overlay.classList.remove("active");
-
-        }
-    );
-
-
-
-    /* =====================================================
-       DATATABLE
-    ===================================================== */
-
-    const table =
-        new DataTable(
-            "#dukTable",
-            {
-
-                pageLength: 10,
-
-                lengthMenu: [
-                    [5, 10, 25, 50],
-                    [5, 10, 25, 50]
-                ],
-
-                language: {
-
-                    search:
-                        "Cari:",
-
-                    lengthMenu:
-                        "Tampilkan _MENU_ data",
-
-                    info:
-                        "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-
-                    infoEmpty:
-                        "Tidak ada data",
-
-                    zeroRecords:
-                        "Data tidak ditemukan",
-
-                    emptyTable:
-                        "Belum ada data",
-
-                    paginate: {
-
-                        first:
-                            "Awal",
-
-                        last:
-                            "Akhir",
-
-                        next:
-                            "›",
-
-                        previous:
-                            "‹"
-
-                    }
-
-                },
-
-                columnDefs: [
-
-                    {
-                        orderable: false,
-                        searchable: false,
-                        targets: 6
-                    }
-
-                ]
-
+            paginate: {
+                first: 'Awal',
+                last: 'Akhir',
+                next: '›',
+                previous: '‹'
             }
-        );
 
+        },
 
+        columnDefs: [
 
-    /* =====================================================
-       MODAL
-    ===================================================== */
+            {
+                orderable: false,
+                searchable: false,
+                targets: 6
+            }
 
-    const btnTambah =
-        document.getElementById("btnTambah");
+        ]
+
+    });
 
 
     const modalOverlay =
-        document.getElementById("modalOverlay");
-
-
-    const modalClose =
-        document.getElementById("modalClose");
-
-
-    const btnBatal =
-        document.getElementById("btnBatal");
-
-
-    const btnSimpan =
-        document.getElementById("btnSimpan");
-
-
-    const formDUK =
-        document.getElementById("formDUK");
-
+        document.getElementById('modalOverlay');
 
     const modalEditOverlay =
-        document.getElementById("modalEditOverlay");
+        document.getElementById('modalEditOverlay');
+
+    const modalViewOverlay =
+        document.getElementById('modalViewOverlay');
+
+    const btnTambah =
+        document.getElementById('btnTambah');
+
+    const formData =
+        document.getElementById('formData');
+
+    const formEdit =
+        document.getElementById('formEdit');
 
 
-    const modalEditClose =
-        document.getElementById("modalEditClose");
+    let selectedRow = null;
 
 
-    const btnEditBatal =
-        document.getElementById("btnEditBatal");
+    /* =========================
+       UPDATE TOTAL
+    ========================= */
 
+    function updateTotal() {
 
-    const btnEditSimpan =
-        document.getElementById("btnEditSimpan");
+        const info = table.page.info();
 
-
-    const formEditDUK =
-        document.getElementById("formEditDUK");
-
-
-    let selectedEditRow = null;
-
-
-
-    function bukaModal() {
-
-        modalOverlay.classList.add("active");
-
-    }
-
-
-    function tutupModal() {
-
-        modalOverlay.classList.remove("active");
-
-        formDUK.reset();
+        document.getElementById('totalData')
+            .textContent =
+            info.recordsDisplay + ' Data';
 
     }
 
 
-    function tutupModalEdit() {
+    table.on('draw', function () {
 
-        modalEditOverlay.classList.remove("active");
+        updateTotal();
 
-        formEditDUK.reset();
-
-    }
+    });
 
 
-    btnTambah.addEventListener(
-        "click",
-        bukaModal
-    );
+    updateTotal();
 
 
-    modalClose.addEventListener(
-        "click",
-        tutupModal
-    );
+    /* =========================
+       TAMBAH
+    ========================= */
+
+    btnTambah.addEventListener('click', function () {
+
+        formData.reset();
+
+        modalOverlay.classList.add('show');
+
+    });
 
 
-    btnBatal.addEventListener(
-        "click",
-        tutupModal
-    );
+    /* =========================
+       CLOSE MODAL
+    ========================= */
+
+    document
+        .querySelectorAll('[data-close]')
+        .forEach(function (button) {
+
+            button.addEventListener('click', function () {
+
+                const target =
+                    document.getElementById(
+                        button.getAttribute('data-close')
+                    );
+
+                if (target) {
+
+                    target.classList.remove('show');
+
+                }
+
+            });
+
+        });
 
 
-    modalOverlay.addEventListener(
-        "click",
-        function(event) {
+    [
+        modalOverlay,
+        modalEditOverlay,
+        modalViewOverlay
+    ].forEach(function (modal) {
 
-            if (
-                event.target ===
-                modalOverlay
-            ) {
+        modal.addEventListener('click', function (event) {
 
-                tutupModal();
+            if (event.target === modal) {
 
-            }
-
-        }
-    );
-
-
-    modalEditClose.addEventListener(
-        "click",
-        tutupModalEdit
-    );
-
-
-    btnEditBatal.addEventListener(
-        "click",
-        tutupModalEdit
-    );
-
-
-    modalEditOverlay.addEventListener(
-        "click",
-        function(event) {
-
-            if (event.target === modalEditOverlay) {
-
-                tutupModalEdit();
+                modal.classList.remove('show');
 
             }
 
-        }
-    );
+        });
+
+    });
 
 
+    /* =========================
+       ESCAPE
+    ========================= */
 
-    /* =====================================================
-       SIMPAN DATA DUMMY
-    ===================================================== */
+    document.addEventListener('keydown', function (event) {
 
-    btnSimpan.addEventListener(
-        "click",
-        function() {
+        if (event.key === 'Escape') {
 
+            modalOverlay.classList.remove('show');
 
-            if (
-                !formDUK.checkValidity()
-            ) {
+            modalEditOverlay.classList.remove('show');
 
-                formDUK.reportValidity();
-
-                return;
-
-            }
-
-
-            alert(
-                "Data berhasil disimpan.\n\n" +
-                "Pada tahap Laravel, data ini akan " +
-                "disimpan ke database."
-            );
-
-
-            tutupModal();
-
+            modalViewOverlay.classList.remove('show');
 
         }
-    );
+
+    });
 
 
+    /* =========================
+       FORMAT DATE
+    ========================= */
 
-    /* =====================================================
-       VIEW DATA
-    ===================================================== */
+    function formatDate(dateString) {
 
-    function viewData(button) {
+        if (!dateString) return '-';
 
-        const cells = button.closest("tr").cells;
+        const parts =
+            dateString.split('-');
 
-        alert(
-            "Detail Data BMD\n\n" +
-            "Nama Barang: " + cells[0].innerText.trim() + "\n" +
-            "Tipe: " + cells[1].innerText.trim() + "\n" +
-            "Tahun Perolehan: " + cells[2].innerText.trim() + "\n" +
-            "Sumber Dana: " + cells[3].innerText.trim() + "\n" +
-            "Kondisi: " + cells[4].innerText.trim() + "\n" +
-            "Keterangan: " + cells[5].innerText.trim()
+        if (parts.length !== 3) {
+            return dateString;
+        }
+
+        const months = [
+            'Januari',
+            'Februari',
+            'Maret',
+            'April',
+            'Mei',
+            'Juni',
+            'Juli',
+            'Agustus',
+            'September',
+            'Oktober',
+            'November',
+            'Desember'
+        ];
+
+        return (
+            parseInt(parts[2]) +
+            ' ' +
+            months[parseInt(parts[1]) - 1] +
+            ' ' +
+            parts[0]
         );
 
     }
 
 
-    /* =====================================================
-       EDIT DATA
-    ===================================================== */
+    /* =========================
+       DATE TO INPUT
+    ========================= */
 
-    function editData(button) {
+    function convertDateToInput(dateText) {
 
-        selectedEditRow = button.closest("tr");
+        if (!dateText || dateText === '-') {
+            return '';
+        }
 
-        const cells = selectedEditRow.cells;
+        const months = {
+            'Januari': '01',
+            'Februari': '02',
+            'Maret': '03',
+            'April': '04',
+            'Mei': '05',
+            'Juni': '06',
+            'Juli': '07',
+            'Agustus': '08',
+            'September': '09',
+            'Oktober': '10',
+            'November': '11',
+            'Desember': '12'
+        };
 
-        document.getElementById("editNama").value = cells[0].innerText.trim();
-        document.getElementById("editJenis").value = cells[1].innerText.trim();
-        document.getElementById("editNomor").value = cells[2].innerText.trim();
-        document.getElementById("editGolongan").value = cells[3].innerText.trim();
-        document.getElementById("editPangkat").value = cells[4].innerText.trim();
-        document.getElementById("editJabatan").value = cells[5].innerText.trim();
+        const parts =
+            dateText.split(' ');
 
-        modalEditOverlay.classList.add("active");
+        if (parts.length !== 3) {
+            return '';
+        }
+
+        const day =
+            parts[0].padStart(2, '0');
+
+        const month =
+            months[parts[1]];
+
+        const year =
+            parts[2];
+
+        if (!month) {
+            return '';
+        }
+
+        return year + '-' + month + '-' + day;
 
     }
 
 
-    btnEditSimpan.addEventListener(
-        "click",
-        function() {
+    /* =========================
+       GET ROW DATA
+    ========================= */
 
-            if (!formEditDUK.checkValidity()) {
+    function getRowData(row) {
 
-                formEditDUK.reportValidity();
+        const cells =
+            row.querySelectorAll('td');
 
-                return;
+        return {
+
+            jenis:
+                cells[0].innerText.trim(),
+
+            nomor:
+                cells[1].innerText.trim(),
+
+            rw:
+                cells[2].innerText.trim(),
+
+            namaKetua:
+                cells[3].innerText.trim(),
+
+            tanggalMulai:
+                cells[4].innerText.trim(),
+
+            tanggalBerakhir:
+                cells[5].innerText.trim()
+
+        };
+
+    }
+
+
+    /* =========================
+       JENIS CLASS
+    ========================= */
+
+    function getJenisClass(jenis) {
+
+        if (jenis === 'RT') {
+            return 'badge-rt';
+        }
+
+        return 'badge-rw';
+
+    }
+
+
+    /* =========================
+       TABLE ACTION
+    ========================= */
+
+    document
+        .querySelector('#rtRwTable tbody')
+        .addEventListener('click', function (event) {
+
+            const button =
+                event.target.closest('.btn-action');
+
+            if (!button) return;
+
+
+            const row =
+                button.closest('tr');
+
+            if (!row) return;
+
+
+            selectedRow = row;
+
+
+            const data =
+                getRowData(row);
+
+
+            const action =
+                button.getAttribute('data-action');
+
+
+            /* VIEW */
+
+            if (action === 'view') {
+
+                document.getElementById('viewJenis')
+                    .textContent =
+                    data.jenis;
+
+                document.getElementById('viewNomor')
+                    .textContent =
+                    data.nomor;
+
+                document.getElementById('viewRw')
+                    .textContent =
+                    data.rw;
+
+                document.getElementById('viewNamaKetua')
+                    .textContent =
+                    data.namaKetua;
+
+                document.getElementById('viewTanggalMulai')
+                    .textContent =
+                    data.tanggalMulai;
+
+                document.getElementById('viewTanggalBerakhir')
+                    .textContent =
+                    data.tanggalBerakhir;
+
+                modalViewOverlay.classList.add('show');
 
             }
 
+
+            /* EDIT */
+
+            if (action === 'edit') {
+
+                document.getElementById('editJenis')
+                    .value =
+                    data.jenis;
+
+                document.getElementById('editNomor')
+                    .value =
+                    data.nomor;
+
+                document.getElementById('editRw')
+                    .value =
+                    data.rw === '-' ? '' : data.rw;
+
+                document.getElementById('editNamaKetua')
+                    .value =
+                    data.namaKetua;
+
+                document.getElementById('editTanggalMulai')
+                    .value =
+                    convertDateToInput(
+                        data.tanggalMulai
+                    );
+
+                document.getElementById('editTanggalBerakhir')
+                    .value =
+                    convertDateToInput(
+                        data.tanggalBerakhir
+                    );
+
+                modalEditOverlay.classList.add('show');
+
+            }
+
+
+            /* DELETE */
+
+            if (action === 'delete') {
+
+                const confirmDelete =
+                    confirm(
+                        'Apakah Anda yakin ingin menghapus data ' +
+                        data.jenis +
+                        ' ' +
+                        data.nomor +
+                        '?'
+                    );
+
+
+                if (!confirmDelete) return;
+
+
+                table
+                    .row(row)
+                    .remove()
+                    .draw();
+
+
+                updateTotal();
+
+
+                alert(
+                    'Data RT & RW berhasil dihapus.'
+                );
+
+            }
+
+        });
+
+
+    /* =========================
+       FORM TAMBAH
+    ========================= */
+
+    formData.addEventListener('submit', function (event) {
+
+        event.preventDefault();
+
+
+        const jenis =
+            document.getElementById('jenis')
+                .value;
+
+        const nomor =
+            document.getElementById('nomor')
+                .value.trim();
+
+        const rw =
+            document.getElementById('rw')
+                .value;
+
+        const namaKetua =
+            document.getElementById('namaKetua')
+                .value.trim();
+
+        const tanggalMulai =
+            document.getElementById('tanggalMulai')
+                .value;
+
+        const tanggalBerakhir =
+            document.getElementById('tanggalBerakhir')
+                .value;
+
+
+        if (
+            !jenis ||
+            !nomor ||
+            !namaKetua ||
+            !tanggalMulai ||
+            !tanggalBerakhir
+        ) {
+
             alert(
-                "Data BMD berhasil diperbarui.\n\n" +
-                "Nama: " + document.getElementById("editNama").value
+                'Mohon lengkapi seluruh data.'
             );
 
-            const cells = selectedEditRow.cells;
-
-            cells[0].innerText = document.getElementById("editNama").value;
-            cells[1].innerText = document.getElementById("editJenis").value;
-            cells[2].innerText = document.getElementById("editNomor").value;
-            cells[3].innerText = document.getElementById("editGolongan").value;
-            cells[4].innerText = document.getElementById("editPangkat").value;
-            cells[5].innerText = document.getElementById("editJabatan").value;
-
-            tutupModalEdit();
+            return;
 
         }
-    );
 
 
+        if (
+            jenis === 'RT' &&
+            !rw
+        ) {
 
-    /* =====================================================
-       HAPUS DATA
-    ===================================================== */
-
-    function hapusData(button) {
-
-        const row = button.closest("tr");
-        const nama = row.cells[0].innerText.trim();
-
-
-        const konfirmasi =
-            confirm(
-                "Apakah Anda yakin ingin menghapus data:\n\n" +
-                nama +
-                "?"
+            alert(
+                'RW wajib dipilih untuk data RT.'
             );
 
-
-        if (konfirmasi) {
-
-            row.remove();
+            return;
 
         }
 
-    }
 
+        if (
+            tanggalBerakhir < tanggalMulai
+        ) {
 
+            alert(
+                'Tanggal berakhir tidak boleh sebelum tanggal mulai.'
+            );
 
-    /* =====================================================
-       UPDATE TOTAL DATA
-    ===================================================== */
-
-    table.on(
-        "draw",
-        function() {
-
-            const info =
-                table.page.info();
-
-            document.getElementById(
-                "totalData"
-            ).textContent =
-                info.recordsDisplay +
-                " Barang";
+            return;
 
         }
-    );
 
+
+        const jenisClass =
+            getJenisClass(jenis);
+
+
+        const rowData = [
+
+            `<span class="badge ${jenisClass}">${jenis}</span>`,
+
+            `<span class="nomor">${nomor}</span>`,
+
+            `<span class="rw-name">${rw || '-'}</span>`,
+
+            `<span class="leader-name">${namaKetua}</span>`,
+
+            `<span class="date">${formatDate(tanggalMulai)}</span>`,
+
+            `<span class="date">${formatDate(tanggalBerakhir)}</span>`,
+
+            `
+            <div class="action-buttons">
+
+                <button type="button"
+                    class="btn-action btn-view"
+                    title="Lihat"
+                    data-action="view">
+                    👁
+                </button>
+
+                <button type="button"
+                    class="btn-action btn-edit"
+                    title="Edit"
+                    data-action="edit">
+                    ✏
+                </button>
+
+                <button type="button"
+                    class="btn-action btn-delete"
+                    title="Hapus"
+                    data-action="delete">
+                    🗑
+                </button>
+
+            </div>
+            `
+
+        ];
+
+
+        table
+            .row
+            .add(rowData)
+            .draw(false);
+
+
+        formData.reset();
+
+        modalOverlay.classList.remove('show');
+
+        updateTotal();
+
+
+        alert(
+            'Data RT & RW berhasil ditambahkan.'
+        );
+
+    });
+
+
+    /* =========================
+       FORM EDIT
+    ========================= */
+
+    formEdit.addEventListener('submit', function (event) {
+
+        event.preventDefault();
+
+
+        if (!selectedRow) return;
+
+
+        const jenis =
+            document.getElementById('editJenis')
+                .value;
+
+        const nomor =
+            document.getElementById('editNomor')
+                .value.trim();
+
+        const rw =
+            document.getElementById('editRw')
+                .value;
+
+        const namaKetua =
+            document.getElementById('editNamaKetua')
+                .value.trim();
+
+        const tanggalMulai =
+            document.getElementById('editTanggalMulai')
+                .value;
+
+        const tanggalBerakhir =
+            document.getElementById('editTanggalBerakhir')
+                .value;
+
+
+        if (
+            !jenis ||
+            !nomor ||
+            !namaKetua ||
+            !tanggalMulai ||
+            !tanggalBerakhir
+        ) {
+
+            alert(
+                'Mohon lengkapi seluruh data.'
+            );
+
+            return;
+
+        }
+
+
+        if (
+            jenis === 'RT' &&
+            !rw
+        ) {
+
+            alert(
+                'RW wajib dipilih untuk data RT.'
+            );
+
+            return;
+
+        }
+
+
+        if (
+            tanggalBerakhir < tanggalMulai
+        ) {
+
+            alert(
+                'Tanggal berakhir tidak boleh sebelum tanggal mulai.'
+            );
+
+            return;
+
+        }
+
+
+        const jenisClass =
+            getJenisClass(jenis);
+
+
+        const rowData = [
+
+            `<span class="badge ${jenisClass}">${jenis}</span>`,
+
+            `<span class="nomor">${nomor}</span>`,
+
+            `<span class="rw-name">${rw || '-'}</span>`,
+
+            `<span class="leader-name">${namaKetua}</span>`,
+
+            `<span class="date">${formatDate(tanggalMulai)}</span>`,
+
+            `<span class="date">${formatDate(tanggalBerakhir)}</span>`,
+
+            `
+            <div class="action-buttons">
+
+                <button type="button"
+                    class="btn-action btn-view"
+                    title="Lihat"
+                    data-action="view">
+                    👁
+                </button>
+
+                <button type="button"
+                    class="btn-action btn-edit"
+                    title="Edit"
+                    data-action="edit">
+                    ✏
+                </button>
+
+                <button type="button"
+                    class="btn-action btn-delete"
+                    title="Hapus"
+                    data-action="delete">
+                    🗑
+                </button>
+
+            </div>
+            `
+
+        ];
+
+
+        table
+            .row(selectedRow)
+            .data(rowData)
+            .draw(false);
+
+
+        modalEditOverlay.classList.remove('show');
+
+        updateTotal();
+
+
+        alert(
+            'Data RT & RW berhasil diperbarui.'
+        );
+
+
+        selectedRow = null;
+
+    });
+
+});
 
 </script>
 
-
-</body>
-
-</html>
-```
+@endpush

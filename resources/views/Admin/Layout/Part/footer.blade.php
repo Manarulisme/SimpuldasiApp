@@ -1,3 +1,3 @@
 <footer class="dashboard-footer">
-	© 2026 Kelurahan XXXXX · Sistem Informasi Kelurahan
+	© 2026 Kelurahan Cibinong · Sistem Informasi Kelurahan
 </footer>
