@@ -1,10 +1,11 @@
 @extends('Admin.Layout.master')
 
-@section('title', 'Data Stunting - Kelurahan XXXXX')
+@section('title', 'Data Stunting - Kelurahan Binong')
 @section('page_title', 'Data Stunting')
-@section('page_subtitle', 'Kesehatan · Data Stunting')
+@section('page_subtitle', 'Kesejahteraan Sosial · Data Stunting')
 
 @push('styles')
+
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
 
 <style>
@@ -24,6 +25,7 @@
         color: #18364d;
         font-family: Georgia, serif;
         font-size: 26px;
+        margin: 0;
     }
 
     .content-header p,
@@ -31,6 +33,7 @@
         color: var(--muted);
         font-size: 12px;
         margin-top: 6px;
+        margin-bottom: 0;
     }
 
     .btn-add {
@@ -46,10 +49,12 @@
         font-weight: bold;
         cursor: pointer;
         text-decoration: none;
+        white-space: nowrap;
     }
 
     .btn-add:hover {
         background: #065c35;
+        color: white;
     }
 
     .table-panel {
@@ -67,6 +72,7 @@
     .table-panel-header h3 {
         color: #18364d;
         font-size: 16px;
+        margin: 0;
     }
 
     .total-data {
@@ -105,12 +111,90 @@
         vertical-align: middle;
     }
 
+    #stuntingTable tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    /* =========================
+       DATATABLES
+    ========================= */
+
+    #stuntingTable_wrapper {
+        font-size: 12px;
+    }
+
+    #stuntingTable_wrapper .dt-layout-row {
+        margin: 12px 0;
+    }
+
+    #stuntingTable_wrapper .dt-length,
+    #stuntingTable_wrapper .dt-search {
+        color: #52616b;
+        font-size: 12px;
+    }
+
+    #stuntingTable_wrapper .dt-length select,
+    #stuntingTable_wrapper .dt-search input {
+        border: 1px solid #dfe5e8;
+        border-radius: 6px;
+        background: white;
+        color: #52616b;
+        font-size: 12px;
+        padding: 7px 9px;
+        outline: none;
+    }
+
+    #stuntingTable_wrapper .dt-length select {
+        margin: 0 5px;
+    }
+
+    #stuntingTable_wrapper .dt-search input {
+        margin-left: 7px;
+        width: 200px;
+    }
+
+    #stuntingTable_wrapper .dt-length select:focus,
+    #stuntingTable_wrapper .dt-search input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(8, 116, 67, 0.08);
+    }
+
+    #stuntingTable_wrapper .dt-info {
+        color: #7a858d;
+        font-size: 11px;
+    }
+
+    #stuntingTable_wrapper .dt-paging-button {
+        border: 1px solid #dfe5e8 !important;
+        border-radius: 6px !important;
+        background: white !important;
+        color: #52616b !important;
+        font-size: 11px !important;
+    }
+
+    #stuntingTable_wrapper .dt-paging-button:hover {
+        background: var(--primary-light) !important;
+        color: var(--primary) !important;
+        border-color: var(--primary) !important;
+    }
+
+    #stuntingTable_wrapper .dt-paging-button.current {
+        background: var(--primary) !important;
+        color: white !important;
+        border-color: var(--primary) !important;
+    }
+
+    /* =========================
+       BADGE
+    ========================= */
+
     .badge {
         display: inline-block;
         padding: 5px 9px;
         border-radius: 5px;
         font-size: 10px;
         font-weight: 600;
+        white-space: nowrap;
     }
 
     .badge-normal {
@@ -133,6 +217,15 @@
         color: #58636a;
     }
 
+    .badge-default {
+        background: #f1f3f4;
+        color: #58636a;
+    }
+
+    /* =========================
+       CHILD DATA
+    ========================= */
+
     .child-name {
         color: #18364d;
         font-weight: 600;
@@ -143,6 +236,51 @@
         font-size: 10px;
         margin-top: 3px;
     }
+
+    .nik {
+        color: #52616b;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .birth-date {
+        color: #52616b;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .age {
+        color: #18364d;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    /* =========================
+       TERAKHIR PERUBAHAN
+    ========================= */
+
+    .last-update {
+        min-width: 125px;
+        line-height: 1.5;
+    }
+
+    .last-update-date {
+        color: #52616b;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .last-update-time {
+        color: #8a969d;
+        font-size: 10px;
+        margin-top: 2px;
+        white-space: nowrap;
+    }
+
+    /* =========================
+       ACTION
+    ========================= */
 
     .action-buttons {
         display: flex;
@@ -156,9 +294,29 @@
         border-radius: 6px;
         background: white;
         cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-size: 15px;
+        padding: 0;
+    }
+
+    .action-view {
+        color: #2d6a9f;
+    }
+
+    .action-view:hover {
+        background: #edf5fb;
+        color: #2d6a9f;
     }
 
     .action-edit {
+        color: var(--primary);
+    }
+
+    .action-edit:hover {
+        background: var(--primary-light);
         color: var(--primary);
     }
 
@@ -166,339 +324,523 @@
         color: #c0392b;
     }
 
+    .action-delete:hover {
+        background: #fff0ee;
+        color: #c0392b;
+    }
+
+    .delete-form {
+        display: inline;
+        margin: 0;
+        padding: 0;
+    }
+
+    .delete-form button {
+        font-family: inherit;
+    }
+
+    /* =========================
+       ALERT
+    ========================= */
+
+    .alert-success,
+    .alert-error {
+        margin-bottom: 20px;
+        padding: 12px 15px;
+        border-radius: 7px;
+        font-size: 12px;
+    }
+
+    .alert-success {
+        background: #eaf5ef;
+        color: #087443;
+        border: 1px solid #cce7d9;
+    }
+
+    .alert-error {
+        background: #fff0ee;
+        color: #c0392b;
+        border: 1px solid #f3d0cc;
+    }
+
+    /* =========================
+       EMPTY
+    ========================= */
+
+    .empty-state {
+        text-align: center;
+        padding: 30px !important;
+        color: #8a969d;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
     @media (max-width: 700px) {
+
         .content-header {
             align-items: flex-start;
             flex-direction: column;
         }
+
+        .content-header h2 {
+            font-size: 23px;
+        }
+
+        .btn-add {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .table-panel-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        #stuntingTable_wrapper .dt-layout-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        #stuntingTable_wrapper .dt-search {
+            width: 100%;
+        }
+
+        #stuntingTable_wrapper .dt-search input {
+            width: 100%;
+            margin-left: 5px;
+        }
     }
 </style>
-@endpush
 
+@endpush
 
 @section('content')
 
-<div class="content-header">
-    <div>
-        <h2>Data Stunting</h2>
-        <p>Kelola data balita dan anak yang berkaitan dengan kondisi stunting Kelurahan XXXXX.</p>
-    </div>
+@if(session('success'))
 
-    <a href="{{ url('/tambah-data-stunting') }}" class="btn-add">
-        + Tambah Data
-    </a>
+
+<div class="alert-success">
+    {{ session('success') }}
 </div>
 
 
+@endif
+
+@if(session('error'))
+
+
+<div class="alert-error">
+    {{ session('error') }}
+</div>
+
+
+@endif
+
+@if(session('warning'))
+
+
+<div class="alert-error">
+    {{ session('warning') }}
+</div>
+
+
+@endif
+
+<div class="content-header">
+
+
+<div>
+
+    <h2>
+        Data Stunting
+    </h2>
+
+    <p>
+        Kelola data balita dan anak terkait kondisi stunting Kelurahan Binong.
+    </p>
+
+</div>
+
+
+<a
+    href="{{ route('datastunting.create') }}"
+    class="btn-add"
+>
+    + Tambah Data
+</a>
+
+
+</div>
+
 <section class="table-panel">
 
-    <div class="table-panel-header">
-        <div>
-            <h3>Daftar Data Stunting</h3>
-            <p>Data balita dan anak Kelurahan XXXXX</p>
-        </div>
 
-        <span class="total-data" id="totalData">
-            5 Data
-        </span>
-    </div>
+<div class="table-panel-header">
 
+    <div>
 
-    <div class="table-wrapper">
+        <h3>
+            Daftar Data Stunting
+        </h3>
 
-        <table id="stuntingTable" class="display">
-
-            <thead>
-                <tr>
-                    <th>NIK</th>
-                    <th>Nama Anak</th>
-                    <th>Tanggal Lahir</th>
-                    <th>Usia</th>
-                    <th>Jenis Kelamin</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-                <tr>
-                    <td>3214011205200001</td>
-
-                    <td>
-                        <div class="child-name">
-                            Ahmad Fauzan
-                        </div>
-                        <div class="child-id">
-                            Data 001
-                        </div>
-                    </td>
-
-                    <td>12 Mei 2020</td>
-
-                    <td>6 Tahun</td>
-
-                    <td>
-                        <span class="badge badge-gender">
-                            Laki-laki
-                        </span>
-                    </td>
-
-                    <td>
-                        <span class="badge badge-stunting">
-                            Stunting
-                        </span>
-                    </td>
-
-                    <td>
-                        <div class="action-buttons">
-
-                            <button
-                                class="action-btn action-edit"
-                                onclick="editData(this)"
-                                title="Ubah">
-                                ✎
-                            </button>
-
-                            <button
-                                class="action-btn action-delete"
-                                onclick="hapusData(this)"
-                                title="Hapus">
-                                ×
-                            </button>
-
-                        </div>
-                    </td>
-                </tr>
-
-
-                <tr>
-                    <td>3214012308210002</td>
-
-                    <td>
-                        <div class="child-name">
-                            Siti Aisyah
-                        </div>
-                        <div class="child-id">
-                            Data 002
-                        </div>
-                    </td>
-
-                    <td>23 Agustus 2021</td>
-
-                    <td>5 Tahun</td>
-
-                    <td>
-                        <span class="badge badge-gender">
-                            Perempuan
-                        </span>
-                    </td>
-
-                    <td>
-                        <span class="badge badge-normal">
-                            Normal
-                        </span>
-                    </td>
-
-                    <td>
-                        <div class="action-buttons">
-
-                            <button
-                                class="action-btn action-edit"
-                                onclick="editData(this)"
-                                title="Ubah">
-                                ✎
-                            </button>
-
-                            <button
-                                class="action-btn action-delete"
-                                onclick="hapusData(this)"
-                                title="Hapus">
-                                ×
-                            </button>
-
-                        </div>
-                    </td>
-                </tr>
-
-
-                <tr>
-                    <td>3214011501220003</td>
-
-                    <td>
-                        <div class="child-name">
-                            Bima Pratama
-                        </div>
-                        <div class="child-id">
-                            Data 003
-                        </div>
-                    </td>
-
-                    <td>15 Januari 2022</td>
-
-                    <td>4 Tahun</td>
-
-                    <td>
-                        <span class="badge badge-gender">
-                            Laki-laki
-                        </span>
-                    </td>
-
-                    <td>
-                        <span class="badge badge-risk">
-                            Berisiko
-                        </span>
-                    </td>
-
-                    <td>
-                        <div class="action-buttons">
-
-                            <button
-                                class="action-btn action-edit"
-                                onclick="editData(this)"
-                                title="Ubah">
-                                ✎
-                            </button>
-
-                            <button
-                                class="action-btn action-delete"
-                                onclick="hapusData(this)"
-                                title="Hapus">
-                                ×
-                            </button>
-
-                        </div>
-                    </td>
-                </tr>
-
-
-                <tr>
-                    <td>3214012803230004</td>
-
-                    <td>
-                        <div class="child-name">
-                            Nabila Putri
-                        </div>
-                        <div class="child-id">
-                            Data 004
-                        </div>
-                    </td>
-
-                    <td>28 Maret 2023</td>
-
-                    <td>3 Tahun</td>
-
-                    <td>
-                        <span class="badge badge-gender">
-                            Perempuan
-                        </span>
-                    </td>
-
-                    <td>
-                        <span class="badge badge-stunting">
-                            Stunting
-                        </span>
-                    </td>
-
-                    <td>
-                        <div class="action-buttons">
-
-                            <button
-                                class="action-btn action-edit"
-                                onclick="editData(this)"
-                                title="Ubah">
-                                ✎
-                            </button>
-
-                            <button
-                                class="action-btn action-delete"
-                                onclick="hapusData(this)"
-                                title="Hapus">
-                                ×
-                            </button>
-
-                        </div>
-                    </td>
-                </tr>
-
-
-                <tr>
-                    <td>3214010509240005</td>
-
-                    <td>
-                        <div class="child-name">
-                            Rizky Ramadhan
-                        </div>
-                        <div class="child-id">
-                            Data 005
-                        </div>
-                    </td>
-
-                    <td>05 September 2024</td>
-
-                    <td>2 Tahun</td>
-
-                    <td>
-                        <span class="badge badge-gender">
-                            Laki-laki
-                        </span>
-                    </td>
-
-                    <td>
-                        <span class="badge badge-normal">
-                            Normal
-                        </span>
-                    </td>
-
-                    <td>
-                        <div class="action-buttons">
-
-                            <button
-                                class="action-btn action-edit"
-                                onclick="editData(this)"
-                                title="Ubah">
-                                ✎
-                            </button>
-
-                            <button
-                                class="action-btn action-delete"
-                                onclick="hapusData(this)"
-                                title="Hapus">
-                                ×
-                            </button>
-
-                        </div>
-                    </td>
-                </tr>
-
-            </tbody>
-
-        </table>
+        <p>
+            Data balita dan anak Kelurahan Binong
+        </p>
 
     </div>
+
+
+    <span
+        class="total-data"
+        id="totalData"
+    >
+        {{ $dataStunting->count() }} Data
+    </span>
+
+</div>
+
+
+<div class="table-wrapper">
+
+    <table
+        id="stuntingTable"
+        class="display"
+    >
+
+        <thead>
+
+            <tr>
+
+                <th>NIK</th>
+
+                <th>Nama Anak</th>
+
+                <th>Tanggal Lahir</th>
+
+                <th>Usia</th>
+
+                <th>Jenis Kelamin</th>
+
+                <th>Status</th>
+
+                <th>Terakhir Perubahan</th>
+
+                <th>Aksi</th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            @forelse ($dataStunting as $item)
+
+                <tr>
+
+                    {{-- NIK --}}
+
+                    <td>
+
+                        <div class="nik">
+                            {{ $item->nik ?: '-' }}
+                        </div>
+
+                    </td>
+
+
+                    {{-- NAMA ANAK --}}
+
+                    <td>
+
+                        <div class="child-name">
+                            {{ $item->nama }}
+                        </div>
+
+                        <div class="child-id">
+                            ID {{ $item->id }}
+                        </div>
+
+                    </td>
+
+
+                    {{-- TANGGAL LAHIR --}}
+
+                    <td>
+
+                        @if ($item->tanggal_lahir)
+
+                            <div class="birth-date">
+                                {{ $item->tanggal_lahir->locale('id')->translatedFormat('d M Y') }}
+                            </div>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- USIA --}}
+
+                    <td>
+
+                        @if ($item->tanggal_lahir)
+
+                            <div class="age">
+
+                                {{ $item->tanggal_lahir->age }}
+
+                                {{ $item->tanggal_lahir->age == 1 ? 'Tahun' : 'Tahun' }}
+
+                            </div>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- JENIS KELAMIN --}}
+
+                    <td>
+
+                        @if ($item->jenis_kelamin === 'Laki-laki')
+
+                            <span class="badge badge-gender">
+                                Laki-laki
+                            </span>
+
+                        @elseif ($item->jenis_kelamin === 'Perempuan')
+
+                            <span class="badge badge-gender">
+                                Perempuan
+                            </span>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                {{ $item->jenis_kelamin ?: '-' }}
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- STATUS --}}
+
+                    <td>
+
+                        @if ($item->status === 'Stunting')
+
+                            <span class="badge badge-stunting">
+                                Stunting
+                            </span>
+
+                        @elseif ($item->status === 'Berisiko')
+
+                            <span class="badge badge-risk">
+                                Berisiko
+                            </span>
+
+                        @elseif ($item->status === 'Normal')
+
+                            <span class="badge badge-normal">
+                                Normal
+                            </span>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                {{ $item->status ?: '-' }}
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- TERAKHIR PERUBAHAN --}}
+
+                    <td>
+
+                        @if ($item->updated_at)
+
+                            <div
+                                class="last-update"
+                                data-order="{{ $item->updated_at->timestamp }}"
+                            >
+
+                                <div class="last-update-date">
+                                    {{ $item->updated_at->locale('id')->translatedFormat('d M Y') }}
+                                </div>
+
+                                <div class="last-update-time">
+                                    {{ $item->updated_at->format('H:i') }} WIB
+                                </div>
+
+                            </div>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- AKSI --}}
+
+                    <td>
+
+                        <div class="action-buttons">
+
+                            <a
+                                href="{{ route('datastunting.show', $item->id) }}"
+                                class="action-btn action-view"
+                                title="Lihat Detail"
+                                aria-label="Lihat Detail"
+                            >
+                                ◉
+                            </a>
+
+
+                            <a
+                                href="{{ route('datastunting.edit', $item->id) }}"
+                                class="action-btn action-edit"
+                                title="Ubah Data"
+                                aria-label="Ubah Data"
+                            >
+                                ✎
+                            </a>
+
+
+                            <form
+                                action="{{ route('datastunting.destroy', $item->id) }}"
+                                method="POST"
+                                class="delete-form"
+                                onsubmit="return confirm('Yakin ingin menghapus data stunting ini? Data yang dihapus hanya akan dihapus dari sistem lokal.')"
+                            >
+
+                                @csrf
+
+                                @method('DELETE')
+
+                                <button
+                                    type="submit"
+                                    class="action-btn action-delete"
+                                    title="Hapus Data"
+                                    aria-label="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+
+            @empty
+
+                <tr>
+
+                    <td
+                        colspan="8"
+                        class="empty-state"
+                    >
+                        Belum ada data stunting.
+
+                    </td>
+
+                </tr>
+
+            @endforelse
+
+        </tbody>
+
+    </table>
+
+</div>
+
 
 </section>
 
 @endsection
 
-
 @push('scripts')
 
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 
 <script>
 
     const stuntingTable = new DataTable('#stuntingTable', {
+
         pageLength: 10,
 
+        lengthMenu: [
+            [10, 25, 50, 100],
+            [10, 25, 50, 100]
+        ],
+
+        language: {
+
+            lengthMenu: 'Tampilkan _MENU_ data',
+
+            search: 'Cari:',
+
+            searchPlaceholder: 'Cari data stunting...',
+
+            info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+
+            infoEmpty: 'Tidak ada data',
+
+            infoFiltered: '(difilter dari _MAX_ total data)',
+
+            zeroRecords: 'Data tidak ditemukan',
+
+            paginate: {
+                first: '«',
+                last: '»',
+                next: '›',
+                previous: '‹'
+            }
+
+        },
+
+        order: [],
+
         columnDefs: [
+
             {
                 orderable: false,
                 searchable: false,
-                targets: 6
+                targets: 7
             }
+
         ]
+
     });
 
 
@@ -508,30 +850,6 @@
             stuntingTable.page.info().recordsDisplay + ' Data';
 
     });
-
-
-    function editData(button) {
-
-        window.location.href =
-            '{{ url('/edit-data-stunting') }}';
-
-    }
-
-
-    function hapusData(button) {
-
-        if (confirm('Hapus data stunting ini?')) {
-
-            button.closest('tr').remove();
-
-            stuntingTable
-                .row(button.closest('tr'))
-                .remove()
-                .draw(false);
-
-        }
-
-    }
 
 </script>
 

@@ -1,1030 +1,664 @@
-```html
 @php
-    $isEdit = false;
-    $kpmValue = fn (string $key, mixed $default = '') => old($key, data_get($kpm ?? null, $key, $default));
+$isEdit = $isEdit ?? false;
+
+
+$kpmValue = fn (string $key, mixed $default = '') =>
+    old($key, data_get($kpm ?? null, $key, $default));
+
+
 @endphp
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Data KPM / Bantuan Sosial - Kelurahan XXXXX</title>
 
-    <style>
-        :root {
-            --primary: #087443;
-            --primary-dark: #065c35;
-            --primary-light: #eaf5ef;
-            --sidebar: #102f47;
-            --sidebar-hover: #173c58;
-            --text: #263238;
-            --muted: #7a858d;
-            --border: #e7ebee;
-            --background: #f5f7f8;
-            --white: #ffffff;
-            --danger: #c0392b;
-        }
+@extends('Admin.Layout.master')
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+@section(
+'title',
+($isEdit ? 'Edit Data KPM / Bantuan Sosial' : 'Tambah Data KPM / Bantuan Sosial')
+. ' - Kelurahan Binong'
+)
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: var(--background);
-            color: var(--text);
-        }
+@section(
+'page_title',
+$isEdit ? 'Edit Data KPM / Bantuan Sosial' : 'Tambah Data KPM / Bantuan Sosial'
+)
 
-        /* =========================
-           SIDEBAR
-        ========================= */
+@section(
+'page_subtitle',
+'Kesejahteraan Sosial · KPM / Bantuan Sosial'
+)
 
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 270px;
-            height: 100vh;
-            background: var(--sidebar);
-            color: white;
-            z-index: 1000;
-            overflow-y: auto;
-        }
+@push('styles')
 
-        .brand {
-            padding: 25px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            text-align: center;
-        }
+<style>
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 22px;
+        font-size: 11px;
+        color: var(--muted);
+    }
 
-        .logo {
-            width: 58px;
-            height: 58px;
-            margin: 0 auto 12px;
-            border-radius: 50%;
-            background: white;
-            color: var(--sidebar);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
+    .breadcrumb a {
+        color: var(--primary);
+        text-decoration: none;
+    }
 
-        .brand h2 {
-            font-size: 17px;
-            margin-bottom: 5px;
-        }
+    .breadcrumb span {
+        color: #b0b7bc;
+    }
 
-        .brand p {
-            font-size: 10px;
-            color: #b9c7d1;
-            letter-spacing: 1px;
-        }
+    .page-title-block {
+        margin-bottom: 25px;
+    }
 
-        .menu {
-            padding: 15px 10px 30px;
-        }
+    .page-title-block h2 {
+        color: #18364d;
+        font-family: Georgia, serif;
+        font-size: 26px;
+        margin: 0;
+    }
 
-        .menu-title {
-            padding: 12px 15px 7px;
-            font-size: 10px;
-            text-transform: uppercase;
-            color: #7f96a7;
-            letter-spacing: 1px;
-        }
+    .page-title-block p {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 6px;
+    }
 
-        .menu a {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            padding: 11px 15px;
-            margin-bottom: 3px;
-            border-radius: 7px;
-            text-decoration: none;
-            color: #d9e2e8;
-            font-size: 13px;
-            transition: 0.2s;
-        }
+    .form-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+    }
 
-        .menu a:hover {
-            background: var(--sidebar-hover);
-            color: white;
-        }
+    .form-header {
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--border);
+    }
 
-        .menu a.active {
-            background: var(--primary);
-            color: white;
-            font-weight: bold;
-        }
+    .form-header h3 {
+        color: #18364d;
+        font-size: 16px;
+        margin: 0;
+    }
 
-        .menu-icon {
-            width: 20px;
-            text-align: center;
-            font-size: 16px;
-        }
+    .form-header p {
+        color: var(--muted);
+        font-size: 11px;
+        margin-top: 5px;
+    }
 
-        .submenu a {
-            padding-left: 46px;
-            font-size: 12px;
-        }
+    .form-body {
+        padding: 25px 22px;
+    }
 
-        /* =========================
-           MAIN
-        ========================= */
+    .form-section {
+        margin-bottom: 30px;
+    }
 
-        .main {
-            margin-left: 270px;
-            min-height: 100vh;
-        }
+    .form-section:last-child {
+        margin-bottom: 0;
+    }
 
-        /* =========================
-           TOPBAR
-        ========================= */
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #18364d;
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
 
-        .topbar {
-            height: 82px;
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
-            position: sticky;
-            top: 0;
-            z-index: 500;
-        }
+    .section-number {
+        width: 27px;
+        height: 27px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
 
-        .page-heading h1 {
-            font-family: Georgia, serif;
-            font-size: 24px;
-            color: var(--sidebar);
-            margin-bottom: 4px;
-        }
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 20px;
+    }
 
-        .page-heading p {
-            font-size: 12px;
-            color: var(--muted);
-        }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+    }
 
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
+    .form-group.full-width {
+        grid-column: 1 / -1;
+    }
 
-        .notification {
-            width: 38px;
-            height: 38px;
-            border: 1px solid var(--border);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            background: white;
-            cursor: pointer;
-        }
+    .form-label {
+        color: #52616b;
+        font-size: 11px;
+        font-weight: 600;
+    }
 
-        .user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .required {
+        color: #c0392b;
+    }
 
-        .avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #dfe4e7;
+        border-radius: 7px;
+        background: #fff;
+        color: #263238;
+        padding: 11px 12px;
+        font-family: inherit;
+        font-size: 12px;
+        outline: none;
+        transition: border-color .2s, box-shadow .2s;
+    }
 
-        .user-info strong {
-            display: block;
-            font-size: 13px;
-        }
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(8, 116, 67, .08);
+    }
 
-        .user-info span {
-            display: block;
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 2px;
-        }
+    textarea.form-control {
+        min-height: 100px;
+        resize: vertical;
+        line-height: 1.6;
+    }
 
-        /* =========================
-           CONTENT
-        ========================= */
+    select.form-control {
+        cursor: pointer;
+    }
 
-        .content {
-            padding: 30px;
-            max-width: 1250px;
-        }
+    .form-help {
+        color: #9aa4aa;
+        font-size: 10px;
+        line-height: 1.5;
+    }
 
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--muted);
-            font-size: 12px;
-            margin-bottom: 18px;
-        }
+    .error-message {
+        color: #c0392b;
+        font-size: 10px;
+        margin-top: -2px;
+    }
 
-        .breadcrumb a {
-            color: var(--primary);
-            text-decoration: none;
-        }
+    .info-box {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        background: var(--primary-light);
+        border: 1px solid #d6ebdf;
+        border-radius: 7px;
+        padding: 13px 14px;
+        margin-top: 22px;
+    }
 
-        .page-title {
-            margin-bottom: 25px;
-        }
+    .info-icon {
+        color: var(--primary);
+        font-size: 14px;
+        line-height: 1;
+    }
 
-        .page-title h2 {
-            font-family: Georgia, serif;
-            font-size: 27px;
-            color: var(--sidebar);
-            margin-bottom: 7px;
-        }
+    .info-box p {
+        color: #426154;
+        font-size: 10px;
+        line-height: 1.6;
+        margin: 0;
+    }
 
-        .page-title p {
-            font-size: 13px;
-            color: var(--muted);
-        }
+    .form-footer {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        padding: 18px 22px;
+        background: #fafbfb;
+        border-top: 1px solid var(--border);
+    }
 
-        /* =========================
-           FORM CARD
-        ========================= */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        min-width: 110px;
+        padding: 10px 16px;
+        border-radius: 7px;
+        font-size: 11px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: .2s;
+    }
 
-        .form-card {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
+    .btn-secondary {
+        color: #52616b;
+        background: white;
+        border: 1px solid #dfe4e7;
+    }
 
-        .form-header {
-            padding: 22px 25px;
-            border-bottom: 1px solid var(--border);
-            background: #fbfcfc;
-        }
+    .btn-secondary:hover {
+        background: #f5f7f8;
+    }
 
-        .form-header h3 {
-            font-size: 17px;
-            color: var(--sidebar);
-            margin-bottom: 5px;
-        }
+    .btn-primary {
+        color: white;
+        background: var(--primary);
+        border: 1px solid var(--primary);
+    }
 
-        .form-header p {
-            font-size: 12px;
-            color: var(--muted);
-        }
+    .btn-primary:hover {
+        background: #065c35;
+        border-color: #065c35;
+    }
 
-        .form-body {
-            padding: 28px 25px;
-        }
-
-        .form-section {
-            margin-bottom: 30px;
-        }
-
-        .form-section:last-child {
-            margin-bottom: 0;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            color: var(--sidebar);
-            font-weight: bold;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .section-number {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
+    @media (max-width: 700px) {
 
         .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px 25px;
+            grid-template-columns: 1fr;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
+        .form-group.full-width {
+            grid-column: auto;
         }
-
-        .form-group.full {
-            grid-column: 1 / -1;
-        }
-
-        .form-group label {
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
-        .required {
-            color: var(--danger);
-        }
-
-        .form-control {
-            width: 100%;
-            height: 43px;
-            border: 1px solid #dce2e5;
-            border-radius: 7px;
-            padding: 0 13px;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 13px;
-            color: var(--text);
-            background: white;
-            outline: none;
-            transition: 0.2s;
-        }
-
-        textarea.form-control {
-            height: 100px;
-            padding: 12px 13px;
-            resize: vertical;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(8,116,67,0.08);
-        }
-
-        .form-control::placeholder {
-            color: #aab2b7;
-        }
-
-        select.form-control {
-            cursor: pointer;
-        }
-
-        .form-help {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 6px;
-        }
-
-        /* =========================
-           INFO BOX
-        ========================= */
-
-        .info-box {
-            margin-top: 25px;
-            padding: 14px 16px;
-            background: var(--primary-light);
-            border: 1px solid #d7ecdf;
-            border-radius: 8px;
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-        }
-
-        .info-icon {
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .info-box p {
-            font-size: 12px;
-            line-height: 1.6;
-            color: #416052;
-        }
-
-        /* =========================
-           FORM FOOTER
-        ========================= */
 
         .form-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            border-top: 1px solid var(--border);
-            background: #fbfcfc;
-        }
-
-        .required-note {
-            font-size: 11px;
-            color: var(--muted);
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 10px;
+            flex-direction: column-reverse;
         }
 
         .btn {
-            height: 42px;
-            padding: 0 20px;
-            border-radius: 7px;
-            border: none;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
+            width: 100%;
         }
 
-        .btn-secondary {
-            background: white;
-            color: var(--text);
-            border: 1px solid #dce2e5;
-        }
+    }
+</style>
 
-        .btn-secondary:hover {
-            background: #f2f4f5;
-        }
+@endpush
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
+@section('content')
 
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
+<div class="breadcrumb">
 
-        /* =========================
-           FOOTER
-        ========================= */
 
-        .footer {
-            padding: 25px 30px;
-            margin-top: 15px;
-            font-size: 11px;
-            color: var(--muted);
-            border-top: 1px solid var(--border);
-        }
+<a href="{{ route('dashboard') }}">
+    Beranda
+</a>
 
-        /* =========================
-           MOBILE
-        ========================= */
+<span>›</span>
 
-        .mobile-menu {
-            display: none;
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--border);
-            background: white;
-            border-radius: 7px;
-            font-size: 20px;
-            cursor: pointer;
-        }
+<a href="{{ route('datakpm.index') }}">
+    Data KPM / Bantuan Sosial
+</a>
 
-        .overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-            z-index: 900;
-        }
+<span>›</span>
 
-        @media (max-width: 1100px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
+<span>
+    {{ $isEdit ? 'Edit Data' : 'Tambah Data' }}
+</span>
 
-            .form-group.full {
-                grid-column: auto;
-            }
-        }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: 0.3s;
-            }
+</div>
 
-            .sidebar.open {
-                transform: translateX(0);
-            }
+<div class="page-title-block">
 
-            .overlay.show {
-                display: block;
-            }
 
-            .main {
-                margin-left: 0;
-            }
+<h2>
+    {{ $isEdit ? 'Edit Data KPM / Bantuan Sosial' : 'Tambah Data KPM / Bantuan Sosial' }}
+</h2>
 
-            .mobile-menu {
-                display: block;
-            }
+<p>
+    {{ $isEdit
+        ? 'Perbarui informasi penerima bantuan sosial Kelurahan Binong.'
+        : 'Tambahkan data penerima bantuan sosial Kelurahan Binong.'
+    }}
+</p>
 
-            .topbar {
-                padding: 0 18px;
-            }
 
-            .page-heading {
-                display: none;
-            }
+</div>
 
-            .content {
-                padding: 20px 18px;
-            }
+<section class="form-card">
 
-            .topbar-right {
-                margin-left: auto;
-            }
 
-            .user-info {
-                display: none;
-            }
+<div class="form-header">
 
-            .form-body {
-                padding: 22px 18px;
-            }
+    <h3>
+        {{ $isEdit ? 'Form Edit Data KPM' : 'Form Data KPM' }}
+    </h3>
 
-            .form-header {
-                padding: 20px 18px;
-            }
+    <p>
+        Lengkapi informasi penerima bantuan sosial dengan data yang sesuai.
+    </p>
 
-            .form-footer {
-                padding: 18px;
-                flex-direction: column;
-                align-items: stretch;
-                gap: 15px;
-            }
+</div>
 
-            .form-actions {
-                width: 100%;
-            }
+<form
+    action="{{ $isEdit
+        ? route('datakpm.update', $kpm->id)
+        : route('datakpm.store')
+    }}"
+    method="POST"
+>
 
-            .form-actions .btn {
-                flex: 1;
-            }
-        }
+    @csrf
 
-        @media (max-width: 480px) {
-            .content {
-                padding: 18px 14px;
-            }
+    @if ($isEdit)
+        @method('PUT')
+    @endif
 
-            .page-title h2 {
-                font-size: 23px;
-            }
+    <div class="form-body">
 
-            .topbar {
-                height: 70px;
-            }
+        {{-- ========================================= --}}
+        {{-- 1. IDENTITAS KPM --}}
+        {{-- ========================================= --}}
 
-            .notification {
-                display: none;
-            }
+        <div class="form-section">
 
-            .form-actions {
-                flex-direction: column-reverse;
-            }
+            <div class="section-title">
 
-            .form-actions .btn {
-                width: 100%;
-            }
-        }
-    </style>
-</head>
+                <span class="section-number">
+                    1
+                </span>
 
-<body>
+                Identitas KPM
 
-    <!-- OVERLAY -->
-    <div class="overlay" id="overlay"></div>
+            </div>
 
-    <!-- =========================
-         SIDEBAR
-    ========================== -->
-    <aside class="sidebar" id="sidebar">
+            <div class="form-grid">
 
-        <div class="brand">
-            <div class="logo">LOGO</div>
-            <h2>Kelurahan XXXXX</h2>
-            <p>SISTEM INFORMASI KELURAHAN</p>
+                <div class="form-group">
+
+                    <label class="form-label">
+                        ID Data KPM
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="id_data"
+                        class="form-control"
+                        value="{{ $kpmValue('id_data') }}"
+                        placeholder="Contoh: KPM-001"
+                        required
+                    >
+
+                    <span class="form-help">
+                        ID unik untuk membedakan setiap data KPM.
+                    </span>
+
+                    @error('id_data')
+                        <span class="error-message">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
+                </div>
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        NIK
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="nik"
+                        class="form-control"
+                        value="{{ $kpmValue('nik') }}"
+                        placeholder="Masukkan NIK"
+                        maxlength="20"
+                        required
+                    >
+
+                    <span class="form-help">
+                        Masukkan NIK sesuai dokumen kependudukan.
+                    </span>
+
+                    @error('nik')
+                        <span class="error-message">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
+                </div>
+
+                <div class="form-group full-width">
+
+                    <label class="form-label">
+                        Nama KPM
+                        <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="nama"
+                        class="form-control"
+                        value="{{ $kpmValue('nama') }}"
+                        placeholder="Masukkan nama lengkap penerima bantuan"
+                        required
+                    >
+
+                    @error('nama')
+                        <span class="error-message">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
+                </div>
+
+                <div class="form-group">
+
+                    <label class="form-label">
+                        Alamat RW
+                    </label>
+
+                    <input
+                        type="text"
+                        name="rw"
+                        class="form-control"
+                        value="{{ $kpmValue('rw') }}"
+                        placeholder="Contoh: 05"
+                        maxlength="10"
+                    >
+
+                    <span class="form-help">
+                        Isi nomor RW tempat tinggal KPM.
+                    </span>
+
+                    @error('rw')
+                        <span class="error-message">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
+                </div>
+
+            </div>
+
         </div>
 
-        <nav class="menu">
+        {{-- ========================================= --}}
+        {{-- 2. DATA BANTUAN SOSIAL --}}
+        {{-- ========================================= --}}
 
-            <div class="menu-title">Menu Utama</div>
+        <div class="form-section">
 
-            <a href="dashboard.html">
-                <span class="menu-icon">⌂</span>
-                <span>Beranda</span>
-            </a>
+            <div class="section-title">
 
-            <div class="menu-title">Kesekretariatan</div>
+                <span class="section-number">
+                    2
+                </span>
 
-            <div class="submenu">
-                <a href="duk.html" class="active">
-                    <span class="menu-icon">👤</span>
-                    <span>Data Umum Kepegawaian</span>
-                </a>
+                Data Bantuan Sosial
 
-                <a href="#">
-                    <span class="menu-icon">▣</span>
-                    <span>Data BMD</span>
-                </a>
             </div>
 
-            <div class="menu-title">Kesejahteraan Sosial</div>
+            <div class="form-grid">
 
-            <div class="submenu">
-                <a href="#">
-                    <span class="menu-icon">♙</span>
-                    <span>Posyandu & Posbindu</span>
-                </a>
+                <div class="form-group">
 
-                <a href="#">
-                    <span class="menu-icon">♥</span>
-                    <span>Data Stunting</span>
-                </a>
+                    <label class="form-label">
+                        Jenis Bantuan
+                        <span class="required">*</span>
+                    </label>
 
-                <a href="#">
-                    <span class="menu-icon">♧</span>
-                    <span>KPM / Bantuan Sosial</span>
-                </a>
+                    <select
+                        name="jenis_bantuan"
+                        class="form-control"
+                        required
+                    >
 
-                <a href="#">
-                    <span class="menu-icon">🎓</span>
-                    <span>Anak Putus Sekolah</span>
-                </a>
+                        <option value="">
+                            Pilih jenis bantuan
+                        </option>
 
-                <a href="#">
-                    <span class="menu-icon">▤</span>
-                    <span>Data Sekolah</span>
-                </a>
-            </div>
+                        <option
+                            value="PKH"
+                            {{ $kpmValue('jenis_bantuan') === 'PKH' ? 'selected' : '' }}
+                        >
+                            PKH
+                        </option>
 
-            <div class="menu-title">Ekonomi & Pembangunan</div>
+                        <option
+                            value="BPNT"
+                            {{ $kpmValue('jenis_bantuan') === 'BPNT' ? 'selected' : '' }}
+                        >
+                            BPNT
+                        </option>
 
-            <div class="submenu">
-                <a href="#">
-                    <span class="menu-icon">◉</span>
-                    <span>Data UMKM</span>
-                </a>
+                        <option
+                            value="Bantuan Pangan"
+                            {{ $kpmValue('jenis_bantuan') === 'Bantuan Pangan' ? 'selected' : '' }}
+                        >
+                            Bantuan Pangan
+                        </option>
 
-                <a href="#">
-                    <span class="menu-icon">⌂</span>
-                    <span>Data Rutillahu</span>
-                </a>
+                        <option
+                            value="Bantuan Sosial Lainnya"
+                            {{ $kpmValue('jenis_bantuan') === 'Bantuan Sosial Lainnya' ? 'selected' : '' }}
+                        >
+                            Bantuan Sosial Lainnya
+                        </option>
 
-                <a href="#">
-                    <span class="menu-icon">♧</span>
-                    <span>Data Buruan Sae</span>
-                </a>
+                    </select>
 
-                <a href="#">
-                    <span class="menu-icon">♣</span>
-                    <span>Data Pohon</span>
-                </a>
+                    @error('jenis_bantuan')
+                        <span class="error-message">
+                            {{ $message }}
+                        </span>
+                    @enderror
 
-                <a href="#">
-                    <span class="menu-icon">▦</span>
-                    <span>Fasilitas Umum & Sosial</span>
-                </a>
-            </div>
-
-            <div class="menu-title">Pemerintahan</div>
-
-            <div class="submenu">
-                <a href="#">
-                    <span class="menu-icon">▤</span>
-                    <span>Laporan Kependudukan</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">⚑</span>
-                    <span>Linmas & Siskamling</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">♟</span>
-                    <span>Data RT/RW & Periode</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">▣</span>
-                    <span>Data PKL</span>
-                </a>
-            </div>
-
-            <div class="menu-title">Sistem</div>
-
-            <a href="#">
-                <span class="menu-icon">⚙</span>
-                <span>Pengaturan</span>
-            </a>
-
-            <a href="login.html">
-                <span class="menu-icon">↪</span>
-                <span>Keluar</span>
-            </a>
-
-        </nav>
-    </aside>
-
-
-    <!-- =========================
-         MAIN
-    ========================== -->
-    <main class="main">
-
-        <!-- TOPBAR -->
-        <header class="topbar">
-
-            <button class="mobile-menu" id="mobileMenu">☰</button>
-
-            <div class="page-heading">
-                <h1>Tambah Data KPM / Bantuan Sosial</h1>
-                <p>Kesejahteraan Sosial · KPM / Bantuan Sosial · Tambah Data</p>
-            </div>
-
-            <div class="topbar-right">
-
-                <div class="notification">
-                    ♧
                 </div>
 
-                <div class="user">
-                    <div class="avatar">A</div>
+                <div class="form-group">
 
-                    <div class="user-info">
-                        <strong>Administrator</strong>
-                        <span>Admin Kelurahan</span>
-                    </div>
+                    <label class="form-label">
+                        Desil
+                    </label>
+
+                    <select
+                        name="desil"
+                        class="form-control"
+                    >
+
+                        <option value="">
+                            Pilih desil
+                        </option>
+
+                        @for ($i = 1; $i <= 10; $i++)
+
+                            <option
+                                value="{{ $i }}"
+                                {{ (string) $kpmValue('desil') === (string) $i ? 'selected' : '' }}
+                            >
+                                Desil {{ $i }}
+                            </option>
+
+                        @endfor
+
+                    </select>
+
+                    <span class="form-help">
+                        Pilih desil sesuai data kesejahteraan yang tersedia.
+                    </span>
+
+                    @error('desil')
+                        <span class="error-message">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
+                </div>
+
+                <div class="form-group full-width">
+
+                    <label class="form-label">
+                        Keterangan
+                    </label>
+
+                    <textarea
+                        name="keterangan"
+                        class="form-control"
+                        placeholder="Tambahkan keterangan jika diperlukan..."
+                    >{{ $kpmValue('keterangan') }}</textarea>
+
+                    @error('keterangan')
+                        <span class="error-message">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
                 </div>
 
             </div>
 
-        </header>
+        </div>
 
+        <div class="info-box">
 
-        <!-- CONTENT -->
-        <section class="content">
-
-            <!-- BREADCRUMB -->
-            <div class="breadcrumb">
-                <a href="dashboard.html">Beranda</a>
-                <span>›</span>
-                <a href="{{ url('/datakpm') }}">KPM / Bantuan Sosial</a>
-                <span>›</span>
-                <span>{{ $isEdit ? 'Edit Data' : 'Tambah Data' }}</span>
+            <div class="info-icon">
+                ●
             </div>
 
+            <p>
+                Data KPM akan disimpan ke database Kelurahan Binong.
+                Data yang telah tersimpan dapat diperbarui melalui menu Ubah Data.
+            </p>
 
-            <!-- PAGE TITLE -->
-            <div class="page-title">
-                <h2>Tambah Data KPM / Bantuan Sosial</h2>
-                <p>Tambahkan data penerima bantuan sosial Kelurahan XXXXX.</p>
-            </div>
+        </div>
 
+    </div>
 
-            <!-- FORM CARD -->
-            <div class="form-card">
+    <div class="form-footer">
 
-                <div class="form-header">
-                    <h3>Form Data KPM / Bantuan Sosial</h3>
-                    <p>Silakan lengkapi informasi penerima bantuan pada kolom yang tersedia.</p>
-                </div>
+        <a
+            href="{{ route('datakpm.index') }}"
+            class="btn btn-secondary"
+        >
+            Batal
+        </a>
 
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+            {{ $isEdit ? 'Perbarui Data' : 'Simpan Data' }}
+        </button>
 
-                <form id="kpmForm" method="POST" action="{{ url()->current() }}">
-                    @csrf
-                    @if ($isEdit)
-                        @method('PUT')
-                    @endif
+    </div>
 
-                    <div class="form-body">
+</form>
 
-                        <!-- IDENTITAS KPM -->
-                        <div class="form-section">
 
-                            <div class="section-title">
-                                <span class="section-number">1</span>
-                                Identitas KPM
-                            </div>
+</section>
 
-                            <div class="form-grid">
-
-                                <div class="form-group">
-                                    <label for="nama_kpm">
-                                        Nama KPM <span class="required">*</span>
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        id="nama_kpm"
-                                        name="nama_kpm"
-                                        class="form-control"
-                                        placeholder="Nama lengkap KPM"
-                                        value="{{ $kpmValue('nama_kpm') }}"
-                                        required
-                                    >
-                                </div>
-
-
-                                <div class="form-group">
-                                    <label for="nik">
-                                        NIK <span class="required">*</span>
-                                    </label>
-
-                                    <input type="text" id="nik" name="nik" class="form-control" placeholder="Masukkan NIK" value="{{ $kpmValue('nik') }}" required>
-                                </div>
-
-
-                                <div class="form-group full">
-                                    <label for="alamat_rw">
-                                        Alamat RW <span class="required">*</span>
-                                    </label>
-
-                                    <input
-                                        type="number"
-                                        id="alamat_rw"
-                                        name="alamat_rw"
-                                        class="form-control"
-                                        placeholder="Contoh: RW 05"
-                                        value="{{ $kpmValue('alamat_rw') }}"
-                                        required
-                                    >
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- DATA PENGELOLAAN -->
-                        <div class="form-section">
-
-                            <div class="section-title">
-                                <span class="section-number">2</span>
-                                Detail Bantuan
-                            </div>
-
-                            <div class="form-grid">
-
-                                <div class="form-group">
-                                    <label for="jenis_bantuan">
-                                        Jenis Bantuan <span class="required">*</span>
-                                    </label>
-
-                                    <select id="jenis_bantuan" name="jenis_bantuan" class="form-control" required>
-                                        <option value="">Pilih Jenis Bantuan</option>
-                                        <option value="PKH" @selected($kpmValue('jenis_bantuan') === 'PKH')>PKH</option>
-                                        <option value="BPNT" @selected($kpmValue('jenis_bantuan') === 'BPNT')>BPNT</option>
-                                        <option value="Bantuan Pangan" @selected($kpmValue('jenis_bantuan') === 'Bantuan Pangan')>Bantuan Pangan</option>
-                                    </select>
-                                </div>
-
-
-                                <div class="form-group">
-                                    <label for="desil">
-                                        Desil <span class="required">*</span>
-                                    </label>
-
-                                    <input type="text" id="desil" name="desil" class="form-control" placeholder="Contoh: Desil 2" value="{{ $kpmValue('desil') }}" required>
-                                </div>
-
-
-                                <div class="form-group full">
-                                    <label for="keterangan">
-                                        Keterangan
-                                    </label>
-
-                                    <textarea
-                                        id="keterangan"
-                                        name="keterangan"
-                                        class="form-control"
-                                        placeholder="Tambahkan keterangan bantuan jika diperlukan..."
-                                    >{{ $kpmValue('keterangan') }}</textarea>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- INFO -->
-                        <div class="info-box">
-
-                            <div class="info-icon">i</div>
-
-                            <p>
-                                Pastikan data KPM yang dimasukkan sudah benar sebelum menyimpan.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- FORM FOOTER -->
-                    <div class="form-footer">
-
-                        <div class="required-note">
-                            <span class="required">*</span> Wajib diisi
-                        </div>
-
-                        <div class="form-actions">
-
-                            <a href="{{ url('/datakpm') }}" class="btn btn-secondary">
-                                Batal
-                            </a>
-
-                            <button type="submit" class="btn btn-primary">
-                                {{ $isEdit ? 'Perbarui Data' : 'Simpan Data' }}
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </form>
-
-            </div>
-
-
-            <!-- FOOTER -->
-            <footer class="footer">
-                © 2026 Sistem Informasi Kelurahan XXXXX · Semua hak dilindungi.
-            </footer>
-
-        </section>
-
-    </main>
-
-
-    <script>
-
-        /* =========================
-           MOBILE SIDEBAR
-        ========================== */
-
-        const mobileMenu = document.getElementById('mobileMenu');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-
-        mobileMenu.addEventListener('click', function () {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        });
-
-        overlay.addEventListener('click', function () {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('show');
-        });
-
-
-        @if (!$isEdit)
-            const form = document.getElementById('kpmForm');
-
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
-
-                const namaKpm = document.getElementById('nama_kpm').value;
-
-                alert(
-                    'Data KPM berhasil disimpan!\\n\\n' +
-                    'Nama KPM: ' + namaKpm
-                );
-
-                window.location.href = '{{ url('/datakpm') }}';
-            });
-        @endif
-
-    </script>
-
-</body>
-</html>
-```
+@endsection

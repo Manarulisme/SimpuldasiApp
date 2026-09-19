@@ -4,17 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\DataUmumKepegawaian;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class DataUmumKepegawaianController extends Controller
 {
     /**
-     * Menampilkan semua data pegawai
+     * Menampilkan seluruh data pegawai
      */
     public function index()
     {
-        $pegawai = DataUmumKepegawaian::latest()->get();
+        $pegawai = DataUmumKepegawaian::orderBy('updated_at', 'desc')->get();
 
         return view(
             'Admin.Konten.Data_umum_pegawai.index',
@@ -24,40 +23,87 @@ class DataUmumKepegawaianController extends Controller
 
 
     /**
-     * Form tambah
+     * Menampilkan form tambah data
      */
     public function create()
     {
+        $pegawai = null;
         $isEdit = false;
 
         return view(
             'Admin.Konten.Data_umum_pegawai.tambah',
-            compact('isEdit')
+            compact('pegawai', 'isEdit')
         );
     }
 
 
     /**
-     * Simpan data baru
+     * Menyimpan data pegawai baru
      */
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'jenis' => ['required', 'in:ASN,PPPK,Non-ASN'],
-            'nomor' => ['required', 'string', 'max:100'],
-            'nama' => ['required', 'string', 'max:150'],
-            'golongan' => ['required', 'string', 'max:20'],
-            'pangkat' => ['required', 'string', 'max:100'],
-            'jabatan' => ['required', 'string', 'max:150'],
-            'keterangan' => ['nullable', 'string'],
+            'jenis' => [
+                'required',
+                'in:ASN,PPPK,Non-ASN'
+            ],
+
+            'nomor' => [
+                'required',
+                'string',
+                'max:100'
+            ],
+
+            'nama' => [
+                'required',
+                'string',
+                'max:150'
+            ],
+
+            'golongan' => [
+                'required',
+                'string',
+                'max:20'
+            ],
+
+            'pangkat' => [
+                'required',
+                'string',
+                'max:100'
+            ],
+
+            'jabatan' => [
+                'required',
+                'string',
+                'max:150'
+            ],
+
+            'keterangan' => [
+                'nullable',
+                'string'
+            ],
         ], [
-            'jenis.required' => 'Jenis pegawai wajib dipilih.',
-            'jenis.in' => 'Jenis pegawai tidak valid.',
-            'nomor.required' => 'NIP / NRP / TT wajib diisi.',
-            'nama.required' => 'Nama lengkap wajib diisi.',
-            'golongan.required' => 'Golongan wajib dipilih.',
-            'pangkat.required' => 'Pangkat wajib diisi.',
-            'jabatan.required' => 'Jabatan wajib diisi.',
+
+            'jenis.required' =>
+                'Jenis pegawai wajib dipilih.',
+
+            'jenis.in' =>
+                'Jenis pegawai tidak valid.',
+
+            'nomor.required' =>
+                'NIP / NRP / TT wajib diisi.',
+
+            'nama.required' =>
+                'Nama lengkap wajib diisi.',
+
+            'golongan.required' =>
+                'Golongan wajib dipilih.',
+
+            'pangkat.required' =>
+                'Pangkat wajib diisi.',
+
+            'jabatan.required' =>
+                'Jabatan wajib diisi.',
         ]);
 
 
@@ -68,9 +114,23 @@ class DataUmumKepegawaianController extends Controller
         */
 
         $pegawai = DataUmumKepegawaian::create([
-            ...$validated,
+
+            'jenis' => $validated['jenis'],
+
+            'nomor' => $validated['nomor'],
+
+            'nama' => $validated['nama'],
+
+            'golongan' => $validated['golongan'],
+
+            'pangkat' => $validated['pangkat'],
+
+            'jabatan' => $validated['jabatan'],
+
+            'keterangan' => $validated['keterangan'] ?? null,
 
             'google_sync_status' => 'pending',
+
             'google_synced_at' => null,
         ]);
 
@@ -81,7 +141,10 @@ class DataUmumKepegawaianController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $berhasilSync = $this->sendToGoogleSheets([
+        $sync = $this->sendToGoogleSheets([
+
+            'module' => 'Data Umum Kepegawaian',
+
             'action' => 'create',
 
             'id' => $pegawai->id,
@@ -100,10 +163,9 @@ class DataUmumKepegawaianController extends Controller
 
             'keterangan' => $pegawai->keterangan,
 
-            // Gunakan updated_at
             'updated_at' => $pegawai->updated_at
-                ? $pegawai->updated_at->format('Y-m-d H:i:s')
-                : now()->format('Y-m-d H:i:s'),
+                ? $pegawai->updated_at->format('d/m/Y H:i:s')
+                : now()->format('d/m/Y H:i:s'),
         ]);
 
 
@@ -113,33 +175,58 @@ class DataUmumKepegawaianController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if ($berhasilSync) {
+        if ($sync) {
 
             $pegawai->update([
+
                 'google_sync_status' => 'synced',
+
                 'google_synced_at' => now(),
             ]);
 
-        } else {
 
-            $pegawai->update([
-                'google_sync_status' => 'failed',
-                'google_synced_at' => null,
-            ]);
+            return redirect()
+                ->route('dataumumpegawai.index')
+                ->with(
+                    'success',
+                    'Data pegawai berhasil ditambahkan dan disinkronkan ke Google Sheets.'
+                );
         }
+
+
+        $pegawai->update([
+
+            'google_sync_status' => 'failed',
+
+            'google_synced_at' => null,
+        ]);
 
 
         return redirect()
             ->route('dataumumpegawai.index')
             ->with(
-                'success',
-                'Data pegawai berhasil disimpan.'
+                'warning',
+                'Data pegawai berhasil disimpan, tetapi gagal disinkronkan ke Google Sheets.'
             );
     }
 
 
     /**
-     * Form edit
+     * Menampilkan detail data pegawai
+     */
+    public function show(DataUmumKepegawaian $dataumumpegawai)
+    {
+        $pegawai = $dataumumpegawai;
+
+        return view(
+            'Admin.Konten.Data_umum_pegawai.show',
+            compact('pegawai')
+        );
+    }
+
+
+    /**
+     * Menampilkan form edit
      */
     public function edit(DataUmumKepegawaian $dataumumpegawai)
     {
@@ -158,28 +245,74 @@ class DataUmumKepegawaianController extends Controller
 
 
     /**
-     * Update data
+     * Memperbarui data pegawai
      */
     public function update(
         Request $request,
         DataUmumKepegawaian $dataumumpegawai
     ) {
         $validated = $request->validate([
-            'jenis' => ['required', 'in:ASN,PPPK,Non-ASN'],
-            'nomor' => ['required', 'string', 'max:100'],
-            'nama' => ['required', 'string', 'max:150'],
-            'golongan' => ['required', 'string', 'max:20'],
-            'pangkat' => ['required', 'string', 'max:100'],
-            'jabatan' => ['required', 'string', 'max:150'],
-            'keterangan' => ['nullable', 'string'],
+            'jenis' => [
+                'required',
+                'in:ASN,PPPK,Non-ASN'
+            ],
+
+            'nomor' => [
+                'required',
+                'string',
+                'max:100'
+            ],
+
+            'nama' => [
+                'required',
+                'string',
+                'max:150'
+            ],
+
+            'golongan' => [
+                'required',
+                'string',
+                'max:20'
+            ],
+
+            'pangkat' => [
+                'required',
+                'string',
+                'max:100'
+            ],
+
+            'jabatan' => [
+                'required',
+                'string',
+                'max:150'
+            ],
+
+            'keterangan' => [
+                'nullable',
+                'string'
+            ],
         ], [
-            'jenis.required' => 'Jenis pegawai wajib dipilih.',
-            'jenis.in' => 'Jenis pegawai tidak valid.',
-            'nomor.required' => 'NIP / NRP / TT wajib diisi.',
-            'nama.required' => 'Nama lengkap wajib diisi.',
-            'golongan.required' => 'Golongan wajib dipilih.',
-            'pangkat.required' => 'Pangkat wajib diisi.',
-            'jabatan.required' => 'Jabatan wajib diisi.',
+
+            'jenis.required' =>
+                'Jenis pegawai wajib dipilih.',
+
+            'jenis.in' =>
+                'Jenis pegawai tidak valid.',
+
+            'nomor.required' =>
+                'NIP / NRP / TT wajib diisi.',
+
+            'nama.required' =>
+                'Nama lengkap wajib diisi.',
+
+            'golongan.required' =>
+                'Golongan wajib dipilih.',
+
+            'pangkat.required' =>
+                'Pangkat wajib diisi.',
+
+            'jabatan.required' =>
+                'Jabatan wajib diisi.',
         ]);
 
 
@@ -191,7 +324,19 @@ class DataUmumKepegawaianController extends Controller
 
         $dataumumpegawai->update([
 
-            ...$validated,
+            'jenis' => $validated['jenis'],
+
+            'nomor' => $validated['nomor'],
+
+            'nama' => $validated['nama'],
+
+            'golongan' => $validated['golongan'],
+
+            'pangkat' => $validated['pangkat'],
+
+            'jabatan' => $validated['jabatan'],
+
+            'keterangan' => $validated['keterangan'] ?? null,
 
             'google_sync_status' => 'pending',
 
@@ -218,7 +363,10 @@ class DataUmumKepegawaianController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $berhasilSync = $this->sendToGoogleSheets([
+        $sync = $this->sendToGoogleSheets([
+
+            'module' => 'Data Umum Kepegawaian',
+
             'action' => 'update',
 
             'id' => $dataumumpegawai->id,
@@ -238,8 +386,8 @@ class DataUmumKepegawaianController extends Controller
             'keterangan' => $dataumumpegawai->keterangan,
 
             'updated_at' => $dataumumpegawai->updated_at
-                ? $dataumumpegawai->updated_at->format('Y-m-d H:i:s')
-                : now()->format('Y-m-d H:i:s'),
+                ? $dataumumpegawai->updated_at->format('d/m/Y H:i:s')
+                : now()->format('d/m/Y H:i:s'),
         ]);
 
 
@@ -249,114 +397,122 @@ class DataUmumKepegawaianController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if ($berhasilSync) {
+        if ($sync) {
 
             $dataumumpegawai->update([
+
                 'google_sync_status' => 'synced',
 
                 'google_synced_at' => now(),
             ]);
 
-        } else {
-
-            $dataumumpegawai->update([
-                'google_sync_status' => 'failed',
-
-                'google_synced_at' => null,
-            ]);
-        }
-
-
-        return redirect()
-            ->route('dataumumpegawai.index')
-            ->with(
-                'success',
-                'Data pegawai berhasil diperbarui.'
-            );
-    }
-
-
-    /**
-     * Hapus data
-     */
-    public function destroy(
-        DataUmumKepegawaian $dataumumpegawai
-    ) {
-        $id = $dataumumpegawai->id;
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | 1. HAPUS DARI GOOGLE SHEETS
-        |--------------------------------------------------------------------------
-        |
-        | Kita hapus Google terlebih dahulu.
-        | Kalau Google gagal, data MySQL tidak langsung hilang.
-        |
-        */
-
-        $berhasilSync = $this->sendToGoogleSheets([
-            'action' => 'delete',
-
-            'id' => $id,
-        ]);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | 2. JIKA GOOGLE BERHASIL, HAPUS DATABASE
-        |--------------------------------------------------------------------------
-        */
-
-        if ($berhasilSync) {
-
-            $dataumumpegawai->delete();
 
             return redirect()
                 ->route('dataumumpegawai.index')
                 ->with(
                     'success',
-                    'Data pegawai berhasil dihapus.'
+                    'Data pegawai berhasil diperbarui dan disinkronkan ke Google Sheets.'
                 );
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | 3. JIKA GOOGLE GAGAL
-        |--------------------------------------------------------------------------
-        */
+        $dataumumpegawai->update([
+
+            'google_sync_status' => 'failed',
+
+            'google_synced_at' => null,
+        ]);
+
 
         return redirect()
             ->route('dataumumpegawai.index')
             ->with(
-                'error',
-                'Data gagal dihapus karena sinkronisasi dengan Google Sheets gagal.'
+                'warning',
+                'Data pegawai berhasil diperbarui, tetapi gagal disinkronkan ke Google Sheets.'
             );
     }
 
 
     /**
-     * Komunikasi dengan Google Apps Script
+     * Menghapus data pegawai
+     *
+     * CATATAN:
+     * Delete hanya dilakukan pada database lokal.
+     * Tidak ada sinkronisasi delete ke Google Sheets.
      */
-private function sendToGoogleSheets(array $data): bool
-{
-    $url = env('GOOGLE_SHEETS_WEBHOOK_URL');
+    public function destroy(DataUmumKepegawaian $dataumumpegawai)
+    {
+        $dataumumpegawai->delete();
 
-    if (!$url) {
-        Log::error('GOOGLE_SHEETS_WEBHOOK_URL belum dikonfigurasi.');
-
-        return false;
+        return redirect()
+            ->route('dataumumpegawai.index')
+            ->with(
+                'success',
+                'Data pegawai berhasil dihapus.'
+            );
     }
 
-    try {
 
-        $payload = json_encode(
+    /**
+     * Mengirim data ke Google Apps Script
+     */
+    private function sendToGoogleSheets(array $data): bool
+    {
+        $url = env('GOOGLE_SHEETS_WEBHOOK_URL');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CEK WEBHOOK
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$url) {
+
+            Log::error(
+                'GOOGLE_SHEETS_WEBHOOK_URL tidak ditemukan di .env'
+            );
+
+            return false;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | ENCODE JSON
+        |--------------------------------------------------------------------------
+        */
+
+        $jsonData = json_encode(
             $data,
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
         );
 
+
+        if ($jsonData === false) {
+
+            Log::error(
+                'Gagal encode JSON Google Sheets Data Umum Kepegawaian',
+                [
+                    'data' => $data,
+
+                    'json_error' =>
+                        json_last_error_msg(),
+                ]
+            );
+
+            return false;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CURL REQUEST
+        |--------------------------------------------------------------------------
+        */
+
         $ch = curl_init($url);
+
 
         curl_setopt_array($ch, [
 
@@ -364,51 +520,108 @@ private function sendToGoogleSheets(array $data): bool
 
             CURLOPT_POST => true,
 
-            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_POSTFIELDS => $jsonData,
 
             CURLOPT_HTTPHEADER => [
+
                 'Content-Type: application/json',
+
                 'Accept: application/json',
+
+                'Content-Length: ' . strlen($jsonData),
             ],
 
-            // Maksimal waktu koneksi
             CURLOPT_CONNECTTIMEOUT => 10,
 
-            // Maksimal request
-            CURLOPT_TIMEOUT => 25,
+            CURLOPT_TIMEOUT => 30,
 
-            // JANGAN ikuti redirect Google Apps Script
+            /*
+             * Jangan mengikuti redirect otomatis.
+             * Google Apps Script biasanya memberikan
+             * response redirect setelah menerima POST.
+             */
+
             CURLOPT_FOLLOWLOCATION => false,
 
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_HTTP_VERSION =>
+                CURL_HTTP_VERSION_1_1,
+
+            CURLOPT_HEADER => true,
         ]);
 
-        $response = curl_exec($ch);
 
-        $curlError = curl_error($ch);
-        $curlErrno = curl_errno($ch);
+        $rawResponse = curl_exec($ch);
+
 
         $httpCode = curl_getinfo(
             $ch,
             CURLINFO_HTTP_CODE
         );
 
+
         $redirectUrl = curl_getinfo(
             $ch,
             CURLINFO_REDIRECT_URL
         );
 
+
+        $curlErrno = curl_errno($ch);
+
+
+        $curlError = curl_error($ch);
+
+
+        $headerSize = curl_getinfo(
+            $ch,
+            CURLINFO_HEADER_SIZE
+        );
+
+
+        $responseHeaders = '';
+
+        $responseBody = '';
+
+
+        if ($rawResponse !== false) {
+
+            $responseHeaders = substr(
+                $rawResponse,
+                0,
+                $headerSize
+            );
+
+            $responseBody = substr(
+                $rawResponse,
+                $headerSize
+            );
+        }
+
+
         curl_close($ch);
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | LOG RESPONSE AWAL
+        |--------------------------------------------------------------------------
+        */
+
         Log::info(
-            'Response Google Sheets',
+            'Response Google Sheets Data Umum Kepegawaian - Initial',
             [
+
                 'http_code' => $httpCode,
+
                 'curl_errno' => $curlErrno,
+
                 'curl_error' => $curlError,
+
                 'redirect_url' => $redirectUrl,
-                'response' => $response,
+
+                'response_headers' => $responseHeaders,
+
+                'response_body' => $responseBody,
+
                 'data' => $data,
             ]
         );
@@ -420,13 +633,34 @@ private function sendToGoogleSheets(array $data): bool
         |--------------------------------------------------------------------------
         */
 
-        if ($response === false) {
+        if ($rawResponse === false) {
 
             Log::error(
-                'cURL Google Sheets gagal',
+                'cURL Google Sheets Data Umum Kepegawaian gagal',
                 [
+
                     'curl_errno' => $curlErrno,
+
                     'curl_error' => $curlError,
+
+                    'data' => $data,
+                ]
+            );
+
+            return false;
+        }
+
+
+        if ($curlErrno !== 0) {
+
+            Log::error(
+                'cURL Google Sheets Data Umum Kepegawaian error',
+                [
+
+                    'curl_errno' => $curlErrno,
+
+                    'curl_error' => $curlError,
+
                     'data' => $data,
                 ]
             );
@@ -437,51 +671,152 @@ private function sendToGoogleSheets(array $data): bool
 
         /*
         |--------------------------------------------------------------------------
-        | RESPONSE NORMAL
+        | JIKA GOOGLE MEMBERIKAN REDIRECT
         |--------------------------------------------------------------------------
-        */
-
-        $result = json_decode(
-            $response,
-            true
-        );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | GOOGLE APPS SCRIPT BERHASIL
-        |--------------------------------------------------------------------------
-        |
-        | Apps Script dapat mengembalikan HTTP 200
-        | atau redirect 302 setelah POST diproses.
-        |
         */
 
         if (
-            is_array($result) &&
-            isset($result['success'])
+            (
+                $httpCode === 301 ||
+                $httpCode === 302 ||
+                $httpCode === 303
+            )
+            &&
+            $redirectUrl
         ) {
 
-            if ($result['success'] === true) {
+            $redirectUrl = trim(
+                $redirectUrl
+            );
 
-                Log::info(
-                    'Google Sheets berhasil disinkronkan.',
-                    [
-                        'response' => $result,
-                        'data' => $data,
-                    ]
-                );
+
+            /*
+            |--------------------------------------------------------------------------
+            | REQUEST KE URL REDIRECT
+            |--------------------------------------------------------------------------
+            */
+
+            $ch = curl_init(
+                $redirectUrl
+            );
+
+
+            curl_setopt_array($ch, [
+
+                CURLOPT_RETURNTRANSFER => true,
+
+                CURLOPT_HTTPGET => true,
+
+                CURLOPT_HTTPHEADER => [
+
+                    'Accept: application/json',
+                ],
+
+                CURLOPT_CONNECTTIMEOUT => 10,
+
+                CURLOPT_TIMEOUT => 30,
+
+                CURLOPT_FOLLOWLOCATION => false,
+
+                CURLOPT_HTTP_VERSION =>
+                    CURL_HTTP_VERSION_1_1,
+            ]);
+
+
+            $finalResponse = curl_exec($ch);
+
+
+            $finalHttpCode = curl_getinfo(
+                $ch,
+                CURLINFO_HTTP_CODE
+            );
+
+
+            $finalCurlErrno = curl_errno(
+                $ch
+            );
+
+
+            $finalCurlError = curl_error(
+                $ch
+            );
+
+
+            curl_close($ch);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | LOG RESPONSE REDIRECT
+            |--------------------------------------------------------------------------
+            */
+
+            Log::info(
+                'Response Google Sheets Data Umum Kepegawaian - Redirect',
+                [
+
+                    'http_code' =>
+                        $finalHttpCode,
+
+                    'curl_errno' =>
+                        $finalCurlErrno,
+
+                    'curl_error' =>
+                        $finalCurlError,
+
+                    'response' =>
+                        $finalResponse,
+
+                    'data' =>
+                        $data,
+                ]
+            );
+
+
+            if (
+                $finalResponse === false ||
+                $finalCurlErrno !== 0
+            ) {
+
+                return false;
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | CEK JSON RESPONSE
+            |--------------------------------------------------------------------------
+            */
+
+            $decoded = json_decode(
+                $finalResponse,
+                true
+            );
+
+
+            if (
+                is_array($decoded) &&
+                isset($decoded['success'])
+            ) {
+
+                return (bool) $decoded['success'];
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | HTTP 2xx DIANGGAP BERHASIL
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                $finalHttpCode >= 200 &&
+                $finalHttpCode < 300
+            ) {
 
                 return true;
             }
 
-            Log::error(
-                'Google Apps Script mengembalikan success=false.',
-                [
-                    'response' => $result,
-                    'data' => $data,
-                ]
-            );
 
             return false;
         }
@@ -489,25 +824,35 @@ private function sendToGoogleSheets(array $data): bool
 
         /*
         |--------------------------------------------------------------------------
-        | HTTP 302
+        | RESPONSE JSON NORMAL
         |--------------------------------------------------------------------------
-        |
-        | Untuk Apps Script, redirect berarti POST sudah
-        | diterima dan diproses, tetapi Google mengarahkan
-        | browser/client ke URL hasil.
-        |
         */
 
-        if ($httpCode === 302 || $httpCode === 301) {
+        $decoded = json_decode(
+            $responseBody,
+            true
+        );
 
-            Log::info(
-                'Google Apps Script mengembalikan redirect setelah POST.',
-                [
-                    'http_code' => $httpCode,
-                    'redirect_url' => $redirectUrl,
-                    'data' => $data,
-                ]
-            );
+
+        if (
+            is_array($decoded) &&
+            isset($decoded['success'])
+        ) {
+
+            return (bool) $decoded['success'];
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HTTP 2xx
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $httpCode >= 200 &&
+            $httpCode < 300
+        ) {
 
             return true;
         }
@@ -519,37 +864,19 @@ private function sendToGoogleSheets(array $data): bool
         |--------------------------------------------------------------------------
         */
 
-        if ($httpCode < 200 || $httpCode >= 300) {
-
-            Log::error(
-                'Google Sheets HTTP error',
-                [
-                    'http_code' => $httpCode,
-                    'response' => $response,
-                    'data' => $data,
-                ]
-            );
-
-            return false;
-        }
-
-
-        return true;
-
-
-    } catch (\Throwable $e) {
-
         Log::error(
-            'Gagal menghubungi Google Sheets',
+            'Google Sheets Data Umum Kepegawaian HTTP error',
             [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
+
+                'http_code' => $httpCode,
+
+                'response' => $responseBody,
+
                 'data' => $data,
             ]
         );
 
+
         return false;
     }
-}
 }

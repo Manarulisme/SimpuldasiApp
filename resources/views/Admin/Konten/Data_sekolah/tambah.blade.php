@@ -1,1022 +1,825 @@
-```html
+@extends('Admin.Layout.master')
+
 @php
-    $isEdit = $isEdit ?? false;
-    $sekolahValue = fn (string $key, mixed $default = '') => old($key, data_get($sekolah ?? null, $key, $default));
+$isEdit = $isEdit ?? false;
+
+
+$sekolahValue = fn (
+    string $key,
+    mixed $default = ''
+) => old(
+    $key,
+    data_get($sekolah ?? null, $key, $default)
+);
+
+
 @endphp
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Data Sekolah - Kelurahan XXXXX</title>
 
-    <style>
-        :root {
-            --primary: #087443;
-            --primary-dark: #065c35;
-            --primary-light: #eaf5ef;
-            --sidebar: #102f47;
-            --sidebar-hover: #173c58;
-            --text: #263238;
-            --muted: #7a858d;
-            --border: #e7ebee;
-            --background: #f5f7f8;
-            --white: #ffffff;
-            --danger: #c0392b;
-        }
+@section('title', $isEdit ? 'Edit Data Sekolah - Kelurahan Binong' : 'Tambah Data Sekolah - Kelurahan Binong')
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+@section('page_title', $isEdit ? 'Edit Data Sekolah' : 'Tambah Data Sekolah')
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: var(--background);
-            color: var(--text);
-        }
+@section('page_subtitle', 'Kesejahteraan Sosial · Data Sekolah · ' . ($isEdit ? 'Edit Data' : 'Tambah Data'))
 
-        /* =========================
-           SIDEBAR
-        ========================= */
+@push('styles')
 
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 270px;
-            height: 100vh;
-            background: var(--sidebar);
-            color: white;
-            z-index: 1000;
-            overflow-y: auto;
-        }
+<style>
 
-        .brand {
-            padding: 25px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            text-align: center;
-        }
+    /* =========================
+       BREADCRUMB
+    ========================== */
 
-        .logo {
-            width: 58px;
-            height: 58px;
-            margin: 0 auto 12px;
-            border-radius: 50%;
-            background: white;
-            color: var(--sidebar);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 12px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+    }
 
-        .brand h2 {
-            font-size: 17px;
-            margin-bottom: 5px;
-        }
+    .breadcrumb a {
+        color: var(--primary);
+        text-decoration: none;
+    }
 
-        .brand p {
-            font-size: 10px;
-            color: #b9c7d1;
-            letter-spacing: 1px;
-        }
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
 
-        .menu {
-            padding: 15px 10px 30px;
-        }
 
-        .menu-title {
-            padding: 12px 15px 7px;
-            font-size: 10px;
-            text-transform: uppercase;
-            color: #7f96a7;
-            letter-spacing: 1px;
-        }
+    /* =========================
+       PAGE TITLE
+    ========================== */
 
-        .menu a {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            padding: 11px 15px;
-            margin-bottom: 3px;
-            border-radius: 7px;
-            text-decoration: none;
-            color: #d9e2e8;
-            font-size: 13px;
-            transition: 0.2s;
-        }
+    .page-title {
+        margin-bottom: 25px;
+    }
 
-        .menu a:hover {
-            background: var(--sidebar-hover);
-            color: white;
-        }
+    .page-title h2 {
+        font-family: Georgia, serif;
+        font-size: 27px;
+        color: #18364d;
+        margin-bottom: 7px;
+    }
 
-        .menu a.active {
-            background: var(--primary);
-            color: white;
-            font-weight: bold;
-        }
+    .page-title p {
+        font-size: 13px;
+        color: var(--muted);
+    }
 
-        .menu-icon {
-            width: 20px;
-            text-align: center;
-            font-size: 16px;
-        }
 
-        .submenu a {
-            padding-left: 46px;
-            font-size: 12px;
-        }
+    /* =========================
+       FORM CARD
+    ========================== */
 
-        /* =========================
-           MAIN
-        ========================= */
+    .form-card {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+    }
 
-        .main {
-            margin-left: 270px;
-            min-height: 100vh;
-        }
+    .form-header {
+        padding: 22px 25px;
+        border-bottom: 1px solid var(--border);
+        background: #fbfcfc;
+    }
 
-        /* =========================
-           TOPBAR
-        ========================= */
+    .form-header h3 {
+        font-size: 17px;
+        color: #18364d;
+        margin-bottom: 5px;
+    }
 
-        .topbar {
-            height: 82px;
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
-            position: sticky;
-            top: 0;
-            z-index: 500;
-        }
+    .form-header p {
+        font-size: 12px;
+        color: var(--muted);
+    }
 
-        .page-heading h1 {
-            font-family: Georgia, serif;
-            font-size: 24px;
-            color: var(--sidebar);
-            margin-bottom: 4px;
-        }
+    .form-body {
+        padding: 28px 25px;
+    }
 
-        .page-heading p {
-            font-size: 12px;
-            color: var(--muted);
-        }
 
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
+    /* =========================
+       FORM SECTION
+    ========================== */
 
-        .notification {
-            width: 38px;
-            height: 38px;
-            border: 1px solid var(--border);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            background: white;
-            cursor: pointer;
-        }
+    .form-section {
+        margin-bottom: 30px;
+    }
 
-        .user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    .form-section:last-child {
+        margin-bottom: 0;
+    }
 
-        .avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
+        color: #18364d;
+        font-weight: bold;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border);
+    }
 
-        .user-info strong {
-            display: block;
-            font-size: 13px;
-        }
+    .section-number {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        background: var(--primary-light);
+        color: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        flex-shrink: 0;
+    }
 
-        .user-info span {
-            display: block;
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 2px;
-        }
 
-        /* =========================
-           CONTENT
-        ========================= */
+    /* =========================
+       FORM GRID
+    ========================== */
 
-        .content {
-            padding: 30px;
-            max-width: 1250px;
-        }
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px 25px;
+    }
 
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--muted);
-            font-size: 12px;
-            margin-bottom: 18px;
-        }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
 
-        .breadcrumb a {
-            color: var(--primary);
-            text-decoration: none;
-        }
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
 
-        .page-title {
-            margin-bottom: 25px;
-        }
+    .form-group label {
+        font-size: 12px;
+        font-weight: bold;
+        color: var(--text);
+        margin-bottom: 8px;
+    }
 
-        .page-title h2 {
-            font-family: Georgia, serif;
-            font-size: 27px;
-            color: var(--sidebar);
-            margin-bottom: 7px;
-        }
+    .required {
+        color: #c0392b;
+    }
 
-        .page-title p {
-            font-size: 13px;
-            color: var(--muted);
-        }
 
-        /* =========================
-           FORM CARD
-        ========================= */
+    /* =========================
+       FORM CONTROL
+    ========================== */
 
-        .form-card {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
+    .form-control {
+        width: 100%;
+        height: 43px;
+        border: 1px solid #dce2e5;
+        border-radius: 7px;
+        padding: 0 13px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 13px;
+        color: var(--text);
+        background: white;
+        outline: none;
+        transition: 0.2s;
+    }
 
-        .form-header {
-            padding: 22px 25px;
-            border-bottom: 1px solid var(--border);
-            background: #fbfcfc;
-        }
+    textarea.form-control {
+        height: 105px;
+        padding: 12px 13px;
+        resize: vertical;
+        line-height: 1.5;
+    }
 
-        .form-header h3 {
-            font-size: 17px;
-            color: var(--sidebar);
-            margin-bottom: 5px;
-        }
+    .form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(8, 116, 67, 0.08);
+    }
 
-        .form-header p {
-            font-size: 12px;
-            color: var(--muted);
-        }
+    .form-control::placeholder {
+        color: #aab2b7;
+    }
 
-        .form-body {
-            padding: 28px 25px;
-        }
+    select.form-control {
+        cursor: pointer;
+    }
 
-        .form-section {
-            margin-bottom: 30px;
-        }
+    .form-help {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 6px;
+    }
 
-        .form-section:last-child {
-            margin-bottom: 0;
-        }
 
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            color: var(--sidebar);
-            font-weight: bold;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-        }
+    /* =========================
+       VALIDATION
+    ========================== */
 
-        .section-number {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
+    .field-error {
+        font-size: 11px;
+        color: #c0392b;
+        margin-top: 6px;
+    }
+
+    .form-control.is-invalid {
+        border-color: #c0392b;
+    }
+
+
+    /* =========================
+       INFO BOX
+    ========================== */
+
+    .info-box {
+        margin-top: 25px;
+        padding: 14px 16px;
+        background: var(--primary-light);
+        border: 1px solid #d7ecdf;
+        border-radius: 8px;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .info-icon {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .info-box p {
+        font-size: 12px;
+        line-height: 1.6;
+        color: #416052;
+    }
+
+
+    /* =========================
+       FORM FOOTER
+    ========================== */
+
+    .form-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 25px;
+        border-top: 1px solid var(--border);
+        background: #fbfcfc;
+    }
+
+    .required-note {
+        font-size: 11px;
+        color: var(--muted);
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn {
+        height: 42px;
+        padding: 0 20px;
+        border-radius: 7px;
+        border: none;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+
+    .btn-secondary {
+        background: white;
+        color: var(--text);
+        border: 1px solid #dce2e5;
+    }
+
+    .btn-secondary:hover {
+        background: #f2f4f5;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #065c35;
+    }
+
+
+    /* =========================
+       MOBILE
+    ========================== */
+
+    @media (max-width: 900px) {
 
         .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px 25px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
+            grid-template-columns: 1fr;
         }
 
         .form-group.full {
-            grid-column: 1 / -1;
+            grid-column: auto;
         }
 
-        .form-group label {
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--text);
-            margin-bottom: 8px;
+    }
+
+
+    @media (max-width: 768px) {
+
+        .form-body {
+            padding: 22px 18px;
         }
 
-        .required {
-            color: var(--danger);
+        .form-header {
+            padding: 20px 18px;
         }
-
-        .form-control {
-            width: 100%;
-            height: 43px;
-            border: 1px solid #dce2e5;
-            border-radius: 7px;
-            padding: 0 13px;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 13px;
-            color: var(--text);
-            background: white;
-            outline: none;
-            transition: 0.2s;
-        }
-
-        textarea.form-control {
-            height: 100px;
-            padding: 12px 13px;
-            resize: vertical;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(8,116,67,0.08);
-        }
-
-        .form-control::placeholder {
-            color: #aab2b7;
-        }
-
-        select.form-control {
-            cursor: pointer;
-        }
-
-        .form-help {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 6px;
-        }
-
-        /* =========================
-           INFO BOX
-        ========================= */
-
-        .info-box {
-            margin-top: 25px;
-            padding: 14px 16px;
-            background: var(--primary-light);
-            border: 1px solid #d7ecdf;
-            border-radius: 8px;
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-        }
-
-        .info-icon {
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .info-box p {
-            font-size: 12px;
-            line-height: 1.6;
-            color: #416052;
-        }
-
-        /* =========================
-           FORM FOOTER
-        ========================= */
 
         .form-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            border-top: 1px solid var(--border);
-            background: #fbfcfc;
-        }
-
-        .required-note {
-            font-size: 11px;
-            color: var(--muted);
+            padding: 18px;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 15px;
         }
 
         .form-actions {
-            display: flex;
-            gap: 10px;
+            width: 100%;
         }
 
-        .btn {
-            height: 42px;
-            padding: 0 20px;
-            border-radius: 7px;
-            border: none;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
+        .form-actions .btn {
+            flex: 1;
         }
 
-        .btn-secondary {
-            background: white;
-            color: var(--text);
-            border: 1px solid #dce2e5;
+    }
+
+
+    @media (max-width: 480px) {
+
+        .page-title h2 {
+            font-size: 23px;
         }
 
-        .btn-secondary:hover {
-            background: #f2f4f5;
+        .form-actions {
+            flex-direction: column-reverse;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
+        .form-actions .btn {
+            width: 100%;
         }
 
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
+    }
 
-        /* =========================
-           FOOTER
-        ========================= */
+</style>
 
-        .footer {
-            padding: 25px 30px;
-            margin-top: 15px;
-            font-size: 11px;
-            color: var(--muted);
-            border-top: 1px solid var(--border);
-        }
+@endpush
 
-        /* =========================
-           MOBILE
-        ========================= */
+@section('content')
 
-        .mobile-menu {
-            display: none;
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--border);
-            background: white;
-            border-radius: 7px;
-            font-size: 20px;
-            cursor: pointer;
-        }
+<!-- =========================
+     BREADCRUMB
+========================== -->
 
-        .overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-            z-index: 900;
-        }
+<div class="breadcrumb">
 
-        @media (max-width: 1100px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
 
-            .form-group.full {
-                grid-column: auto;
-            }
-        }
+<a href="{{ route('dashboard') }}">
+    Beranda
+</a>
 
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: 0.3s;
-            }
+<span>›</span>
 
-            .sidebar.open {
-                transform: translateX(0);
-            }
+<a href="{{ route('datasekolah.index') }}">
+    Data Sekolah
+</a>
 
-            .overlay.show {
-                display: block;
-            }
+<span>›</span>
 
-            .main {
-                margin-left: 0;
-            }
+<span>
+    {{ $isEdit ? 'Edit Data' : 'Tambah Data' }}
+</span>
 
-            .mobile-menu {
-                display: block;
-            }
 
-            .topbar {
-                padding: 0 18px;
-            }
+</div>
 
-            .page-heading {
-                display: none;
-            }
+<!-- =========================
+     PAGE TITLE
+========================== -->
 
-            .content {
-                padding: 20px 18px;
-            }
+<div class="page-title">
 
-            .topbar-right {
-                margin-left: auto;
-            }
 
-            .user-info {
-                display: none;
-            }
+<h2>
+    {{ $isEdit ? 'Edit Data Sekolah' : 'Tambah Data Sekolah' }}
+</h2>
 
-            .form-body {
-                padding: 22px 18px;
-            }
+<p>
+    {{ $isEdit
+        ? 'Perbarui informasi data sekolah Kelurahan Binong.'
+        : 'Tambahkan data sekolah yang berada di wilayah Kelurahan Binong.'
+    }}
+</p>
 
-            .form-header {
-                padding: 20px 18px;
-            }
 
-            .form-footer {
-                padding: 18px;
-                flex-direction: column;
-                align-items: stretch;
-                gap: 15px;
-            }
+</div>
 
-            .form-actions {
-                width: 100%;
-            }
+<!-- =========================
+     FORM CARD
+========================== -->
 
-            .form-actions .btn {
-                flex: 1;
-            }
-        }
+<div class="form-card">
 
-        @media (max-width: 480px) {
-            .content {
-                padding: 18px 14px;
-            }
 
-            .page-title h2 {
-                font-size: 23px;
-            }
+<!-- FORM HEADER -->
 
-            .topbar {
-                height: 70px;
-            }
+<div class="form-header">
 
-            .notification {
-                display: none;
-            }
+    <h3>
+        Form Data Sekolah
+    </h3>
 
-            .form-actions {
-                flex-direction: column-reverse;
-            }
+    <p>
+        Silakan lengkapi informasi sekolah pada kolom yang tersedia.
+    </p>
 
-            .form-actions .btn {
-                width: 100%;
-            }
-        }
-    </style>
-</head>
+</div>
 
-<body>
 
-    <!-- OVERLAY -->
-    <div class="overlay" id="overlay"></div>
+<!-- FORM -->
 
-    <!-- =========================
-         SIDEBAR
-    ========================== -->
-    <aside class="sidebar" id="sidebar">
+<form
+    id="sekolahForm"
+    method="POST"
+    action="{{ $isEdit
+        ? route('datasekolah.update', $sekolah->id)
+        : route('datasekolah.store')
+    }}"
+>
 
-        <div class="brand">
-            <div class="logo">LOGO</div>
-            <h2>Kelurahan XXXXX</h2>
-            <p>SISTEM INFORMASI KELURAHAN</p>
+    @csrf
+
+    @if ($isEdit)
+        @method('PUT')
+    @endif
+
+
+    <div class="form-body">
+
+
+        <!-- =========================
+             SECTION 1
+        ========================== -->
+
+        <div class="form-section">
+
+            <div class="section-title">
+
+                <span class="section-number">
+                    1
+                </span>
+
+                Identitas Sekolah
+
+            </div>
+
+
+            <div class="form-grid">
+
+
+                <!-- ID DATA -->
+
+                <div class="form-group">
+
+                    <label for="id_data">
+
+                        ID Data
+                        <span class="required">*</span>
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="id_data"
+                        name="id_data"
+                        class="form-control @error('id_data') is-invalid @enderror"
+                        placeholder="Contoh: SEK-001"
+                        value="{{ $sekolahValue('id_data') }}"
+                        required
+                    >
+
+                    @error('id_data')
+                        <span class="field-error">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
+                    <span class="form-help">
+                        Gunakan ID unik untuk setiap data sekolah.
+                    </span>
+
+                </div>
+
+
+                <!-- NAMA SEKOLAH -->
+
+                <div class="form-group">
+
+                    <label for="nama_sekolah">
+
+                        Nama Sekolah
+                        <span class="required">*</span>
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nama_sekolah"
+                        name="nama_sekolah"
+                        class="form-control @error('nama_sekolah') is-invalid @enderror"
+                        placeholder="Contoh: SDN Binong 01"
+                        value="{{ $sekolahValue('nama_sekolah') }}"
+                        required
+                    >
+
+                    @error('nama_sekolah')
+                        <span class="field-error">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
+                </div>
+
+
+                <!-- JENJANG -->
+
+                <div class="form-group">
+
+                    <label for="jenjang">
+
+                        Jenjang
+                        <span class="required">*</span>
+
+                    </label>
+
+                    <select
+                        id="jenjang"
+                        name="jenjang"
+                        class="form-control @error('jenjang') is-invalid @enderror"
+                        required
+                    >
+
+                        <option value="">
+                            Pilih Jenjang
+                        </option>
+
+                        <option
+                            value="TK"
+                            @selected($sekolahValue('jenjang') === 'TK')
+                        >
+                            TK
+                        </option>
+
+                        <option
+                            value="SD"
+                            @selected($sekolahValue('jenjang') === 'SD')
+                        >
+                            SD
+                        </option>
+
+                        <option
+                            value="SMP"
+                            @selected($sekolahValue('jenjang') === 'SMP')
+                        >
+                            SMP
+                        </option>
+
+                        <option
+                            value="SMA"
+                            @selected($sekolahValue('jenjang') === 'SMA')
+                        >
+                            SMA
+                        </option>
+
+                        <option
+                            value="SMK"
+                            @selected($sekolahValue('jenjang') === 'SMK')
+                        >
+                            SMK
+                        </option>
+
+                    </select>
+
+                    @error('jenjang')
+                        <span class="field-error">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
+                    <span class="form-help">
+                        Pilih jenjang pendidikan sekolah.
+                    </span>
+
+                </div>
+
+
+                <!-- ALAMAT -->
+
+                <div class="form-group full">
+
+                    <label for="alamat">
+
+                        Alamat Sekolah
+                        <span class="required">*</span>
+
+                    </label>
+
+                    <textarea
+                        id="alamat"
+                        name="alamat"
+                        class="form-control @error('alamat') is-invalid @enderror"
+                        placeholder="Contoh: Jl. Melati No. 1, Kelurahan Binong"
+                        required
+                    >{{ $sekolahValue('alamat') }}</textarea>
+
+                    @error('alamat')
+                        <span class="field-error">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
+                </div>
+
+            </div>
+
         </div>
 
-        <nav class="menu">
 
-            <div class="menu-title">Menu Utama</div>
+        <!-- =========================
+             SECTION 2
+        ========================== -->
 
-            <a href="dashboard.html">
-                <span class="menu-icon">⌂</span>
-                <span>Beranda</span>
-            </a>
+        <div class="form-section">
 
-            <div class="menu-title">Kesekretariatan</div>
+            <div class="section-title">
 
-            <div class="submenu">
-                <a href="duk.html" class="active">
-                    <span class="menu-icon">👤</span>
-                    <span>Data Umum Kepegawaian</span>
-                </a>
+                <span class="section-number">
+                    2
+                </span>
 
-                <a href="#">
-                    <span class="menu-icon">▣</span>
-                    <span>Data BMD</span>
-                </a>
+                Data Sekolah
+
             </div>
 
-            <div class="menu-title">Kesejahteraan Sosial</div>
 
-            <div class="submenu">
-                <a href="#">
-                    <span class="menu-icon">♙</span>
-                    <span>Posyandu & Posbindu</span>
-                </a>
+            <div class="form-grid">
 
-                <a href="#">
-                    <span class="menu-icon">♥</span>
-                    <span>Data Stunting</span>
-                </a>
 
-                <a href="#">
-                    <span class="menu-icon">♧</span>
-                    <span>KPM / Bantuan Sosial</span>
-                </a>
+                <!-- JUMLAH SISWA -->
 
-                <a href="#">
-                    <span class="menu-icon">🎓</span>
-                    <span>Anak Putus Sekolah</span>
-                </a>
+                <div class="form-group">
 
-                <a href="#">
-                    <span class="menu-icon">▤</span>
-                    <span>Data Sekolah</span>
-                </a>
+                    <label for="jumlah_siswa">
+
+                        Jumlah Siswa
+                        <span class="required">*</span>
+
+                    </label>
+
+                    <input
+                        type="number"
+                        id="jumlah_siswa"
+                        name="jumlah_siswa"
+                        class="form-control @error('jumlah_siswa') is-invalid @enderror"
+                        placeholder="Contoh: 245"
+                        min="0"
+                        value="{{ $sekolahValue('jumlah_siswa') }}"
+                        required
+                    >
+
+                    @error('jumlah_siswa')
+                        <span class="field-error">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
+                    <span class="form-help">
+                        Masukkan jumlah siswa yang terdaftar.
+                    </span>
+
+                </div>
+
+
+                <!-- KETERANGAN -->
+
+                <div class="form-group">
+
+                    <label for="keterangan">
+                        Keterangan
+                    </label>
+
+                    <textarea
+                        id="keterangan"
+                        name="keterangan"
+                        class="form-control @error('keterangan') is-invalid @enderror"
+                        placeholder="Keterangan tambahan mengenai sekolah"
+                    >{{ $sekolahValue('keterangan') }}</textarea>
+
+                    @error('keterangan')
+                        <span class="field-error">
+                            {{ $message }}
+                        </span>
+                    @enderror
+
+                </div>
+
             </div>
 
-            <div class="menu-title">Ekonomi & Pembangunan</div>
+        </div>
 
-            <div class="submenu">
-                <a href="#">
-                    <span class="menu-icon">◉</span>
-                    <span>Data UMKM</span>
-                </a>
 
-                <a href="#">
-                    <span class="menu-icon">⌂</span>
-                    <span>Data Rutillahu</span>
-                </a>
+        <!-- =========================
+             INFO
+        ========================== -->
 
-                <a href="#">
-                    <span class="menu-icon">♧</span>
-                    <span>Data Buruan Sae</span>
-                </a>
+        <div class="info-box">
 
-                <a href="#">
-                    <span class="menu-icon">♣</span>
-                    <span>Data Pohon</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">▦</span>
-                    <span>Fasilitas Umum & Sosial</span>
-                </a>
+            <div class="info-icon">
+                i
             </div>
 
-            <div class="menu-title">Pemerintahan</div>
+            <p>
 
-            <div class="submenu">
-                <a href="#">
-                    <span class="menu-icon">▤</span>
-                    <span>Laporan Kependudukan</span>
-                </a>
+                Pastikan ID data, nama sekolah, jenjang, alamat,
+                dan jumlah siswa sudah benar sebelum menyimpan data.
 
-                <a href="#">
-                    <span class="menu-icon">⚑</span>
-                    <span>Linmas & Siskamling</span>
-                </a>
+            </p>
 
-                <a href="#">
-                    <span class="menu-icon">♟</span>
-                    <span>Data RT/RW & Periode</span>
-                </a>
+        </div>
 
-                <a href="#">
-                    <span class="menu-icon">▣</span>
-                    <span>Data PKL</span>
-                </a>
-            </div>
-
-            <div class="menu-title">Sistem</div>
-
-            <a href="#">
-                <span class="menu-icon">⚙</span>
-                <span>Pengaturan</span>
-            </a>
-
-            <a href="login.html">
-                <span class="menu-icon">↪</span>
-                <span>Keluar</span>
-            </a>
-
-        </nav>
-    </aside>
+    </div>
 
 
     <!-- =========================
-         MAIN
+         FORM FOOTER
     ========================== -->
-    <main class="main">
 
-        <!-- TOPBAR -->
-        <header class="topbar">
+    <div class="form-footer">
 
-            <button class="mobile-menu" id="mobileMenu">☰</button>
+        <div class="required-note">
 
-            <div class="page-heading">
-                <h1>Tambah Data Sekolah</h1>
-                <p>Kesejahteraan Sosial · Data Sekolah · Tambah Data</p>
-            </div>
+            <span class="required">*</span>
+            Wajib diisi
 
-            <div class="topbar-right">
+        </div>
 
-                <div class="notification">
-                    ♧
-                </div>
 
-                <div class="user">
-                    <div class="avatar">A</div>
+        <div class="form-actions">
 
-                    <div class="user-info">
-                        <strong>Administrator</strong>
-                        <span>Admin Kelurahan</span>
-                    </div>
-                </div>
+            <a
+                href="{{ route('datasekolah.index') }}"
+                class="btn btn-secondary"
+            >
+                Batal
+            </a>
 
-            </div>
 
-        </header>
-
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
 
-        <!-- CONTENT -->
-        <section class="content">
+                {{ $isEdit
+                    ? 'Perbarui Data'
+                    : 'Simpan Data'
+                }}
 
-            <!-- BREADCRUMB -->
-            <div class="breadcrumb">
-                <a href="dashboard.html">Beranda</a>
-                <span>›</span>
-                <a href="{{ url('/datasekolah') }}">Data Sekolah</a>
-                <span>›</span>
-                <span>{{ $isEdit ? 'Edit Data' : 'Tambah Data' }}</span>
-            </div>
+            </button>
 
+        </div>
 
-            <!-- PAGE TITLE -->
-            <div class="page-title">
-                <h2>Tambah Data Sekolah</h2>
-                <p>Tambahkan data sekolah Kelurahan XXXXX.</p>
-            </div>
+    </div>
 
+</form>
 
-            <!-- FORM CARD -->
-            <div class="form-card">
 
-                <div class="form-header">
-                    <h3>Form Data Sekolah</h3>
-                    <p>Silakan lengkapi informasi sekolah pada kolom yang tersedia.</p>
-                </div>
+</div>
 
-
-                <form id="sekolahForm" method="POST" action="{{ url()->current() }}">
-                    @csrf
-                    @if ($isEdit)
-                        @method('PUT')
-                    @endif
-
-                    <div class="form-body">
-
-                        <!-- IDENTITAS SEKOLAH -->
-                        <div class="form-section">
-
-                            <div class="section-title">
-                                <span class="section-number">1</span>
-                                Identitas Sekolah
-                            </div>
-
-                            <div class="form-grid">
-
-                                <div class="form-group">
-                                    <label for="nama_sekolah">
-                                        Nama Sekolah <span class="required">*</span>
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        id="nama_sekolah"
-                                        name="nama_sekolah"
-                                        class="form-control"
-                                        placeholder="Contoh: SDN XXXXX 01"
-                                        value="{{ $sekolahValue('nama_sekolah') }}"
-                                        required
-                                    >
-                                </div>
-
-
-                                <div class="form-group">
-                                    <label for="jenjang">
-                                        Jenjang <span class="required">*</span>
-                                    </label>
-
-                                    <select id="jenjang" name="jenjang" class="form-control" required>
-                                        <option value="">Pilih Jenjang</option>
-                                        <option value="TK" @selected($sekolahValue('jenjang') === 'TK')>TK</option>
-                                        <option value="SD" @selected($sekolahValue('jenjang') === 'SD')>SD</option>
-                                        <option value="SMP" @selected($sekolahValue('jenjang') === 'SMP')>SMP</option>
-                                        <option value="SMA" @selected($sekolahValue('jenjang') === 'SMA')>SMA</option>
-                                    </select>
-
-                                    <span class="form-help">
-                                        Pilih jenjang sekolah yang sesuai.
-                                    </span>
-                                </div>
-
-
-                                <div class="form-group full">
-                                    <label for="alamat">
-                                        Alamat <span class="required">*</span>
-                                    </label>
-
-                                    <input
-                                        type="number"
-                                        id="alamat"
-                                        name="alamat"
-                                        class="form-control"
-                                        placeholder="Alamat sekolah"
-                                        value="{{ $sekolahValue('alamat') }}"
-                                        required
-                                    >
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- DATA PENGELOLAAN -->
-                        <div class="form-section">
-
-                            <div class="section-title">
-                                <span class="section-number">2</span>
-                                Detail Sekolah
-                            </div>
-
-                            <div class="form-grid">
-
-                                <div class="form-group">
-                                    <label for="jumlah_siswa">
-                                        Jumlah Siswa <span class="required">*</span>
-                                    </label>
-
-                                    <input type="number" id="jumlah_siswa" name="jumlah_siswa" class="form-control" placeholder="Contoh: 245" min="0" value="{{ $sekolahValue('jumlah_siswa') }}" required>
-                                </div>
-
-
-                                <div class="form-group">
-                                    <label for="keterangan">
-                                        Keterangan
-                                    </label>
-
-                                    <textarea id="keterangan" name="keterangan" class="form-control" placeholder="Keterangan sekolah">{{ $sekolahValue('keterangan') }}</textarea>
-                                </div>
-
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- INFO -->
-                        <div class="info-box">
-
-                            <div class="info-icon">i</div>
-
-                            <p>
-                                Pastikan data sekolah yang dimasukkan sudah benar sebelum menyimpan.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- FORM FOOTER -->
-                    <div class="form-footer">
-
-                        <div class="required-note">
-                            <span class="required">*</span> Wajib diisi
-                        </div>
-
-                        <div class="form-actions">
-
-                            <a href="{{ url('/datasekolah') }}" class="btn btn-secondary">
-                                Batal
-                            </a>
-
-                            <button type="submit" class="btn btn-primary">
-                                {{ $isEdit ? 'Perbarui Data' : 'Simpan Data' }}
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </form>
-
-            </div>
-
-
-            <!-- FOOTER -->
-            <footer class="footer">
-                © 2026 Sistem Informasi Kelurahan XXXXX · Semua hak dilindungi.
-            </footer>
-
-        </section>
-
-    </main>
-
-
-    <script>
-
-        /* =========================
-           MOBILE SIDEBAR
-        ========================== */
-
-        const mobileMenu = document.getElementById('mobileMenu');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-
-        mobileMenu.addEventListener('click', function () {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        });
-
-        overlay.addEventListener('click', function () {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('show');
-        });
-
-
-        @if (!$isEdit)
-            const form = document.getElementById('sekolahForm');
-
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
-
-                const namaSekolah = document.getElementById('nama_sekolah').value;
-
-                alert(
-                    'Data Sekolah berhasil disimpan!\\n\\n' +
-                    'Nama Sekolah: ' + namaSekolah
-                );
-
-                window.location.href = '{{ url('/datasekolah') }}';
-            });
-        @endif
-
-    </script>
-
-</body>
-</html>
-```
+@endsection

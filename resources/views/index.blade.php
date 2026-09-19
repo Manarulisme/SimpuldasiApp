@@ -2,14 +2,12 @@
 <html lang="id">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Website Resmi Kelurahan Binong</title>
 
     <style>
-
         * {
             margin: 0;
             padding: 0;
@@ -27,7 +25,6 @@
             text-decoration: none;
             color: inherit;
         }
-
 
         /* =========================
            NAVBAR
@@ -96,7 +93,6 @@
             border-radius: 6px;
         }
 
-
         /* =========================
            HERO
         ========================= */
@@ -121,8 +117,6 @@
             z-index: -2;
         }
 
-        /* FOTO 1 */
-
         .hero::before {
             background-image:
                 linear-gradient(
@@ -130,11 +124,8 @@
                     rgba(0, 0, 0, 0.45)
                 ),
                 url('{{ asset('Assets/Image/foto_kelurahan1.jpg') }}');
-
             animation: heroSlide1 10s infinite;
         }
-
-        /* FOTO 2 */
 
         .hero::after {
             background-image:
@@ -143,54 +134,37 @@
                     rgba(0, 0, 0, 0.45)
                 ),
                 url('{{ asset('Assets/Image/foto_kelurahan2.jpg') }}');
-
             opacity: 0;
-
             animation: heroSlide2 10s infinite;
         }
 
-
-        /* =========================
-           HERO ANIMATION
-        ========================= */
-
         @keyframes heroSlide1 {
-
-            0%,
-            45% {
+            0%, 45% {
                 opacity: 1;
             }
 
-            50%,
-            95% {
+            50%, 95% {
                 opacity: 0;
             }
 
             100% {
                 opacity: 1;
             }
-
         }
-
 
         @keyframes heroSlide2 {
-
-            0%,
-            45% {
+            0%, 45% {
                 opacity: 0;
             }
 
-            50%,
-            95% {
+            50%, 95% {
                 opacity: 1;
             }
 
             100% {
                 opacity: 0;
             }
-
         }
-
 
         .hero-container {
             max-width: 1200px;
@@ -254,7 +228,6 @@
             background: #f1f1f1;
         }
 
-
         /* =========================
            GENERAL SECTION
         ========================= */
@@ -289,7 +262,6 @@
         .section-header p {
             color: #666;
         }
-
 
         /* =========================
            SURVEY
@@ -342,6 +314,7 @@
         .survey-icon {
             width: 130px;
             height: 130px;
+            min-width: 130px;
             border-radius: 50%;
             background: #e7f3ec;
             display: flex;
@@ -351,6 +324,73 @@
             color: #0b6b3a;
         }
 
+        /* =========================
+           LAYANAN TAMBAHAN
+        ========================= */
+
+        .service-section {
+            background: #fff;
+        }
+
+        .service-section.alt {
+            background: #f5f8f6;
+        }
+
+        .service-box {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            border-radius: 12px;
+            padding: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e8ecea;
+        }
+
+        .service-content {
+            flex: 1;
+        }
+
+        .service-content h3 {
+            font-size: 27px;
+            margin-bottom: 12px;
+        }
+
+        .service-content p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .service-button {
+            display: inline-block;
+            background: #0b6b3a;
+            color: white;
+            padding: 13px 22px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: 0.3s ease;
+        }
+
+        .service-button:hover {
+            background: #095b31;
+            transform: translateY(-2px);
+        }
+
+        .service-icon {
+            width: 130px;
+            height: 130px;
+            min-width: 130px;
+            border-radius: 50%;
+            background: #e7f3ec;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 52px;
+            color: #0b6b3a;
+        }
 
         /* =========================
            PERSYARATAN PELAYANAN
@@ -409,7 +449,6 @@
             font-size: 12px;
             font-weight: 600;
         }
-
 
         /* =========================
            IMAGE VIEWER
@@ -508,7 +547,6 @@
             font-size: 12px;
         }
 
-
         /* =========================
            LOGIN PEGAWAI
         ========================= */
@@ -539,7 +577,6 @@
             font-weight: bold;
         }
 
-
         /* =========================
            FOOTER
         ========================= */
@@ -554,7 +591,7 @@
             max-width: 1200px;
             margin: auto;
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
+            grid-template-columns: 2fr 1fr 1.5fr;
             gap: 40px;
         }
 
@@ -577,6 +614,21 @@
             margin-bottom: 8px;
         }
 
+        .footer-map-wrapper {
+            width: 100%;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .footer-map {
+            width: 100%;
+            height: 220px;
+            border: 0;
+            border-radius: 10px;
+            display: block;
+        }
+
         .copyright {
             max-width: 1200px;
             margin: 35px auto 0;
@@ -585,7 +637,6 @@
             color: #888;
             font-size: 13px;
         }
-
 
         /* =========================
            RESPONSIVE
@@ -612,9 +663,7 @@
             .footer-container {
                 grid-template-columns: 1fr 1fr;
             }
-
         }
-
 
         @media (max-width: 650px) {
 
@@ -638,10 +687,18 @@
                 font-size: 12px;
             }
 
-            .survey-box {
+            .survey-box,
+            .service-box {
                 flex-direction: column;
                 text-align: center;
                 padding: 30px 22px;
+            }
+
+            .service-icon {
+                width: 110px;
+                height: 110px;
+                min-width: 110px;
+                font-size: 44px;
             }
 
             .requirements-grid {
@@ -654,6 +711,10 @@
 
             .footer-container {
                 grid-template-columns: 1fr;
+            }
+
+            .footer-map {
+                height: 250px;
             }
 
             .section {
@@ -676,16 +737,11 @@
             .viewer-controls {
                 bottom: 15px;
             }
-
         }
-
     </style>
-
 </head>
 
-
 <body>
-
 
     <!-- =========================
          NAVBAR
@@ -715,7 +771,6 @@
                 </div>
 
             </a>
-
 
             <ul class="nav-menu">
 
@@ -756,7 +811,6 @@
     </header>
 
 
-
     <!-- =========================
          HERO
     ========================= -->
@@ -780,7 +834,6 @@
                     Informasi dan pelayanan publik untuk masyarakat
                     secara mudah, cepat, transparan, dan terpercaya.
                 </p>
-
 
                 <div class="hero-buttons">
 
@@ -807,7 +860,6 @@
     </section>
 
 
-
     <!-- =========================
          SURVEY
     ========================= -->
@@ -818,7 +870,6 @@
     >
 
         <div class="container">
-
 
             <div class="section-header">
 
@@ -838,8 +889,6 @@
                 </p>
 
             </div>
-
-
 
             <div class="survey-box">
 
@@ -866,7 +915,6 @@
 
                 </div>
 
-
                 <div class="survey-icon">
                     ✓
                 </div>
@@ -878,6 +926,127 @@
     </section>
 
 
+    <!-- =========================
+         CEK BANSOS
+    ========================= -->
+
+    <section class="section service-section">
+
+        <div class="container">
+
+            <div class="section-header">
+
+                <small>
+                    Layanan Informasi
+                </small>
+
+                <h2>
+                    Cek Bansos
+                </h2>
+
+                <p>
+                    Cek informasi penerima bantuan sosial melalui
+                    situs resmi Kementerian Sosial Republik Indonesia.
+                </p>
+
+            </div>
+
+            <div class="service-box">
+
+                <div class="service-content">
+
+                    <h3>
+                        Cek Data Penerima Bansos
+                    </h3>
+
+                    <p>
+                        Masyarakat dapat melakukan pengecekan informasi
+                        bantuan sosial secara online melalui layanan
+                        resmi Kementerian Sosial.
+                    </p>
+
+                    <a
+                        href="https://cekbansos.kemensos.go.id/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="service-button"
+                    >
+                        Cek Bansos
+                    </a>
+
+                </div>
+
+                <div class="service-icon">
+                    🤝
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         PETA SEBARAN UMKM
+    ========================= -->
+
+    <section class="section service-section alt">
+
+        <div class="container">
+
+            <div class="section-header">
+
+                <small>
+                    Informasi UMKM
+                </small>
+
+                <h2>
+                    Peta Sebaran UMKM Kelurahan Binong
+                </h2>
+
+                <p>
+                    Temukan lokasi dan informasi UMKM yang berada
+                    di wilayah Kelurahan Binong melalui peta digital.
+                </p>
+
+            </div>
+
+            <div class="service-box">
+
+                <div class="service-content">
+
+                    <h3>
+                        Peta Sebaran UMKM
+                    </h3>
+
+                    <p>
+                        Gunakan peta digital untuk mengetahui lokasi
+                        UMKM di Kelurahan Binong dan mendapatkan
+                        informasi terkait pelaku usaha yang terdaftar.
+                    </p>
+
+                    <a
+                        href="https://apps-umkm-binong.vercel.app/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="service-button"
+                    >
+                        Lihat Peta UMKM
+                    </a>
+
+                </div>
+
+                <div class="service-icon">
+                    📍
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
 
     <!-- =========================
          PERSYARATAN PELAYANAN
@@ -886,7 +1055,6 @@
     <section class="section">
 
         <div class="container">
-
 
             <div class="section-header">
 
@@ -905,14 +1073,9 @@
 
             </div>
 
-
-
             <div class="requirements-grid">
 
-
-                <!-- =========================
-                     PERSYARATAN 1
-                ========================= -->
+                <!-- PERSYARATAN 1 -->
 
                 <div
                     class="requirement-card"
@@ -935,10 +1098,7 @@
                 </div>
 
 
-
-                <!-- =========================
-                     PERSYARATAN 2
-                ========================= -->
+                <!-- PERSYARATAN 2 -->
 
                 <div
                     class="requirement-card"
@@ -960,13 +1120,11 @@
 
                 </div>
 
-
             </div>
 
         </div>
 
     </section>
-
 
 
     <!-- =========================
@@ -984,9 +1142,6 @@
             onclick="event.stopPropagation()"
         >
 
-
-            <!-- CLOSE -->
-
             <button
                 type="button"
                 class="viewer-close"
@@ -996,20 +1151,13 @@
                 ×
             </button>
 
-
-            <!-- IMAGE -->
-
             <img
                 id="viewerImage"
                 src=""
                 alt="Persyaratan Pelayanan"
             >
 
-
-            <!-- CONTROLS -->
-
             <div class="viewer-controls">
-
 
                 <button
                     type="button"
@@ -1019,14 +1167,12 @@
                     −
                 </button>
 
-
                 <span
                     class="viewer-zoom-value"
                     id="zoomValue"
                 >
                     100%
                 </span>
-
 
                 <button
                     type="button"
@@ -1036,7 +1182,6 @@
                     +
                 </button>
 
-
                 <button
                     type="button"
                     onclick="resetZoom()"
@@ -1045,13 +1190,11 @@
                     ↺
                 </button>
 
-
             </div>
 
         </div>
 
     </div>
-
 
 
     <!-- =========================
@@ -1062,21 +1205,26 @@
 
         <div class="footer-container">
 
+            <!-- KOLOM 1 -->
 
             <div class="footer-column">
 
                 <h3>
-                    Kelurahan Binong
+                    Sistem Pengumpulan Data Terintegrasi (SIMPULDASI)
                 </h3>
 
                 <p>
                     Website resmi Kelurahan Binong sebagai media
                     informasi dan pelayanan publik bagi masyarakat.
                 </p>
+                <p>
+                    <b>Alamat:</b>Jalan H. Basuki No.28b, Binong, Kec. Batununggal, Kota Bandung, Jawa Barat 40275
+                </p>
 
             </div>
 
 
+            <!-- KOLOM 2 -->
 
             <div class="footer-column">
 
@@ -1110,43 +1258,42 @@
                         </a>
                     </li>
 
+                    <li>
+                        <a href="#survey">
+                            Survey
+                        </a>
+                    </li>
+
                 </ul>
 
             </div>
 
 
+            <!-- KOLOM 3 - MAP -->
 
             <div class="footer-column">
 
                 <h3>
-                    Kontak
+                    Lokasi Kelurahan Binong
                 </h3>
 
-                <ul>
+                <div class="footer-map-wrapper">
 
-                    <li>
-                        Alamat Kelurahan
-                    </li>
+                    <iframe
+                        class="footer-map"
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.5598355013003!2d107.63750637565555!3d-6.943089193057012!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e68e86dfa9151a1%3A0x64b830e2c36a56f6!2sKelurahan%20Binong!5e0!3m2!1sid!2sid!4v1789741136018!5m2!1sid!2sid"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        title="Lokasi Kelurahan Binong"
+                    >
+                    </iframe>
 
-                    <li>
-                        Telepon
-                    </li>
-
-                    <li>
-                        Email
-                    </li>
-
-                    <li>
-                        Jam Pelayanan
-                    </li>
-
-                </ul>
+                </div>
 
             </div>
 
-
         </div>
-
 
 
         <div class="copyright">
@@ -1156,7 +1303,6 @@
         </div>
 
     </footer>
-
 
 
     <!-- =========================
@@ -1331,7 +1477,6 @@
         );
 
     </script>
-
 
 </body>
 

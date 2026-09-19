@@ -1,7 +1,9 @@
 @extends('Admin.Layout.master')
 
-@section('title', 'Data KPM / Bantuan Sosial - Kelurahan XXXXX')
+@section('title', 'Data KPM / Bantuan Sosial - Kelurahan Binong')
+
 @section('page_title', 'Data KPM / Bantuan Sosial')
+
 @section('page_subtitle', 'Kesejahteraan Sosial · KPM / Bantuan Sosial')
 
 @push('styles')
@@ -106,12 +108,24 @@
         vertical-align: middle;
     }
 
+    .kpm-name {
+        color: #18364d;
+        font-weight: 600;
+    }
+
+    .kpm-id {
+        color: #8a969d;
+        font-size: 10px;
+        margin-top: 3px;
+    }
+
     .badge {
         display: inline-block;
         padding: 5px 9px;
         border-radius: 5px;
         font-size: 10px;
         font-weight: 600;
+        white-space: nowrap;
     }
 
     .badge-pkh {
@@ -129,15 +143,14 @@
         color: #58636a;
     }
 
-    .kpm-name {
-        color: #18364d;
-        font-weight: 600;
+    .badge-lainnya {
+        background: #eef6fc;
+        color: #2d6a9f;
     }
 
-    .kpm-id {
-        color: #8a969d;
-        font-size: 10px;
-        margin-top: 3px;
+    .badge-desil {
+        background: #f1f3f4;
+        color: #58636a;
     }
 
     .action-buttons {
@@ -156,6 +169,7 @@
         align-items: center;
         justify-content: center;
         font-size: 13px;
+        text-decoration: none;
     }
 
     .action-view {
@@ -185,6 +199,30 @@
         border-color: #edc5c1;
     }
 
+    .delete-form {
+        display: inline-flex;
+        margin: 0;
+    }
+
+    .last-update {
+        white-space: nowrap;
+        line-height: 1.5;
+    }
+
+    .last-update-date {
+        color: #52616b;
+        font-size: 11px;
+    }
+
+    .last-update-time {
+        color: #9aa4aa;
+        font-size: 10px;
+    }
+
+    .text-muted {
+        color: #9aa4aa;
+    }
+
     @media (max-width: 700px) {
         .content-header {
             align-items: flex-start;
@@ -203,17 +241,18 @@
 @section('content')
 
 <div class="content-header">
-    <div>
-        <h2>Data KPM / Bantuan Sosial</h2>
 
+
+<div>
+    <h2>Data KPM / Bantuan Sosial</h2>
 
     <p>
-        Kelola data penerima bantuan sosial Kelurahan XXXXX.
+        Kelola data penerima bantuan sosial Kelurahan Binong.
     </p>
 </div>
 
 <a
-    href="{{ url('/tambah-data-kpm') }}"
+    href="{{ route('datakpm.create') }}"
     class="btn-add"
 >
     + Tambah Data
@@ -231,7 +270,7 @@
         <h3>Daftar KPM</h3>
 
         <p>
-            Data KPM / Bantuan Sosial Kelurahan XXXXX
+            Data KPM / Bantuan Sosial Kelurahan Binong
         </p>
     </div>
 
@@ -239,11 +278,10 @@
         class="total-data"
         id="totalData"
     >
-        5 KPM
+        {{ $dataKpm->count() }} KPM
     </span>
 
 </div>
-
 
 <div class="table-wrapper">
 
@@ -260,346 +298,170 @@
                 <th>Jenis Bantuan</th>
                 <th>Desil</th>
                 <th>Keterangan</th>
+                <th>Terakhir Perubahan</th>
                 <th>Aksi</th>
             </tr>
         </thead>
 
-
         <tbody>
 
-            <tr>
-                <td>
-                    <div class="kpm-name">
-                        Rina Wulandari
-                    </div>
-                    <div class="kpm-id">
-                        KPM 001
-                    </div>
-                </td>
+            @forelse ($dataKpm as $item)
 
-                <td>
-                    3204014202850001
-                </td>
+                <tr>
 
-                <td>
-                    RW 05
-                </td>
+                    <td>
+                        <div class="kpm-name">
+                            {{ $item->nama }}
+                        </div>
 
-                <td>
-                    <span class="badge badge-pkh">
-                        PKH
-                    </span>
-                </td>
+                        <div class="kpm-id">
+                            {{ $item->id_data ?? 'ID belum diisi' }}
+                        </div>
+                    </td>
 
-                <td>
-                    Desil 2
-                </td>
+                    <td>
+                        {{ $item->nik }}
+                    </td>
 
-                <td>
-                    Untuk administrasi kelurahan
-                </td>
+                    <td>
+                        @if ($item->rw)
+                            RW {{ $item->rw }}
+                        @else
+                            <span class="text-muted">-</span>
+                        @endif
+                    </td>
 
-                <td>
-                    <div class="action-buttons">
+                    <td>
 
-                        <button
-                            type="button"
-                            class="action-btn action-view"
-                            onclick="viewData(this)"
-                            title="Lihat Data"
-                        >
-                            ◉
-                        </button>
+                        @php
+                            $jenisBantuan = strtolower($item->jenis_bantuan ?? '');
+                        @endphp
 
-                        <button
-                            type="button"
-                            class="action-btn action-edit"
-                            onclick="editData(this)"
-                            title="Ubah Data"
-                        >
-                            ✎
-                        </button>
+                        @if ($jenisBantuan === 'pkh')
 
-                        <button
-                            type="button"
-                            class="action-btn action-delete"
-                            onclick="hapusData(this)"
-                            title="Hapus Data"
-                        >
-                            ×
-                        </button>
+                            <span class="badge badge-pkh">
+                                PKH
+                            </span>
 
-                    </div>
-                </td>
-            </tr>
+                        @elseif ($jenisBantuan === 'bpnt')
 
+                            <span class="badge badge-bpnt">
+                                BPNT
+                            </span>
 
-            <tr>
-                <td>
-                    <div class="kpm-name">
-                        Agus Setiawan
-                    </div>
-                    <div class="kpm-id">
-                        KPM 002
-                    </div>
-                </td>
+                        @elseif ($jenisBantuan === 'bantuan pangan')
 
-                <td>
-                    3204011801780002
-                </td>
+                            <span class="badge badge-pangan">
+                                Bantuan Pangan
+                            </span>
 
-                <td>
-                    RW 03
-                </td>
+                        @else
 
-                <td>
-                    <span class="badge badge-bpnt">
-                        BPNT
-                    </span>
-                </td>
+                            <span class="badge badge-lainnya">
+                                {{ $item->jenis_bantuan ?? '-' }}
+                            </span>
 
-                <td>
-                    Desil 3
-                </td>
+                        @endif
 
-                <td>
-                    Ruang pelayanan umum
-                </td>
+                    </td>
 
-                <td>
-                    <div class="action-buttons">
+                    <td>
 
-                        <button
-                            type="button"
-                            class="action-btn action-view"
-                            onclick="viewData(this)"
-                            title="Lihat Data"
-                        >
-                            ◉
-                        </button>
+                        @if ($item->desil)
+                            <span class="badge badge-desil">
+                                Desil {{ $item->desil }}
+                            </span>
+                        @else
+                            <span class="text-muted">-</span>
+                        @endif
 
-                        <button
-                            type="button"
-                            class="action-btn action-edit"
-                            onclick="editData(this)"
-                            title="Ubah Data"
-                        >
-                            ✎
-                        </button>
+                    </td>
 
-                        <button
-                            type="button"
-                            class="action-btn action-delete"
-                            onclick="hapusData(this)"
-                            title="Hapus Data"
-                        >
-                            ×
-                        </button>
+                    <td>
+                        {{ $item->keterangan ?: '-' }}
+                    </td>
 
-                    </div>
-                </td>
-            </tr>
+                    <td
+                        data-order="{{ optional($item->updated_at)->timestamp ?? 0 }}"
+                    >
 
+                        @if ($item->updated_at)
 
-            <tr>
-                <td>
-                    <div class="kpm-name">
-                        Sulastri
-                    </div>
-                    <div class="kpm-id">
-                        KPM 003
-                    </div>
-                </td>
+                            <div class="last-update">
 
-                <td>
-                    3204015606900003
-                </td>
+                                <div class="last-update-date">
+                                    {{ $item->updated_at->locale('id')->translatedFormat('d M Y') }}
+                                </div>
 
-                <td>
-                    RW 08
-                </td>
+                                <div class="last-update-time">
+                                    {{ $item->updated_at->format('H:i') }} WIB
+                                </div>
 
-                <td>
-                    <span class="badge badge-pkh">
-                        PKH
-                    </span>
-                </td>
+                            </div>
 
-                <td>
-                    Desil 1
-                </td>
+                        @else
 
-                <td>
-                    Cetak dokumen dan laporan
-                </td>
+                            <span class="text-muted">-</span>
 
-                <td>
-                    <div class="action-buttons">
+                        @endif
 
-                        <button
-                            type="button"
-                            class="action-btn action-view"
-                            onclick="viewData(this)"
-                            title="Lihat Data"
-                        >
-                            ◉
-                        </button>
+                    </td>
 
-                        <button
-                            type="button"
-                            class="action-btn action-edit"
-                            onclick="editData(this)"
-                            title="Ubah Data"
-                        >
-                            ✎
-                        </button>
+                    <td>
 
-                        <button
-                            type="button"
-                            class="action-btn action-delete"
-                            onclick="hapusData(this)"
-                            title="Hapus Data"
-                        >
-                            ×
-                        </button>
+                        <div class="action-buttons">
 
-                    </div>
-                </td>
-            </tr>
+                            <a
+                                href="{{ route('datakpm.show', $item->id) }}"
+                                class="action-btn action-view"
+                                title="Lihat Data"
+                            >
+                                ◉
+                            </a>
 
+                            <a
+                                href="{{ route('datakpm.edit', $item->id) }}"
+                                class="action-btn action-edit"
+                                title="Ubah Data"
+                            >
+                                ✎
+                            </a>
 
-            <tr>
-                <td>
-                    <div class="kpm-name">
-                        Bambang Haryanto
-                    </div>
-                    <div class="kpm-id">
-                        KPM 004
-                    </div>
-                </td>
+                            <form
+                                action="{{ route('datakpm.destroy', $item->id) }}"
+                                method="POST"
+                                class="delete-form"
+                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus data KPM {{ addslashes($item->nama) }}?')"
+                            >
 
-                <td>
-                    3204011205640004
-                </td>
+                                @csrf
+                                @method('DELETE')
 
-                <td>
-                    RW 02
-                </td>
+                                <button
+                                    type="submit"
+                                    class="action-btn action-delete"
+                                    title="Hapus Data"
+                                >
+                                    ×
+                                </button>
 
-                <td>
-                    <span class="badge badge-pangan">
-                        Bantuan Pangan
-                    </span>
-                </td>
+                            </form>
 
-                <td>
-                    Desil 4
-                </td>
+                        </div>
 
-                <td>
-                    Area tunggu masyarakat
-                </td>
+                    </td>
 
-                <td>
-                    <div class="action-buttons">
+                </tr>
 
-                        <button
-                            type="button"
-                            class="action-btn action-view"
-                            onclick="viewData(this)"
-                            title="Lihat Data"
-                        >
-                            ◉
-                        </button>
+            @empty
 
-                        <button
-                            type="button"
-                            class="action-btn action-edit"
-                            onclick="editData(this)"
-                            title="Ubah Data"
-                        >
-                            ✎
-                        </button>
+                <tr>
+                    <td colspan="8" style="text-align: center; padding: 30px;">
+                        Belum ada data KPM / Bantuan Sosial.
+                    </td>
+                </tr>
 
-                        <button
-                            type="button"
-                            class="action-btn action-delete"
-                            onclick="hapusData(this)"
-                            title="Hapus Data"
-                        >
-                            ×
-                        </button>
-
-                    </div>
-                </td>
-            </tr>
-
-
-            <tr>
-                <td>
-                    <div class="kpm-name">
-                        Nurhayati
-                    </div>
-                    <div class="kpm-id">
-                        KPM 005
-                    </div>
-                </td>
-
-                <td>
-                    3204016303720005
-                </td>
-
-                <td>
-                    RW 11
-                </td>
-
-                <td>
-                    <span class="badge badge-bpnt">
-                        BPNT
-                    </span>
-                </td>
-
-                <td>
-                    Desil 2
-                </td>
-
-                <td>
-                    Operasional kelurahan
-                </td>
-
-                <td>
-                    <div class="action-buttons">
-
-                        <button
-                            type="button"
-                            class="action-btn action-view"
-                            onclick="viewData(this)"
-                            title="Lihat Data"
-                        >
-                            ◉
-                        </button>
-
-                        <button
-                            type="button"
-                            class="action-btn action-edit"
-                            onclick="editData(this)"
-                            title="Ubah Data"
-                        >
-                            ✎
-                        </button>
-
-                        <button
-                            type="button"
-                            class="action-btn action-delete"
-                            onclick="hapusData(this)"
-                            title="Hapus Data"
-                        >
-                            ×
-                        </button>
-
-                    </div>
-                </td>
-            </tr>
+            @endforelse
 
         </tbody>
 
@@ -625,27 +487,29 @@
         pageLength: 10,
 
         lengthMenu: [
-            [5, 10, 25, 50],
-            [5, 10, 25, 50]
+            [10, 25, 50, 100],
+            [10, 25, 50, 100]
         ],
+
+        order: [],
 
         language: {
 
             search: "Cari:",
 
+            searchPlaceholder: "Cari data KPM...",
+
             lengthMenu: "Tampilkan _MENU_ data",
 
-            info:
-                "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+            info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
 
-            infoEmpty:
-                "Tidak ada data",
+            infoEmpty: "Tidak ada data",
 
-            zeroRecords:
-                "Data tidak ditemukan",
+            infoFiltered: "(difilter dari _MAX_ total data)",
 
-            emptyTable:
-                "Belum ada data",
+            zeroRecords: "Data tidak ditemukan",
+
+            emptyTable: "Belum ada data",
 
             paginate: {
                 first: "Awal",
@@ -656,15 +520,16 @@
         },
 
         columnDefs: [
+
             {
                 orderable: false,
                 searchable: false,
-                targets: 6
+                targets: 7
             }
+
         ]
 
     });
-
 
     kpmTable.on('draw', function () {
 
@@ -672,61 +537,6 @@
             kpmTable.page.info().recordsDisplay + ' KPM';
 
     });
-
-
-    function viewData(button) {
-
-        const cells = button.closest('tr').cells;
-
-        alert(
-            'Detail KPM / Bantuan Sosial\n\n' +
-            'Nama KPM: ' + cells[0].innerText.trim() + '\n' +
-            'NIK: ' + cells[1].innerText.trim() + '\n' +
-            'Alamat RW: ' + cells[2].innerText.trim() + '\n' +
-            'Jenis Bantuan: ' + cells[3].innerText.trim() + '\n' +
-            'Desil: ' + cells[4].innerText.trim() + '\n' +
-            'Keterangan: ' + cells[5].innerText.trim()
-        );
-
-    }
-
-
-    function editData(button) {
-
-        const row = button.closest('tr');
-
-        const nik =
-            row.cells[1].innerText.trim();
-
-        window.location.href =
-            '{{ url('/edit-data-kpm') }}/' + nik;
-
-    }
-
-
-    function hapusData(button) {
-
-        const row = button.closest('tr');
-
-        const nama =
-            row.cells[0].innerText.trim();
-
-        if (
-            confirm(
-                'Apakah Anda yakin ingin menghapus data:\n\n' +
-                nama +
-                '?'
-            )
-        ) {
-
-            kpmTable
-                .row(row)
-                .remove()
-                .draw(false);
-
-        }
-
-    }
 
 </script>
 

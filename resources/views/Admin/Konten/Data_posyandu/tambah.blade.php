@@ -1,16 +1,13 @@
 @php
 $isEdit = $isEdit ?? false;
 
-
 $posyanduValue = fn (
-    string $key,
-    mixed $default = ''
+string $key,
+mixed $default = ''
 ) => old(
-    $key,
-    data_get($posyandu ?? null, $key, $default)
+$key,
+data_get($posyandu ?? null, $key, $default)
 );
-
-
 @endphp
 
 @extends('Admin.Layout.master')
@@ -256,7 +253,6 @@ textarea.form-control {
 
 <div class="breadcrumb">
 
-
 <a href="{{ route('dashboard') }}">
     Beranda
 </a>
@@ -273,11 +269,9 @@ textarea.form-control {
     {{ $isEdit ? 'Edit Data' : 'Tambah Data' }}
 </span>
 
-
 </div>
 
 <div class="page-title-block">
-
 
 <h2>
     {{ $isEdit ? 'Edit' : 'Tambah' }}
@@ -289,25 +283,22 @@ textarea.form-control {
     data Posyandu atau Posbindu Kelurahan Binong.
 </p>
 
-
 </div>
 
 <div class="form-card">
 
-
 <div class="form-header">
 
-    <h3>
-        {{ $isEdit ? 'Edit' : 'Form' }}
-        Data Posyandu & Posbindu
-    </h3>
+<h3>
+    {{ $isEdit ? 'Edit' : 'Form' }}
+    Data Posyandu & Posbindu
+</h3>
 
-    <p>
-        Lengkapi informasi pada kolom yang tersedia.
-    </p>
+<p>
+    Lengkapi informasi pada kolom yang tersedia.
+</p>
 
 </div>
-
 
 <form
     id="posyanduForm"
@@ -315,258 +306,268 @@ textarea.form-control {
     action="{{ $isEdit ? route('dataposyandu.update', $posyandu->id) : route('dataposyandu.store') }}"
 >
 
-    @csrf
+@csrf
 
-    @if($isEdit)
-        @method('PUT')
-    @endif
+@if($isEdit)
+    @method('PUT')
+@endif
 
+<div class="form-body">
 
-    <div class="form-body">
+    <div class="form-section">
 
-        <div class="form-section">
+        <div class="section-title">
 
-            <div class="section-title">
+            <span class="section-number">
+                1
+            </span>
 
-                <span class="section-number">
-                    1
-                </span>
-
-                Data Posyandu & Posbindu
-
-            </div>
-
-
-            <div class="form-grid">
-
-
-                <div class="form-group">
-
-                    <label for="id_data">
-                        ID Data
-                        <span class="required">*</span>
-                    </label>
-
-                    <input
-                        type="text"
-                        id="id_data"
-                        name="id_data"
-                        class="form-control"
-                        placeholder="Contoh: PSY-001"
-                        value="{{ $posyanduValue('id_data') }}"
-                        maxlength="50"
-                        required
-                    >
-
-                    @error('id_data')
-                        <div class="error-message">
-                            {{ $message }}
-                        </div>
-                    @enderror
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="jenis">
-                        Jenis
-                        <span class="required">*</span>
-                    </label>
-
-                    <select
-                        id="jenis"
-                        name="jenis"
-                        class="form-control"
-                        required
-                    >
-
-                        <option value="">
-                            Pilih Jenis
-                        </option>
-
-                        <option
-                            value="Posyandu"
-                            @selected($posyanduValue('jenis') === 'Posyandu')
-                        >
-                            Posyandu
-                        </option>
-
-                        <option
-                            value="Posbindu"
-                            @selected($posyanduValue('jenis') === 'Posbindu')
-                        >
-                            Posbindu
-                        </option>
-
-                    </select>
-
-                    @error('jenis')
-                        <div class="error-message">
-                            {{ $message }}
-                        </div>
-                    @enderror
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="nama">
-                        Nama
-                        <span class="required">*</span>
-                    </label>
-
-                    <input
-                        type="text"
-                        id="nama"
-                        name="nama"
-                        class="form-control"
-                        placeholder="Nama Posyandu atau Posbindu"
-                        value="{{ $posyanduValue('nama') }}"
-                        maxlength="150"
-                        required
-                    >
-
-                    @error('nama')
-                        <div class="error-message">
-                            {{ $message }}
-                        </div>
-                    @enderror
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="rw">
-                        RW
-                    </label>
-
-                    <input
-                        type="text"
-                        id="rw"
-                        name="rw"
-                        class="form-control"
-                        placeholder="Contoh: 05"
-                        value="{{ $posyanduValue('rw') }}"
-                        maxlength="10"
-                    >
-
-                    @error('rw')
-                        <div class="error-message">
-                            {{ $message }}
-                        </div>
-                    @enderror
-
-                </div>
-
-
-                <div class="form-group">
-
-                    <label for="jumlah_kader">
-                        Jumlah Kader
-                        <span class="required">*</span>
-                    </label>
-
-                    <input
-                        type="number"
-                        id="jumlah_kader"
-                        name="jumlah_kader"
-                        class="form-control"
-                        min="0"
-                        placeholder="Contoh: 8"
-                        value="{{ $posyanduValue('jumlah_kader', 0) }}"
-                        required
-                    >
-
-                    @error('jumlah_kader')
-                        <div class="error-message">
-                            {{ $message }}
-                        </div>
-                    @enderror
-
-                </div>
-
-
-                <div class="form-group full">
-
-                    <label for="keterangan">
-                        Keterangan
-                    </label>
-
-                    <textarea
-                        id="keterangan"
-                        name="keterangan"
-                        class="form-control"
-                        placeholder="Keterangan tambahan"
-                    >{{ $posyanduValue('keterangan') }}</textarea>
-
-                    @error('keterangan')
-                        <div class="error-message">
-                            {{ $message }}
-                        </div>
-                    @enderror
-
-                </div>
-
-
-            </div>
+            Data Posyandu & Posbindu
 
         </div>
 
+        <div class="form-grid">
 
-        <div class="info-box">
+            <div class="form-group">
 
-            <div class="info-icon">
-                i
+                <label for="id_data">
+                    ID Data
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="text"
+                    id="id_data"
+                    name="id_data"
+                    class="form-control"
+                    placeholder="Contoh: PSY-001"
+                    value="{{ $posyanduValue('id_data') }}"
+                    maxlength="50"
+                    required
+                >
+
+                @error('id_data')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
+
             </div>
 
-            <p>
-                Pastikan data Posyandu atau Posbindu yang
-                dimasukkan sudah benar sebelum menyimpan.
-                Data akan disimpan ke database dan
-                disinkronkan ke Google Sheets.
-            </p>
+            <div class="form-group">
 
-        </div>
+                <label for="jenis">
+                    Jenis
+                    <span class="required">*</span>
+                </label>
 
+                <select
+                    id="jenis"
+                    name="jenis"
+                    class="form-control"
+                    required
+                >
 
-    </div>
+                    <option value="">
+                        Pilih Jenis
+                    </option>
 
+                    <option
+                        value="Posyandu"
+                        @selected($posyanduValue('jenis') === 'Posyandu')
+                    >
+                        Posyandu
+                    </option>
 
-    <div class="form-footer">
+                    <option
+                        value="Posbindu"
+                        @selected($posyanduValue('jenis') === 'Posbindu')
+                    >
+                        Posbindu
+                    </option>
 
-        <span>
-            <span class="required">*</span>
-            Wajib diisi
-        </span>
+                </select>
 
+                @error('jenis')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
 
-        <div class="form-actions">
+            </div>
 
-            <a
-                href="{{ route('dataposyandu.index') }}"
-                class="btn btn-secondary"
-            >
-                Batal
-            </a>
+            <div class="form-group">
 
+                <label for="nama">
+                    Nama
+                    <span class="required">*</span>
+                </label>
 
-            <button
-                type="submit"
-                class="btn btn-primary"
-            >
-                {{ $isEdit ? 'Perbarui Data' : 'Simpan Data' }}
-            </button>
+                <input
+                    type="text"
+                    id="nama"
+                    name="nama"
+                    class="form-control"
+                    placeholder="Nama Posyandu atau Posbindu"
+                    value="{{ $posyanduValue('nama') }}"
+                    maxlength="150"
+                    required
+                >
+
+                @error('nama')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="rw">
+                    RW
+                </label>
+
+                <input
+                    type="text"
+                    id="rw"
+                    name="rw"
+                    class="form-control"
+                    placeholder="Contoh: 05"
+                    value="{{ $posyanduValue('rw') }}"
+                    maxlength="10"
+                >
+
+                @error('rw')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="jumlah_kader">
+                    Jumlah Kader
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="number"
+                    id="jumlah_kader"
+                    name="jumlah_kader"
+                    class="form-control"
+                    min="0"
+                    placeholder="Contoh: 8"
+                    value="{{ $posyanduValue('jumlah_kader', 0) }}"
+                    required
+                >
+
+                @error('jumlah_kader')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="jumlah_balita">
+                    Jumlah Balita
+                    <span class="required">*</span>
+                </label>
+
+                <input
+                    type="number"
+                    id="jumlah_balita"
+                    name="jumlah_balita"
+                    class="form-control"
+                    min="0"
+                    placeholder="Contoh: 25"
+                    value="{{ $posyanduValue('jumlah_balita', 0) }}"
+                    required
+                >
+
+                @error('jumlah_balita')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
+
+            </div>
+
+            <div class="form-group full">
+
+                <label for="keterangan">
+                    Keterangan
+                </label>
+
+                <textarea
+                    id="keterangan"
+                    name="keterangan"
+                    class="form-control"
+                    placeholder="Keterangan tambahan"
+                >{{ $posyanduValue('keterangan') }}</textarea>
+
+                @error('keterangan')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
+
+            </div>
 
         </div>
 
     </div>
 
+    <div class="info-box">
+
+        <div class="info-icon">
+            i
+        </div>
+
+        <p>
+            Pastikan data Posyandu atau Posbindu yang
+            dimasukkan sudah benar sebelum menyimpan.
+            Data akan disimpan ke database dan
+            disinkronkan ke Google Sheets.
+        </p>
+
+    </div>
+
+</div>
+
+<div class="form-footer">
+
+    <span>
+        <span class="required">*</span>
+        Wajib diisi
+    </span>
+
+    <div class="form-actions">
+
+        <a
+            href="{{ route('dataposyandu.index') }}"
+            class="btn btn-secondary"
+        >
+            Batal
+        </a>
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+        >
+            {{ $isEdit ? 'Perbarui Data' : 'Simpan Data' }}
+        </button>
+
+    </div>
+
+</div>
 
 </form>
-
 
 </div>
 

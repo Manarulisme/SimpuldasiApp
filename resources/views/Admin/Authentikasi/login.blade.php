@@ -489,7 +489,7 @@
                 <div class="logo-text">
 
                     <strong>
-                        Kelurahan XXXXX
+                        Kelurahan Binong
                     </strong>
 
                     <span>
@@ -502,20 +502,20 @@
 
 
             <h1>
-                Portal Pegawai
+                Portal SIMPULDASI
             </h1>
 
 
             <p>
-                Selamat datang di sistem internal Kelurahan Binong.
-                Silakan masuk menggunakan akun pegawai untuk
+                Selamat datang di Sistem Pengumpulan Data Terintegrasi (SIMPULDASI).
+                Silakan masuk menggunakan akun terverifikasi untuk
                 mengakses sistem pelayanan dan administrasi.
             </p>
 
 
             <div class="left-footer">
 
-                Sistem Informasi Pelayanan Kelurahan
+                Sistem Pengumpulan Data Terintegrasi (SIMPULDASI)
 
             </div>
 
@@ -562,7 +562,7 @@
             <div class="login-header">
 
                 <h2>
-                    Login Pegawai
+                    Login Sistem
                 </h2>
 
                 <p>
@@ -701,7 +701,7 @@
 
             <div class="security-note">
 
-                🔒 Akses ini khusus untuk pegawai Kelurahan Binong.
+                🔒 Akses ini khusus untuk akun yang ditunjuk oleh Pihak Kelurahan.
 
             </div>
 

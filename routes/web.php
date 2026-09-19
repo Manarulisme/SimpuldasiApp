@@ -5,6 +5,15 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DataUmumKepegawaianController;
 use App\Http\Controllers\DataBmdController;
 use App\Http\Controllers\DataPosyanduController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\DataStuntingController;
+use App\Http\Controllers\DataKpmController;
+use App\Http\Controllers\DataAnakPutusSekolahController;
+use App\Http\Controllers\DataSekolahController;
+
+
+
+
 
 Route::get('/', function () {
     return view('index');
@@ -57,6 +66,46 @@ Route::resource(
 'dataposyandu',
 DataPosyanduController::class
 );
+
+Route::resource(
+'datastunting',
+DataStuntingController::class
+);
+
+Route::resource(
+'datakpm',
+DataKpmController::class
+);
+
+Route::resource(
+'dataputussekolah',
+DataAnakPutusSekolahController::class
+);
+
+Route::resource(
+'datasekolah',
+DataSekolahController::class
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+Route::resource(
+'pengaturan_user',
+UserController::class
+)->parameters([
+'pengaturan_user' => 'user',
+]);
+
 
 
 
@@ -112,56 +161,56 @@ DataPosyanduController::class
 // });
 
 // Data Stunting
-Route::get('/datastunting', function () {
-    return view('Admin.Konten.Data_stunting.index');
-});
+// Route::get('/datastunting', function () {
+//     return view('Admin.Konten.Data_stunting.index');
+// });
 
-Route::get('/tambah-data-stunting', function () {
-    return view('Admin.Konten.Data_stunting.tambah');
-});
+// Route::get('/tambah-data-stunting', function () {
+//     return view('Admin.Konten.Data_stunting.tambah');
+// });
 
-Route::get('/edit-data-stunting', function () {
-    return view('Admin.Konten.Data_stunting.edit');
-});
+// Route::get('/edit-data-stunting', function () {
+//     return view('Admin.Konten.Data_stunting.edit');
+// });
 
-// Data KPM / Bantuan Sosial
-Route::get('/datakpm', function () {
-    return view('Admin.Konten.Data_kpm.index');
-});
+// // Data KPM / Bantuan Sosial
+// Route::get('/datakpm', function () {
+//     return view('Admin.Konten.Data_kpm.index');
+// });
 
-Route::get('/tambah-data-kpm', function () {
-    return view('Admin.Konten.Data_kpm.tambah');
-});
+// Route::get('/tambah-data-kpm', function () {
+//     return view('Admin.Konten.Data_kpm.tambah');
+// });
 
-Route::get('/edit-data-kpm', function () {
-    return view('Admin.Konten.Data_kpm.edit');
-});
+// Route::get('/edit-data-kpm', function () {
+//     return view('Admin.Konten.Data_kpm.edit');
+// });
 
-// Data Anak Putus Sekolah
-Route::get('/dataputussekolah', function () {
-    return view('Admin.Konten.Data_putus_sekolah.index');
-});
+// // Data Anak Putus Sekolah
+// Route::get('/dataputussekolah', function () {
+//     return view('Admin.Konten.Data_putus_sekolah.index');
+// });
 
-Route::get('/tambah-data-putus-sekolah', function () {
-    return view('Admin.Konten.Data_putus_sekolah.tambah');
-});
+// Route::get('/tambah-data-putus-sekolah', function () {
+//     return view('Admin.Konten.Data_putus_sekolah.tambah');
+// });
 
-Route::get('/edit-data-putus-sekolah', function () {
-    return view('Admin.Konten.Data_putus_sekolah.edit');
-});
+// Route::get('/edit-data-putus-sekolah', function () {
+//     return view('Admin.Konten.Data_putus_sekolah.edit');
+// });
 
 // Data Sekolah
-Route::get('/datasekolah', function () {
-    return view('Admin.Konten.Data_sekolah.index');
-});
+// Route::get('/datasekolah', function () {
+//     return view('Admin.Konten.Data_sekolah.index');
+// });
 
-Route::get('/tambah-data-sekolah', function () {
-    return view('Admin.Konten.Data_sekolah.tambah');
-});
+// Route::get('/tambah-data-sekolah', function () {
+//     return view('Admin.Konten.Data_sekolah.tambah');
+// });
 
-Route::get('/edit-data-sekolah', function () {
-    return view('Admin.Konten.Data_sekolah.edit');
-});
+// Route::get('/edit-data-sekolah', function () {
+//     return view('Admin.Konten.Data_sekolah.edit');
+// });
 
 
 //Data UMKM

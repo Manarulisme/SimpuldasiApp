@@ -4,24 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DataPosyandu extends Model
+class DataStunting extends Model
 {
-    protected $table = 'data_posyandu';
+    protected $table = 'data_stunting';
 
     protected $fillable = [
-        'id_data',
-        'jenis',
+        'nik',
         'nama',
-        'rw',
-        'jumlah_kader',
-        'jumlah_balita',
+        'tanggal_lahir',
+        'jenis_kelamin',
+        'status',
         'keterangan',
         'google_sync_status',
         'google_synced_at',
     ];
 
     protected $casts = [
-        'jumlah_kader' => 'integer',
+        'tanggal_lahir' => 'date',
         'google_synced_at' => 'datetime',
     ];
 }

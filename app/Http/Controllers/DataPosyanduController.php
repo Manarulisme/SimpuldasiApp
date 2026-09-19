@@ -10,11 +10,11 @@ use Illuminate\Validation\Rule;
 class DataPosyanduController extends Controller
 {
     /**
-     * Menampilkan semua data Posyandu & Posbindu
+     * Menampilkan seluruh data Posyandu & Posbindu
      */
     public function index()
     {
-        $dataPosyandu = DataPosyandu::latest()->get();
+        $dataPosyandu = DataPosyandu::orderBy('updated_at', 'desc')->get();
 
         return view(
             'Admin.Konten.Data_posyandu.index',
@@ -24,21 +24,22 @@ class DataPosyanduController extends Controller
 
 
     /**
-     * Form tambah
+     * Menampilkan form tambah data
      */
     public function create()
     {
+        $posyandu = null;
         $isEdit = false;
 
         return view(
             'Admin.Konten.Data_posyandu.tambah',
-            compact('isEdit')
+            compact('posyandu', 'isEdit')
         );
     }
 
 
     /**
-     * Simpan data baru
+     * Menyimpan data Posyandu / Posbindu baru
      */
     public function store(Request $request)
     {
@@ -73,38 +74,87 @@ class DataPosyanduController extends Controller
                 'min:0',
             ],
 
+            'jumlah_balita' => [
+                'required',
+                'integer',
+                'min:0',
+            ],
+
             'keterangan' => [
                 'nullable',
                 'string',
             ],
         ], [
-            'id_data.required' => 'ID Data wajib diisi.',
-            'id_data.unique' => 'ID Data sudah digunakan.',
-            'jenis.required' => 'Jenis wajib dipilih.',
-            'jenis.in' => 'Jenis Posyandu tidak valid.',
-            'nama.required' => 'Nama Posyandu / Posbindu wajib diisi.',
-            'jumlah_kader.required' => 'Jumlah kader wajib diisi.',
-            'jumlah_kader.integer' => 'Jumlah kader harus berupa angka.',
-            'jumlah_kader.min' => 'Jumlah kader tidak boleh kurang dari 0.',
+
+            'id_data.required' =>
+                'ID Data wajib diisi.',
+
+            'id_data.unique' =>
+                'ID Data sudah digunakan.',
+
+            'jenis.required' =>
+                'Jenis wajib dipilih.',
+
+            'jenis.in' =>
+                'Jenis Posyandu tidak valid.',
+
+            'nama.required' =>
+                'Nama Posyandu / Posbindu wajib diisi.',
+
+            'jumlah_kader.required' =>
+                'Jumlah kader wajib diisi.',
+
+            'jumlah_kader.integer' =>
+                'Jumlah kader harus berupa angka.',
+
+            'jumlah_kader.min' =>
+                'Jumlah kader tidak boleh kurang dari 0.',
+
+            'jumlah_balita.required' =>
+                'Jumlah balita wajib diisi.',
+
+            'jumlah_balita.integer' =>
+                'Jumlah balita harus berupa angka.',
+
+            'jumlah_balita.min' =>
+                'Jumlah balita tidak boleh kurang dari 0.',
         ]);
 
 
         /*
         |--------------------------------------------------------------------------
-        | 1. SIMPAN KE DATABASE LARAVEL
+        | 1. SIMPAN KE DATABASE
         |--------------------------------------------------------------------------
         */
 
         $posyandu = DataPosyandu::create([
-            'id_data' => $validated['id_data'],
-            'jenis' => $validated['jenis'],
-            'nama' => $validated['nama'],
-            'rw' => $validated['rw'] ?? null,
-            'jumlah_kader' => $validated['jumlah_kader'],
-            'keterangan' => $validated['keterangan'] ?? null,
 
-            'google_sync_status' => 'pending',
-            'google_synced_at' => null,
+            'id_data' =>
+                $validated['id_data'],
+
+            'jenis' =>
+                $validated['jenis'],
+
+            'nama' =>
+                $validated['nama'],
+
+            'rw' =>
+                $validated['rw'] ?? null,
+
+            'jumlah_kader' =>
+                $validated['jumlah_kader'],
+
+            'jumlah_balita' =>
+                $validated['jumlah_balita'],
+
+            'keterangan' =>
+                $validated['keterangan'] ?? null,
+
+            'google_sync_status' =>
+                'pending',
+
+            'google_synced_at' =>
+                null,
         ]);
 
 
@@ -114,26 +164,42 @@ class DataPosyanduController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $berhasilSync = $this->sendToGoogleSheets([
-            'action' => 'create',
+        $sync = $this->sendToGoogleSheets([
 
-            'id' => $posyandu->id,
+            'module' =>
+                'POSYANDU',
 
-            'id_data' => $posyandu->id_data,
+            'action' =>
+                'create',
 
-            'jenis' => $posyandu->jenis,
+            'id' =>
+                $posyandu->id,
 
-            'nama' => $posyandu->nama,
+            'id_data' =>
+                $posyandu->id_data,
 
-            'rw' => $posyandu->rw,
+            'jenis' =>
+                $posyandu->jenis,
 
-            'jumlah_kader' => $posyandu->jumlah_kader,
+            'nama' =>
+                $posyandu->nama,
 
-            'keterangan' => $posyandu->keterangan,
+            'rw' =>
+                $posyandu->rw,
 
-            'updated_at' => $posyandu->updated_at
-                ? $posyandu->updated_at->format('Y-m-d H:i:s')
-                : now()->format('Y-m-d H:i:s'),
+            'jumlah_kader' =>
+                $posyandu->jumlah_kader,
+
+            'jumlah_balita' =>
+                $posyandu->jumlah_balita,
+
+            'keterangan' =>
+                $posyandu->keterangan,
+
+            'updated_at' =>
+                $posyandu->updated_at
+                    ? $posyandu->updated_at->format('d/m/Y H:i:s')
+                    : now()->format('d/m/Y H:i:s'),
         ]);
 
 
@@ -143,35 +209,54 @@ class DataPosyanduController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if ($berhasilSync) {
+        if ($sync) {
 
             $posyandu->update([
-                'google_sync_status' => 'synced',
-                'google_synced_at' => now(),
+
+                'google_sync_status' =>
+                    'synced',
+
+                'google_synced_at' =>
+                    now(),
             ]);
 
-        } else {
 
-            $posyandu->update([
-                'google_sync_status' => 'failed',
-                'google_synced_at' => null,
-            ]);
+            return redirect()
+                ->route('dataposyandu.index')
+                ->with(
+                    'success',
+                    'Data Posyandu berhasil ditambahkan dan disinkronkan ke Google Sheets.'
+                );
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | GOOGLE SYNC GAGAL
+        |--------------------------------------------------------------------------
+        */
+
+        $posyandu->update([
+
+            'google_sync_status' =>
+                'failed',
+
+            'google_synced_at' =>
+                null,
+        ]);
 
 
         return redirect()
             ->route('dataposyandu.index')
             ->with(
-                'success',
-                $berhasilSync
-                    ? 'Data Posyandu berhasil disimpan dan disinkronkan ke Google Sheets.'
-                    : 'Data Posyandu berhasil disimpan, tetapi gagal disinkronkan ke Google Sheets.'
+                'warning',
+                'Data Posyandu berhasil disimpan, tetapi gagal disinkronkan ke Google Sheets.'
             );
     }
 
 
     /**
-     * Menampilkan detail data
+     * Menampilkan detail data Posyandu / Posbindu
      */
     public function show(DataPosyandu $dataposyandu)
     {
@@ -183,7 +268,7 @@ class DataPosyanduController extends Controller
 
 
     /**
-     * Form edit
+     * Menampilkan form edit
      */
     public function edit(DataPosyandu $dataposyandu)
     {
@@ -202,7 +287,7 @@ class DataPosyanduController extends Controller
 
 
     /**
-     * Update data
+     * Memperbarui data Posyandu / Posbindu
      */
     public function update(
         Request $request,
@@ -243,38 +328,87 @@ class DataPosyanduController extends Controller
                 'min:0',
             ],
 
+            'jumlah_balita' => [
+                'required',
+                'integer',
+                'min:0',
+            ],
+
             'keterangan' => [
                 'nullable',
                 'string',
             ],
         ], [
-            'id_data.required' => 'ID Data wajib diisi.',
-            'id_data.unique' => 'ID Data sudah digunakan oleh data lain.',
-            'jenis.required' => 'Jenis wajib dipilih.',
-            'jenis.in' => 'Jenis Posyandu tidak valid.',
-            'nama.required' => 'Nama Posyandu / Posbindu wajib diisi.',
-            'jumlah_kader.required' => 'Jumlah kader wajib diisi.',
-            'jumlah_kader.integer' => 'Jumlah kader harus berupa angka.',
-            'jumlah_kader.min' => 'Jumlah kader tidak boleh kurang dari 0.',
+
+            'id_data.required' =>
+                'ID Data wajib diisi.',
+
+            'id_data.unique' =>
+                'ID Data sudah digunakan oleh data lain.',
+
+            'jenis.required' =>
+                'Jenis wajib dipilih.',
+
+            'jenis.in' =>
+                'Jenis Posyandu tidak valid.',
+
+            'nama.required' =>
+                'Nama Posyandu / Posbindu wajib diisi.',
+
+            'jumlah_kader.required' =>
+                'Jumlah kader wajib diisi.',
+
+            'jumlah_kader.integer' =>
+                'Jumlah kader harus berupa angka.',
+
+            'jumlah_kader.min' =>
+                'Jumlah kader tidak boleh kurang dari 0.',
+
+            'jumlah_balita.required' =>
+                'Jumlah balita wajib diisi.',
+
+            'jumlah_balita.integer' =>
+                'Jumlah balita harus berupa angka.',
+
+            'jumlah_balita.min' =>
+                'Jumlah balita tidak boleh kurang dari 0.',
         ]);
 
 
         /*
         |--------------------------------------------------------------------------
-        | 1. UPDATE DATABASE LARAVEL
+        | 1. UPDATE DATABASE
         |--------------------------------------------------------------------------
         */
 
         $dataposyandu->update([
-            'id_data' => $validated['id_data'],
-            'jenis' => $validated['jenis'],
-            'nama' => $validated['nama'],
-            'rw' => $validated['rw'] ?? null,
-            'jumlah_kader' => $validated['jumlah_kader'],
-            'keterangan' => $validated['keterangan'] ?? null,
 
-            'google_sync_status' => 'pending',
-            'google_synced_at' => null,
+            'id_data' =>
+                $validated['id_data'],
+
+            'jenis' =>
+                $validated['jenis'],
+
+            'nama' =>
+                $validated['nama'],
+
+            'rw' =>
+                $validated['rw'] ?? null,
+
+            'jumlah_kader' =>
+                $validated['jumlah_kader'],
+
+            'jumlah_balita' =>
+                $validated['jumlah_balita'],
+
+            'keterangan' =>
+                $validated['keterangan'] ?? null,
+
+            'google_sync_status' =>
+                'pending',
+
+            'google_synced_at' =>
+                null,
         ]);
 
 
@@ -283,8 +417,8 @@ class DataPosyanduController extends Controller
         | 2. REFRESH DATA
         |--------------------------------------------------------------------------
         |
-        | Memastikan updated_at yang dikirim adalah
-        | updated_at terbaru dari database.
+        | Memastikan updated_at yang dikirim ke Google Sheets
+        | adalah updated_at terbaru dari database.
         |
         */
 
@@ -297,26 +431,42 @@ class DataPosyanduController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $berhasilSync = $this->sendToGoogleSheets([
-            'action' => 'update',
+        $sync = $this->sendToGoogleSheets([
 
-            'id' => $dataposyandu->id,
+            'module' =>
+                'POSYANDU',
 
-            'id_data' => $dataposyandu->id_data,
+            'action' =>
+                'update',
 
-            'jenis' => $dataposyandu->jenis,
+            'id' =>
+                $dataposyandu->id,
 
-            'nama' => $dataposyandu->nama,
+            'id_data' =>
+                $dataposyandu->id_data,
 
-            'rw' => $dataposyandu->rw,
+            'jenis' =>
+                $dataposyandu->jenis,
 
-            'jumlah_kader' => $dataposyandu->jumlah_kader,
+            'nama' =>
+                $dataposyandu->nama,
 
-            'keterangan' => $dataposyandu->keterangan,
+            'rw' =>
+                $dataposyandu->rw,
 
-            'updated_at' => $dataposyandu->updated_at
-                ? $dataposyandu->updated_at->format('Y-m-d H:i:s')
-                : now()->format('Y-m-d H:i:s'),
+            'jumlah_kader' =>
+                $dataposyandu->jumlah_kader,
+
+            'jumlah_balita' =>
+                $dataposyandu->jumlah_balita,
+
+            'keterangan' =>
+                $dataposyandu->keterangan,
+
+            'updated_at' =>
+                $dataposyandu->updated_at
+                    ? $dataposyandu->updated_at->format('d/m/Y H:i:s')
+                    : now()->format('d/m/Y H:i:s'),
         ]);
 
 
@@ -326,87 +476,68 @@ class DataPosyanduController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if ($berhasilSync) {
+        if ($sync) {
 
             $dataposyandu->update([
-                'google_sync_status' => 'synced',
-                'google_synced_at' => now(),
+
+                'google_sync_status' =>
+                    'synced',
+
+                'google_synced_at' =>
+                    now(),
             ]);
 
-        } else {
-
-            $dataposyandu->update([
-                'google_sync_status' => 'failed',
-                'google_synced_at' => null,
-            ]);
-        }
-
-
-        return redirect()
-            ->route('dataposyandu.index')
-            ->with(
-                'success',
-                $berhasilSync
-                    ? 'Data Posyandu berhasil diperbarui dan disinkronkan ke Google Sheets.'
-                    : 'Data Posyandu berhasil diperbarui, tetapi gagal disinkronkan ke Google Sheets.'
-            );
-    }
-
-
-    /**
-     * Hapus data
-     */
-    public function destroy(
-        DataPosyandu $dataposyandu
-    ) {
-        $id = $dataposyandu->id;
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | 1. HAPUS DARI GOOGLE SHEETS
-        |--------------------------------------------------------------------------
-        */
-
-        $berhasilSync = $this->sendToGoogleSheets([
-            'action' => 'delete',
-
-            'id' => $id,
-
-            'id_data' => $dataposyandu->id_data,
-        ]);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | 2. JIKA GOOGLE BERHASIL, HAPUS DATABASE
-        |--------------------------------------------------------------------------
-        */
-
-        if ($berhasilSync) {
-
-            $dataposyandu->delete();
 
             return redirect()
                 ->route('dataposyandu.index')
                 ->with(
                     'success',
-                    'Data Posyandu berhasil dihapus.'
+                    'Data Posyandu berhasil diperbarui dan disinkronkan ke Google Sheets.'
                 );
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | 3. JIKA GOOGLE GAGAL
+        | GOOGLE SYNC GAGAL
         |--------------------------------------------------------------------------
         */
+
+        $dataposyandu->update([
+
+            'google_sync_status' =>
+                'failed',
+
+            'google_synced_at' =>
+                null,
+        ]);
+
 
         return redirect()
             ->route('dataposyandu.index')
             ->with(
-                'error',
-                'Data gagal dihapus karena sinkronisasi dengan Google Sheets gagal.'
+                'warning',
+                'Data Posyandu berhasil diperbarui, tetapi gagal disinkronkan ke Google Sheets.'
+            );
+    }
+
+
+    /**
+     * Menghapus data Posyandu / Posbindu
+     *
+     * PENTING:
+     * Delete hanya dilakukan pada database Laravel.
+     * Tidak ada request delete yang dikirim ke Google Sheets.
+     */
+    public function destroy(DataPosyandu $dataposyandu)
+    {
+        $dataposyandu->delete();
+
+        return redirect()
+            ->route('dataposyandu.index')
+            ->with(
+                'success',
+                'Data Posyandu berhasil dihapus dari database.'
             );
     }
 
@@ -418,111 +549,347 @@ class DataPosyanduController extends Controller
     {
         $url = env('GOOGLE_SHEETS_WEBHOOK_URL');
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | CEK WEBHOOK
+        |--------------------------------------------------------------------------
+        */
+
         if (!$url) {
 
             Log::error(
-                'GOOGLE_SHEETS_WEBHOOK_URL belum dikonfigurasi.'
+                'GOOGLE_SHEETS_WEBHOOK_URL tidak ditemukan di .env'
             );
 
             return false;
         }
 
 
-        try {
+        /*
+        |--------------------------------------------------------------------------
+        | ENCODE JSON
+        |--------------------------------------------------------------------------
+        */
 
-            $payload = json_encode(
-                array_merge(
-                    [
-                        'module' => 'POSYANDU',
-                    ],
-                    $data
-                ),
-                JSON_UNESCAPED_UNICODE |
-                JSON_UNESCAPED_SLASHES
+        $jsonData = json_encode(
+            $data,
+            JSON_UNESCAPED_UNICODE |
+            JSON_UNESCAPED_SLASHES
+        );
+
+
+        if ($jsonData === false) {
+
+            Log::error(
+                'Gagal encode JSON Google Sheets Posyandu',
+                [
+                    'data' =>
+                        $data,
+
+                    'json_error' =>
+                        json_last_error_msg(),
+                ]
             );
 
+            return false;
+        }
 
-            $ch = curl_init($url);
+
+        /*
+        |--------------------------------------------------------------------------
+        | CURL REQUEST AWAL
+        |--------------------------------------------------------------------------
+        */
+
+        $ch = curl_init($url);
+
+
+        curl_setopt_array($ch, [
+
+            CURLOPT_RETURNTRANSFER =>
+                true,
+
+            CURLOPT_POST =>
+                true,
+
+            CURLOPT_POSTFIELDS =>
+                $jsonData,
+
+            CURLOPT_HTTPHEADER => [
+
+                'Content-Type: application/json',
+
+                'Accept: application/json',
+
+                'Content-Length: ' . strlen($jsonData),
+            ],
+
+            CURLOPT_CONNECTTIMEOUT =>
+                10,
+
+            CURLOPT_TIMEOUT =>
+                30,
+
+            /*
+             * Jangan mengikuti redirect otomatis.
+             */
+
+            CURLOPT_FOLLOWLOCATION =>
+                false,
+
+            CURLOPT_HTTP_VERSION =>
+                CURL_HTTP_VERSION_1_1,
+
+            CURLOPT_HEADER =>
+                true,
+        ]);
+
+
+        $rawResponse = curl_exec($ch);
+
+
+        $httpCode = curl_getinfo(
+            $ch,
+            CURLINFO_HTTP_CODE
+        );
+
+
+        $redirectUrl = curl_getinfo(
+            $ch,
+            CURLINFO_REDIRECT_URL
+        );
+
+
+        $curlErrno = curl_errno($ch);
+
+
+        $curlError = curl_error($ch);
+
+
+        $headerSize = curl_getinfo(
+            $ch,
+            CURLINFO_HEADER_SIZE
+        );
+
+
+        $responseHeaders = '';
+
+        $responseBody = '';
+
+
+        if ($rawResponse !== false) {
+
+            $responseHeaders = substr(
+                $rawResponse,
+                0,
+                $headerSize
+            );
+
+            $responseBody = substr(
+                $rawResponse,
+                $headerSize
+            );
+        }
+
+
+        curl_close($ch);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | LOG RESPONSE AWAL
+        |--------------------------------------------------------------------------
+        */
+
+        Log::info(
+            'Response Google Sheets Posyandu - Initial',
+            [
+
+                'http_code' =>
+                    $httpCode,
+
+                'curl_errno' =>
+                    $curlErrno,
+
+                'curl_error' =>
+                    $curlError,
+
+                'redirect_url' =>
+                    $redirectUrl,
+
+                'response_headers' =>
+                    $responseHeaders,
+
+                'response_body' =>
+                    $responseBody,
+
+                'data' =>
+                    $data,
+            ]
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CURL ERROR
+        |--------------------------------------------------------------------------
+        */
+
+        if ($rawResponse === false) {
+
+            Log::error(
+                'cURL Google Sheets Posyandu gagal',
+                [
+
+                    'curl_errno' =>
+                        $curlErrno,
+
+                    'curl_error' =>
+                        $curlError,
+
+                    'data' =>
+                        $data,
+                ]
+            );
+
+            return false;
+        }
+
+
+        if ($curlErrno !== 0) {
+
+            Log::error(
+                'cURL Google Sheets Posyandu error',
+                [
+
+                    'curl_errno' =>
+                        $curlErrno,
+
+                    'curl_error' =>
+                        $curlError,
+
+                    'data' =>
+                        $data,
+                ]
+            );
+
+            return false;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | JIKA GOOGLE MEMBERIKAN REDIRECT
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            (
+                $httpCode === 301 ||
+                $httpCode === 302 ||
+                $httpCode === 303
+            )
+            &&
+            $redirectUrl
+        ) {
+
+            $redirectUrl =
+                trim($redirectUrl);
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | REQUEST KE URL REDIRECT
+            |--------------------------------------------------------------------------
+            */
+
+            $ch = curl_init(
+                $redirectUrl
+            );
 
 
             curl_setopt_array($ch, [
 
-                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_RETURNTRANSFER =>
+                    true,
 
-                CURLOPT_POST => true,
-
-                CURLOPT_POSTFIELDS => $payload,
+                CURLOPT_HTTPGET =>
+                    true,
 
                 CURLOPT_HTTPHEADER => [
-                    'Content-Type: application/json',
+
                     'Accept: application/json',
                 ],
 
-                CURLOPT_CONNECTTIMEOUT => 10,
+                CURLOPT_CONNECTTIMEOUT =>
+                    10,
 
-                CURLOPT_TIMEOUT => 25,
+                CURLOPT_TIMEOUT =>
+                    30,
 
-                /*
-                |--------------------------------------------------------------------------
-                | Jangan mengikuti redirect Google Apps Script
-                |--------------------------------------------------------------------------
-                */
+                CURLOPT_FOLLOWLOCATION =>
+                    false,
 
-                CURLOPT_FOLLOWLOCATION => false,
-
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_HTTP_VERSION =>
+                    CURL_HTTP_VERSION_1_1,
             ]);
 
 
-            $response = curl_exec($ch);
+            $finalResponse =
+                curl_exec($ch);
 
-            $curlError = curl_error($ch);
 
-            $curlErrno = curl_errno($ch);
+            $finalHttpCode =
+                curl_getinfo(
+                    $ch,
+                    CURLINFO_HTTP_CODE
+                );
 
-            $httpCode = curl_getinfo(
-                $ch,
-                CURLINFO_HTTP_CODE
-            );
 
-            $redirectUrl = curl_getinfo(
-                $ch,
-                CURLINFO_REDIRECT_URL
-            );
+            $finalCurlErrno =
+                curl_errno($ch);
+
+
+            $finalCurlError =
+                curl_error($ch);
 
 
             curl_close($ch);
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | LOG RESPONSE REDIRECT
+            |--------------------------------------------------------------------------
+            */
+
             Log::info(
-                'Response Google Sheets Posyandu',
+                'Response Google Sheets Posyandu - Redirect',
                 [
-                    'http_code' => $httpCode,
-                    'curl_errno' => $curlErrno,
-                    'curl_error' => $curlError,
-                    'redirect_url' => $redirectUrl,
-                    'response' => $response,
-                    'data' => $data,
+
+                    'http_code' =>
+                        $finalHttpCode,
+
+                    'curl_errno' =>
+                        $finalCurlErrno,
+
+                    'curl_error' =>
+                        $finalCurlError,
+
+                    'response' =>
+                        $finalResponse,
+
+                    'data' =>
+                        $data,
                 ]
             );
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | CEK CURL ERROR
-            |--------------------------------------------------------------------------
-            */
-
-            if ($response === false) {
-
-                Log::error(
-                    'cURL Google Sheets Posyandu gagal',
-                    [
-                        'curl_errno' => $curlErrno,
-                        'curl_error' => $curlError,
-                        'data' => $data,
-                    ]
-                );
+            if (
+                $finalResponse === false ||
+                $finalCurlErrno !== 0
+            ) {
 
                 return false;
             }
@@ -530,115 +897,106 @@ class DataPosyanduController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | RESPONSE JSON
+            | CEK JSON RESPONSE
             |--------------------------------------------------------------------------
             */
 
-            $result = json_decode(
-                $response,
-                true
-            );
+            $decoded =
+                json_decode(
+                    $finalResponse,
+                    true
+                );
 
 
             if (
-                is_array($result) &&
-                isset($result['success'])
+                is_array($decoded) &&
+                isset($decoded['success'])
             ) {
 
-                if ($result['success'] === true) {
-
-                    Log::info(
-                        'Google Sheets Posyandu berhasil disinkronkan.',
-                        [
-                            'response' => $result,
-                            'data' => $data,
-                        ]
-                    );
-
-                    return true;
-                }
-
-
-                Log::error(
-                    'Google Apps Script Posyandu mengembalikan success=false.',
-                    [
-                        'response' => $result,
-                        'data' => $data,
-                    ]
-                );
-
-                return false;
+                return (bool)
+                    $decoded['success'];
             }
 
 
             /*
             |--------------------------------------------------------------------------
-            | HTTP 302
+            | HTTP 2XX
             |--------------------------------------------------------------------------
-            |
-            | Apps Script dapat mengembalikan redirect setelah
-            | POST berhasil diproses.
-            |
             */
 
             if (
-                $httpCode === 302 ||
-                $httpCode === 301
+                $finalHttpCode >= 200 &&
+                $finalHttpCode < 300
             ) {
-
-                Log::info(
-                    'Google Apps Script Posyandu mengembalikan redirect.',
-                    [
-                        'http_code' => $httpCode,
-                        'redirect_url' => $redirectUrl,
-                        'data' => $data,
-                    ]
-                );
 
                 return true;
             }
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | HTTP ERROR
-            |--------------------------------------------------------------------------
-            */
-
-            if (
-                $httpCode < 200 ||
-                $httpCode >= 300
-            ) {
-
-                Log::error(
-                    'Google Sheets Posyandu HTTP error',
-                    [
-                        'http_code' => $httpCode,
-                        'response' => $response,
-                        'data' => $data,
-                    ]
-                );
-
-                return false;
-            }
-
-
-            return true;
-
-
-        } catch (\Throwable $e) {
-
-            Log::error(
-                'Gagal menghubungi Google Sheets Posyandu',
-                [
-                    'message' => $e->getMessage(),
-                    'file' => $e->getFile(),
-                    'line' => $e->getLine(),
-                    'data' => $data,
-                ]
-            );
-
             return false;
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | RESPONSE JSON NORMAL
+        |--------------------------------------------------------------------------
+        */
+
+        $decoded =
+            json_decode(
+                $responseBody,
+                true
+            );
+
+
+        if (
+            is_array($decoded) &&
+            isset($decoded['success'])
+        ) {
+
+            return (bool)
+                $decoded['success'];
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HTTP 2XX
+        |--------------------------------------------------------------------------
+        */
+
+        if (
+            $httpCode >= 200 &&
+            $httpCode < 300
+        ) {
+
+            return true;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HTTP ERROR
+        |--------------------------------------------------------------------------
+        */
+
+        Log::error(
+            'Google Sheets Posyandu HTTP error',
+            [
+
+                'http_code' =>
+                    $httpCode,
+
+                'response' =>
+                    $responseBody,
+
+                'data' =>
+                    $data,
+            ]
+        );
+
+
+        return false;
     }
 }

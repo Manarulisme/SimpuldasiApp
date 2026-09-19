@@ -1,17 +1,18 @@
 @extends('Admin.Layout.master')
 
-@section('title', ($isEdit ?? false) ? 'Edit Data BMD - Kelurahan XXXXX' : 'Tambah Data BMD - Kelurahan XXXXX')
+@section('title', ($isEdit ?? false) ? 'Edit Data BMD - Kelurahan Binong' : 'Tambah Data BMD - Kelurahan Binong')
 
 @section('page_title', ($isEdit ?? false) ? 'Edit Data BMD' : 'Tambah Data BMD')
 
 @section('page_subtitle', 'Kesekretariatan · Data BMD')
 
 @php
-    $isEdit = $isEdit ?? false;
-    $bmd = $bmd ?? null;
+$isEdit = $isEdit ?? false;
+$bmd = $bmd ?? null;
 @endphp
 
 @push('styles')
+
 <style>
     .bmd-page {
         padding-bottom: 30px;
@@ -260,315 +261,360 @@
         }
     }
 </style>
+
 @endpush
 
 @section('content')
 
 <div class="bmd-page">
 
-    {{-- Breadcrumb --}}
-    <div class="bmd-breadcrumb">
-        <a href="{{ route('databmd.index') }}">
-            Data BMD
-        </a>
 
-        <span>/</span>
+{{-- Breadcrumb --}}
+<div class="bmd-breadcrumb">
 
-        <span>
-            {{ $isEdit ? 'Edit Data' : 'Tambah Data' }}
-        </span>
+    <a href="{{ route('databmd.index') }}">
+        Data BMD
+    </a>
+
+    <span>/</span>
+
+    <span>
+        {{ $isEdit ? 'Edit Data' : 'Tambah Data' }}
+    </span>
+
+</div>
+
+{{-- Validation Error --}}
+@if ($errors->any())
+
+    <div class="bmd-alert bmd-alert-error">
+
+        <strong>Terjadi kesalahan:</strong>
+
+        <ul>
+
+            @foreach ($errors->all() as $error)
+
+                <li>{{ $error }}</li>
+
+            @endforeach
+
+        </ul>
+
     </div>
 
-    {{-- Validation Error --}}
-    @if ($errors->any())
-        <div class="bmd-alert bmd-alert-error">
-            <strong>Terjadi kesalahan:</strong>
+@endif
 
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+<div class="bmd-card">
 
-    <div class="bmd-card">
+    {{-- Header --}}
+    <div class="bmd-card-header">
 
-        {{-- Header --}}
-        <div class="bmd-card-header">
-            <h3>
-                {{ $isEdit ? 'Edit Data BMD' : 'Tambah Data BMD' }}
-            </h3>
+        <h3>
+            {{ $isEdit ? 'Edit Data BMD' : 'Tambah Data BMD' }}
+        </h3>
 
-            <p>
-                {{ $isEdit
-                    ? 'Perbarui informasi Barang Milik Daerah yang sudah tersimpan.'
-                    : 'Masukkan informasi Barang Milik Daerah yang akan ditambahkan.'
-                }}
-            </p>
-        </div>
+        <p>
+            {{ $isEdit
+                ? 'Perbarui informasi Barang Milik Daerah yang sudah tersimpan.'
+                : 'Masukkan informasi Barang Milik Daerah yang akan ditambahkan.'
+            }}
+        </p>
 
-        {{-- Body --}}
-        <div class="bmd-card-body">
+    </div>
 
-            <form
-                method="POST"
-                action="{{ $isEdit
-                    ? route('databmd.update', $bmd->id)
-                    : route('databmd.store')
-                }}"
-            >
+    {{-- Body --}}
+    <div class="bmd-card-body">
 
-                @csrf
+        <form
+            method="POST"
+            action="{{ $isEdit
+                ? route('databmd.update', $bmd->id)
+                : route('databmd.store')
+            }}"
+        >
 
-                @if ($isEdit)
-                    @method('PUT')
-                @endif
+            @csrf
 
-                <div class="bmd-form-grid">
+            @if ($isEdit)
+                @method('PUT')
+            @endif
 
-                    {{-- ID BMD --}}
-                    <div class="bmd-form-group">
+            <div class="bmd-form-grid">
 
-                        <label for="id_data">
-                            ID BMD
-                            <span class="bmd-required">*</span>
-                        </label>
+                {{-- ID BMD --}}
+                <div class="bmd-form-group">
 
-                        <input
-                            type="text"
-                            id="id_data"
-                            name="id_data"
-                            class="bmd-input"
-                            value="{{ old('id_data', $bmd->id_data ?? '') }}"
-                            placeholder="Contoh: BMD-001"
-                            maxlength="50"
-                            required
-                        >
+                    <label for="id_data">
 
-                        <div class="bmd-help">
-                            ID diisi secara manual oleh pihak kelurahan.
-                            Contoh: BMD-001, BMD-2025-001, BMD-MBL-001.
+                        ID BMD
+
+                        <span class="bmd-required">*</span>
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="id_data"
+                        name="id_data"
+                        class="bmd-input"
+                        value="{{ old('id_data', $bmd->id_data ?? '') }}"
+                        placeholder="Contoh: BMD-001"
+                        maxlength="50"
+                        required
+                    >
+
+                    <div class="bmd-help">
+
+                        ID diisi secara manual oleh pihak kelurahan.
+
+                        Contoh: BMD-001, BMD-2025-001, BMD-MBL-001.
+
+                    </div>
+
+                    @error('id_data')
+
+                        <div class="bmd-error">
+                            {{ $message }}
                         </div>
 
-                        @error('id_data')
-                            <div class="bmd-error">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                    </div>
-
-                    {{-- Nama Barang --}}
-                    <div class="bmd-form-group">
-
-                        <label for="nama_barang">
-                            Nama Barang
-                            <span class="bmd-required">*</span>
-                        </label>
-
-                        <input
-                            type="text"
-                            id="nama_barang"
-                            name="nama_barang"
-                            class="bmd-input"
-                            value="{{ old('nama_barang', $bmd->nama_barang ?? '') }}"
-                            placeholder="Contoh: Meja"
-                            maxlength="150"
-                            required
-                        >
-
-                        @error('nama_barang')
-                            <div class="bmd-error">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                    </div>
-
-                    {{-- Type --}}
-                    <div class="bmd-form-group">
-
-                        <label for="type">
-                            Type
-                        </label>
-
-                        <input
-                            type="text"
-                            id="type"
-                            name="type"
-                            class="bmd-input"
-                            value="{{ old('type', $bmd->type ?? '') }}"
-                            placeholder="Contoh: Sarana"
-                            maxlength="150"
-                        >
-
-                        @error('type')
-                            <div class="bmd-error">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                    </div>
-
-                    {{-- Tahun Perolehan --}}
-                    <div class="bmd-form-group">
-
-                        <label for="tahun_perolehan">
-                            Tahun Perolehan
-                        </label>
-
-                        <input
-                            type="number"
-                            id="tahun_perolehan"
-                            name="tahun_perolehan"
-                            class="bmd-input"
-                            value="{{ old('tahun_perolehan', $bmd->tahun_perolehan ?? '') }}"
-                            placeholder="Contoh: 2025"
-                            min="1900"
-                            max="2100"
-                        >
-
-                        @error('tahun_perolehan')
-                            <div class="bmd-error">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                    </div>
-
-                    {{-- Sumber Dana --}}
-                    <div class="bmd-form-group">
-
-                        <label for="sumber_dana">
-                            Sumber Dana
-                        </label>
-
-                        <input
-                            type="text"
-                            id="sumber_dana"
-                            name="sumber_dana"
-                            class="bmd-input"
-                            value="{{ old('sumber_dana', $bmd->sumber_dana ?? '') }}"
-                            placeholder="Contoh: BOS"
-                            maxlength="100"
-                        >
-
-                        @error('sumber_dana')
-                            <div class="bmd-error">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                    </div>
-
-                    {{-- Kondisi --}}
-                    <div class="bmd-form-group">
-
-                        <label for="kondisi">
-                            Kondisi
-                        </label>
-
-                        <select
-                            id="kondisi"
-                            name="kondisi"
-                            class="bmd-select"
-                        >
-                            <option value="">
-                                -- Pilih Kondisi --
-                            </option>
-
-                            <option
-                                value="Baik"
-                                {{ old('kondisi', $bmd->kondisi ?? '') === 'Baik' ? 'selected' : '' }}
-                            >
-                                Baik
-                            </option>
-
-                            <option
-                                value="Rusak Ringan"
-                                {{ old('kondisi', $bmd->kondisi ?? '') === 'Rusak Ringan' ? 'selected' : '' }}
-                            >
-                                Rusak Ringan
-                            </option>
-
-                            <option
-                                value="Rusak Berat"
-                                {{ old('kondisi', $bmd->kondisi ?? '') === 'Rusak Berat' ? 'selected' : '' }}
-                            >
-                                Rusak Berat
-                            </option>
-                        </select>
-
-                        @error('kondisi')
-                            <div class="bmd-error">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                    </div>
-
-                    {{-- Keterangan --}}
-                    <div class="bmd-form-group full">
-
-                        <label for="keterangan">
-                            Keterangan
-                        </label>
-
-                        <textarea
-                            id="keterangan"
-                            name="keterangan"
-                            class="bmd-textarea"
-                            placeholder="Masukkan keterangan tambahan jika diperlukan..."
-                        >{{ old('keterangan', $bmd->keterangan ?? '') }}</textarea>
-
-                        @error('keterangan')
-                            <div class="bmd-error">
-                                {{ $message }}
-                            </div>
-                        @enderror
-
-                    </div>
+                    @enderror
 
                 </div>
 
-                {{-- Information --}}
-                <div class="bmd-info">
-                    <strong>Informasi:</strong>
-                    Data yang disimpan akan masuk ke database aplikasi
-                    dan secara otomatis dikirim ke Google Sheets.
+                {{-- Nama Barang --}}
+                <div class="bmd-form-group">
+
+                    <label for="nama_barang">
+
+                        Nama Barang
+
+                        <span class="bmd-required">*</span>
+
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nama_barang"
+                        name="nama_barang"
+                        class="bmd-input"
+                        value="{{ old('nama_barang', $bmd->nama_barang ?? '') }}"
+                        placeholder="Contoh: Meja"
+                        maxlength="150"
+                        required
+                    >
+
+                    @error('nama_barang')
+
+                        <div class="bmd-error">
+                            {{ $message }}
+                        </div>
+
+                    @enderror
+
                 </div>
 
-                {{-- Footer --}}
-                <div class="bmd-card-footer">
+                {{-- Type --}}
+                <div class="bmd-form-group">
 
-                    <div class="bmd-footer-left">
-                        <a
-                            href="{{ route('databmd.index') }}"
-                            class="bmd-btn bmd-btn-secondary"
-                        >
-                            Batal
-                        </a>
-                    </div>
+                    <label for="type">
+                        Type
+                    </label>
 
-                    <div class="bmd-footer-right">
+                    <input
+                        type="text"
+                        id="type"
+                        name="type"
+                        class="bmd-input"
+                        value="{{ old('type', $bmd->type ?? '') }}"
+                        placeholder="Contoh: Sarana"
+                        maxlength="150"
+                    >
 
-                        <button
-                            type="submit"
-                            class="bmd-btn bmd-btn-primary"
-                        >
-                            {{ $isEdit ? 'Simpan Perubahan' : 'Simpan Data' }}
-                        </button>
+                    @error('type')
 
-                    </div>
+                        <div class="bmd-error">
+                            {{ $message }}
+                        </div>
+
+                    @enderror
 
                 </div>
 
-            </form>
+                {{-- Tahun Perolehan --}}
+                <div class="bmd-form-group">
 
-        </div>
+                    <label for="tahun_perolehan">
+                        Tahun Perolehan
+                    </label>
+
+                    <input
+                        type="number"
+                        id="tahun_perolehan"
+                        name="tahun_perolehan"
+                        class="bmd-input"
+                        value="{{ old('tahun_perolehan', $bmd->tahun_perolehan ?? '') }}"
+                        placeholder="Contoh: 2025"
+                        min="1900"
+                        max="2100"
+                    >
+
+                    @error('tahun_perolehan')
+
+                        <div class="bmd-error">
+                            {{ $message }}
+                        </div>
+
+                    @enderror
+
+                </div>
+
+                {{-- Sumber Dana --}}
+                <div class="bmd-form-group">
+
+                    <label for="sumber_dana">
+                        Sumber Dana
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sumber_dana"
+                        name="sumber_dana"
+                        class="bmd-input"
+                        value="{{ old('sumber_dana', $bmd->sumber_dana ?? '') }}"
+                        placeholder="Contoh: BOS"
+                        maxlength="100"
+                    >
+
+                    @error('sumber_dana')
+
+                        <div class="bmd-error">
+                            {{ $message }}
+                        </div>
+
+                    @enderror
+
+                </div>
+
+                {{-- Kondisi --}}
+                <div class="bmd-form-group">
+
+                    <label for="kondisi">
+                        Kondisi
+                    </label>
+
+                    <select
+                        id="kondisi"
+                        name="kondisi"
+                        class="bmd-select"
+                    >
+
+                        <option value="">
+                            -- Pilih Kondisi --
+                        </option>
+
+                        <option
+                            value="Baik"
+                            {{ old('kondisi', $bmd->kondisi ?? '') === 'Baik' ? 'selected' : '' }}
+                        >
+                            Baik
+                        </option>
+
+                        <option
+                            value="Rusak Ringan"
+                            {{ old('kondisi', $bmd->kondisi ?? '') === 'Rusak Ringan' ? 'selected' : '' }}
+                        >
+                            Rusak Ringan
+                        </option>
+
+                        <option
+                            value="Rusak Berat"
+                            {{ old('kondisi', $bmd->kondisi ?? '') === 'Rusak Berat' ? 'selected' : '' }}
+                        >
+                            Rusak Berat
+                        </option>
+
+                    </select>
+
+                    @error('kondisi')
+
+                        <div class="bmd-error">
+                            {{ $message }}
+                        </div>
+
+                    @enderror
+
+                </div>
+
+                {{-- Keterangan --}}
+                <div class="bmd-form-group full">
+
+                    <label for="keterangan">
+                        Keterangan
+                    </label>
+
+                    <textarea
+                        id="keterangan"
+                        name="keterangan"
+                        class="bmd-textarea"
+                        placeholder="Masukkan keterangan tambahan jika diperlukan..."
+                    >{{ old('keterangan', $bmd->keterangan ?? '') }}</textarea>
+
+                    @error('keterangan')
+
+                        <div class="bmd-error">
+                            {{ $message }}
+                        </div>
+
+                    @enderror
+
+                </div>
+
+            </div>
+
+            {{-- Information --}}
+            <div class="bmd-info">
+
+                <strong>Informasi:</strong>
+
+                Data yang disimpan akan masuk ke database aplikasi
+                dan secara otomatis dikirim ke Google Sheets.
+
+            </div>
+
+            {{-- Footer --}}
+            <div class="bmd-card-footer">
+
+                <div class="bmd-footer-left">
+
+                    <a
+                        href="{{ route('databmd.index') }}"
+                        class="bmd-btn bmd-btn-secondary"
+                    >
+                        Batal
+                    </a>
+
+                </div>
+
+                <div class="bmd-footer-right">
+
+                    <button
+                        type="submit"
+                        class="bmd-btn bmd-btn-primary"
+                    >
+                        {{ $isEdit ? 'Simpan Perubahan' : 'Simpan Data' }}
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
 
     </div>
+
+</div>
+
 
 </div>
 

@@ -1,13 +1,15 @@
 @extends('Admin.Layout.master')
 
-@section('title', 'Data Umum Kepegawaian - Kelurahan Cibinong')
+@section('title', 'Data Umum Kepegawaian - Kelurahan Binong')
 @section('page_title', 'Data Umum Kepegawaian')
 @section('page_subtitle', 'Kesekretariatan · Data Umum Kepegawaian')
 
 @push('styles')
+
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
 
 <style>
+
     .content-header,
     .table-panel-header {
         display: flex;
@@ -106,6 +108,10 @@
         vertical-align: middle;
     }
 
+    /* =========================
+       BADGE
+    ========================== */
+
     .badge {
         display: inline-block;
         padding: 5px 9px;
@@ -129,6 +135,15 @@
         color: #58636a;
     }
 
+    .badge-default {
+        background: #f1f3f4;
+        color: #58636a;
+    }
+
+    /* =========================
+       NAMA PEGAWAI
+    ========================== */
+
     .employee-name {
         color: #18364d;
         font-weight: 600;
@@ -139,6 +154,33 @@
         font-size: 10px;
         margin-top: 3px;
     }
+
+    /* =========================
+       LAST UPDATE
+    ========================== */
+
+    .last-update {
+        min-width: 125px;
+        line-height: 1.5;
+    }
+
+    .last-update-date {
+        color: #52616b;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .last-update-time {
+        color: #8a969d;
+        font-size: 10px;
+        margin-top: 2px;
+        white-space: nowrap;
+    }
+
+    /* =========================
+       ACTION BUTTON
+    ========================== */
 
     .action-buttons {
         display: flex;
@@ -159,6 +201,19 @@
         font-size: 15px;
     }
 
+    /* SHOW */
+
+    .action-show {
+        color: #36566d;
+    }
+
+    .action-show:hover {
+        background: #eef3f7;
+        color: #18364d;
+    }
+
+    /* EDIT */
+
     .action-edit {
         color: var(--primary);
     }
@@ -167,6 +222,8 @@
         background: var(--primary-light);
         color: var(--primary);
     }
+
+    /* DELETE */
 
     .action-delete {
         color: #c0392b;
@@ -177,7 +234,8 @@
         color: #c0392b;
     }
 
-    /* Supaya form delete tidak merusak layout tombol */
+    /* DELETE FORM */
+
     .delete-form {
         display: inline;
         margin: 0;
@@ -188,204 +246,472 @@
         font-family: inherit;
     }
 
+    /* =========================
+       DATATABLES
+    ========================== */
+
+    .dt-container {
+        font-size: 12px;
+        color: var(--text);
+    }
+
+    .dt-length,
+    .dt-search {
+        margin-bottom: 10px;
+    }
+
+    .dt-length label,
+    .dt-search label {
+        color: #52616b;
+        font-size: 11px;
+    }
+
+    .dt-length select {
+        margin: 0 5px;
+        padding: 6px 28px 6px 9px;
+        border: 1px solid #dce2e5;
+        border-radius: 6px;
+        font-size: 11px;
+        color: var(--text);
+        background: white;
+    }
+
+    .dt-search input {
+        margin-left: 6px !important;
+        padding: 7px 10px !important;
+        border: 1px solid #dce2e5 !important;
+        border-radius: 6px !important;
+        font-size: 11px !important;
+        outline: none;
+    }
+
+    .dt-search input:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 2px rgba(8, 116, 67, 0.08);
+    }
+
+    .dt-info {
+        color: #7a858d;
+        font-size: 11px;
+    }
+
+    .dt-paging button {
+        font-size: 11px !important;
+        border-radius: 5px !important;
+    }
+
+    .dt-paging .current {
+        background: var(--primary) !important;
+        color: white !important;
+        border-color: var(--primary) !important;
+    }
+
     @media (max-width: 700px) {
+
         .content-header {
             align-items: flex-start;
             flex-direction: column;
         }
-    }
-</style>
-@endpush
 
+        .table-panel-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .dt-layout-row {
+            gap: 10px;
+        }
+
+        .dt-search {
+            text-align: left !important;
+        }
+
+        .dt-search input {
+            margin-left: 0 !important;
+            margin-top: 5px;
+            width: 100%;
+        }
+
+    }
+
+</style>
+
+@endpush
 
 @section('content')
 
 <div class="content-header">
 
-    <div>
-        <h2>Data Umum Kepegawaian</h2>
-        <p>
-            Kelola data pegawai dan aparatur Kelurahan Cibinong.
-        </p>
-    </div>
 
-    <a href="{{ route('dataumumpegawai.create') }}" class="btn-add">
-        + Tambah Data
-    </a>
+<div>
+
+    <h2>
+        Data Umum Kepegawaian
+    </h2>
+
+    <p>
+        Kelola data pegawai dan aparatur Kelurahan Binong.
+    </p>
 
 </div>
 
 
+<a
+    href="{{ route('dataumumpegawai.create') }}"
+    class="btn-add"
+>
+    + Tambah Data
+</a>
+
+
+</div>
+
 <section class="table-panel">
 
-    <div class="table-panel-header">
 
-        <div>
-            <h3>Daftar Pegawai</h3>
-            <p>
-                Data Umum Kepegawaian Kelurahan Cibinong
-            </p>
-        </div>
+<div class="table-panel-header">
 
-        <span class="total-data" id="totalData">
-            {{ $pegawai->count() }} Pegawai
-        </span>
+    <div>
+
+        <h3>
+            Daftar Pegawai
+        </h3>
+
+        <p>
+            Data Umum Kepegawaian Kelurahan Binong
+        </p>
 
     </div>
 
 
-    <div class="table-wrapper">
+    <span
+        class="total-data"
+        id="totalData"
+    >
+        {{ $pegawai->count() }} Pegawai
+    </span>
 
-        <table id="pegawaiTable" class="display">
+</div>
 
-            <thead>
+
+<div class="table-wrapper">
+
+
+    <table
+        id="pegawaiTable"
+        class="display"
+    >
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    Jenis
+                </th>
+
+                <th>
+                    NIP / NRP / TT
+                </th>
+
+                <th>
+                    Nama
+                </th>
+
+                <th>
+                    Golongan
+                </th>
+
+                <th>
+                    Pangkat
+                </th>
+
+                <th>
+                    Jabatan
+                </th>
+
+                <th>
+                    Terakhir Perubahan
+                </th>
+
+                <th>
+                    Aksi
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            @forelse ($pegawai as $item)
+
                 <tr>
-                    <th>Jenis</th>
-                    <th>NIP / NRP / TT</th>
-                    <th>Nama</th>
-                    <th>Golongan</th>
-                    <th>Pangkat</th>
-                    <th>Jabatan</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
 
 
-            <tbody>
+                    {{-- =========================
+                         JENIS
+                    ========================== --}}
 
-                @forelse ($pegawai as $item)
+                    <td>
 
-                    <tr>
+                        @if ($item->jenis)
 
-                        {{-- JENIS --}}
-                        <td>
+                            @if ($item->jenis === 'PPPK')
 
-                            <span class="badge
-                                {{ $item->jenis == 'PPPK'
-                                    ? 'badge-pppk'
-                                    : 'badge-asn' }}">
+                                <span class="badge badge-pppk">
+                                    {{ $item->jenis }}
+                                </span>
 
-                                {{ $item->jenis }}
+                            @elseif ($item->jenis === 'ASN')
 
+                                <span class="badge badge-asn">
+                                    {{ $item->jenis }}
+                                </span>
+
+                            @else
+
+                                <span class="badge badge-default">
+                                    {{ $item->jenis }}
+                                </span>
+
+                            @endif
+
+                        @else
+
+                            <span class="badge badge-default">
+                                -
                             </span>
 
-                        </td>
+                        @endif
+
+                    </td>
 
 
-                        {{-- NIP / NRP / TT --}}
-                        <td>
+                    {{-- =========================
+                         NIP / NRP / TT
+                    ========================== --}}
+
+                    <td>
+
+                        @if ($item->nomor)
+
                             {{ $item->nomor }}
-                        </td>
+
+                        @else
+
+                            <span style="color:#9aa5aa;">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
 
 
-                        {{-- NAMA --}}
-                        <td>
+                    {{-- =========================
+                         NAMA
+                    ========================== --}}
 
-                            <div class="employee-name">
-                                {{ $item->nama }}
-                            </div>
+                    <td>
 
-                            <div class="employee-id">
-                                Pegawai
-                                {{ str_pad($item->id, 3, '0', STR_PAD_LEFT) }}
-                            </div>
+                        <div class="employee-name">
 
-                        </td>
+                            {{ $item->nama }}
+
+                        </div>
+
+                        <div class="employee-id">
+
+                            Pegawai
+                            {{ str_pad($item->id, 3, '0', STR_PAD_LEFT) }}
+
+                        </div>
+
+                    </td>
 
 
-                        {{-- GOLONGAN --}}
-                        <td>
+                    {{-- =========================
+                         GOLONGAN
+                    ========================== --}}
+
+                    <td>
+
+                        @if ($item->golongan)
 
                             <span class="badge badge-gol">
                                 {{ $item->golongan }}
                             </span>
 
-                        </td>
+                        @else
+
+                            <span class="badge badge-default">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
 
 
-                        {{-- PANGKAT --}}
-                        <td>
-                            {{ $item->pangkat }}
-                        </td>
+                    {{-- =========================
+                         PANGKAT
+                    ========================== --}}
+
+                    <td>
+
+                        {{ $item->pangkat ?: '-' }}
+
+                    </td>
 
 
-                        {{-- JABATAN --}}
-                        <td>
-                            {{ $item->jabatan }}
-                        </td>
+                    {{-- =========================
+                         JABATAN
+                    ========================== --}}
+
+                    <td>
+
+                        {{ $item->jabatan ?: '-' }}
+
+                    </td>
 
 
-                        {{-- AKSI --}}
-                        <td>
+                    {{-- =========================
+                         TERAKHIR PERUBAHAN
+                    ========================== --}}
 
-                            <div class="action-buttons">
+                    <td>
 
-                                {{-- =========================
-                                     TOMBOL EDIT
-                                ========================== --}}
-                                <a
-                                    href="{{ route('dataumumpegawai.edit', $item->id) }}"
-                                    class="action-btn action-edit"
-                                    title="Ubah"
-                                >
-                                    ✎
-                                </a>
+                        @if ($item->updated_at)
 
+                            <div
+                                class="last-update"
+                                data-order="{{ $item->updated_at->timestamp }}"
+                            >
 
-                                {{-- =========================
-                                     TOMBOL DELETE
-                                ========================== --}}
-                                <form
-                                    action="{{ route('dataumumpegawai.destroy', $item->id) }}"
-                                    method="POST"
-                                    class="delete-form"
-                                    onsubmit="return confirm('Yakin ingin menghapus data pegawai ini?')"
-                                >
+                                <div class="last-update-date">
 
-                                    @csrf
+                                    {{ $item->updated_at
+                                        ->locale('id')
+                                        ->translatedFormat('d M Y')
+                                    }}
 
-                                    @method('DELETE')
+                                </div>
 
-                                    <button
-                                        type="submit"
-                                        class="action-btn action-delete"
-                                        title="Hapus"
-                                    >
-                                        ×
-                                    </button>
+                                <div class="last-update-time">
 
-                                </form>
+                                    {{ $item->updated_at->format('H:i') }}
+                                    WIB
+
+                                </div>
 
                             </div>
 
-                        </td>
+                        @else
 
-                    </tr>
+                            <span class="badge badge-default">
+                                -
+                            </span>
 
-                @empty
+                        @endif
 
-                    <tr>
+                    </td>
 
-                        <td colspan="7" style="text-align: center; padding: 30px; color: #8a969d;">
 
-                            Belum ada data pegawai.
+                    {{-- =========================
+                         AKSI
+                    ========================== --}}
 
-                        </td>
+                    <td>
 
-                    </tr>
+                        <div class="action-buttons">
 
-                @endforelse
 
-            </tbody>
+                            {{-- SHOW --}}
 
-        </table>
+                            <a
+                                href="{{ route('dataumumpegawai.show', $item->id) }}"
+                                class="action-btn action-show"
+                                title="Lihat Detail"
+                            >
+                                ◉
+                            </a>
 
-    </div>
+
+                            {{-- EDIT --}}
+
+                            <a
+                                href="{{ route('dataumumpegawai.edit', $item->id) }}"
+                                class="action-btn action-edit"
+                                title="Ubah"
+                            >
+                                ✎
+                            </a>
+
+
+                            {{-- DELETE --}}
+
+                            <form
+                                action="{{ route('dataumumpegawai.destroy', $item->id) }}"
+                                method="POST"
+                                class="delete-form"
+                                onsubmit="return confirm('Yakin ingin menghapus data pegawai ini?')"
+                            >
+
+                                @csrf
+
+                                @method('DELETE')
+
+                                <button
+                                    type="submit"
+                                    class="action-btn action-delete"
+                                    title="Hapus"
+                                >
+                                    ×
+                                </button>
+
+                            </form>
+
+
+                        </div>
+
+                    </td>
+
+
+                </tr>
+
+            @empty
+
+                <tr>
+
+                    <td
+                        colspan="8"
+                        style="
+                            text-align:center;
+                            padding:30px;
+                            color:#8a969d;
+                        "
+                    >
+
+                        Belum ada data pegawai.
+
+                    </td>
+
+                </tr>
+
+            @endforelse
+
+        </tbody>
+
+    </table>
+
+</div>
+
 
 </section>
 
 @endsection
-
 
 @push('scripts')
 
@@ -393,25 +719,64 @@
 
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 
-
 <script>
 
     const pegawaiTable = new DataTable('#pegawaiTable', {
 
         pageLength: 10,
 
+        lengthMenu: [
+            [10, 25, 50, 100],
+            [10, 25, 50, 100]
+        ],
+
+        /*
+         * Urutan awal mengikuti hasil dari Controller.
+         */
+        order: [],
+
+        language: {
+
+            lengthMenu: 'Tampilkan _MENU_ data',
+
+            search: 'Cari:',
+
+            searchPlaceholder: 'Cari data pegawai...',
+
+            info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+
+            infoEmpty: 'Tidak ada data',
+
+            infoFiltered: '(difilter dari _MAX_ total data)',
+
+            zeroRecords: 'Data tidak ditemukan',
+
+            paginate: {
+                first: '«',
+                last: '»',
+                next: '›',
+                previous: '‹'
+            }
+
+        },
+
         columnDefs: [
 
             {
                 orderable: false,
                 searchable: false,
-                targets: 6
+                targets: 7
             }
 
         ]
 
     });
 
+
+    /*
+     * Update jumlah data pada badge
+     * setiap kali tabel berubah.
+     */
 
     pegawaiTable.on('draw', function () {
 

@@ -1,1030 +1,665 @@
-```html
 @php
-    $isEdit = false;
-    $stuntingValue = fn (string $key, mixed $default = '') => old($key, data_get($stunting ?? null, $key, $default));
+$isEdit = $isEdit ?? false;
+
+$stuntingValue = fn (
+string $key,
+mixed $default = ''
+) => old(
+$key,
+data_get($stunting ?? null, $key, $default)
+);
 @endphp
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Data Stunting - Kelurahan XXXXX</title>
-
-    <style>
-        :root {
-            --primary: #087443;
-            --primary-dark: #065c35;
-            --primary-light: #eaf5ef;
-            --sidebar: #102f47;
-            --sidebar-hover: #173c58;
-            --text: #263238;
-            --muted: #7a858d;
-            --border: #e7ebee;
-            --background: #f5f7f8;
-            --white: #ffffff;
-            --danger: #c0392b;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: var(--background);
-            color: var(--text);
-        }
-
-        /* =========================
-           SIDEBAR
-        ========================= */
-
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 270px;
-            height: 100vh;
-            background: var(--sidebar);
-            color: white;
-            z-index: 1000;
-            overflow-y: auto;
-        }
-
-        .brand {
-            padding: 25px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            text-align: center;
-        }
-
-        .logo {
-            width: 58px;
-            height: 58px;
-            margin: 0 auto 12px;
-            border-radius: 50%;
-            background: white;
-            color: var(--sidebar);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .brand h2 {
-            font-size: 17px;
-            margin-bottom: 5px;
-        }
-
-        .brand p {
-            font-size: 10px;
-            color: #b9c7d1;
-            letter-spacing: 1px;
-        }
-
-        .menu {
-            padding: 15px 10px 30px;
-        }
-
-        .menu-title {
-            padding: 12px 15px 7px;
-            font-size: 10px;
-            text-transform: uppercase;
-            color: #7f96a7;
-            letter-spacing: 1px;
-        }
-
-        .menu a {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            padding: 11px 15px;
-            margin-bottom: 3px;
-            border-radius: 7px;
-            text-decoration: none;
-            color: #d9e2e8;
-            font-size: 13px;
-            transition: 0.2s;
-        }
-
-        .menu a:hover {
-            background: var(--sidebar-hover);
-            color: white;
-        }
-
-        .menu a.active {
-            background: var(--primary);
-            color: white;
-            font-weight: bold;
-        }
-
-        .menu-icon {
-            width: 20px;
-            text-align: center;
-            font-size: 16px;
-        }
-
-        .submenu a {
-            padding-left: 46px;
-            font-size: 12px;
-        }
-
-        /* =========================
-           MAIN
-        ========================= */
-
-        .main {
-            margin-left: 270px;
-            min-height: 100vh;
-        }
-
-        /* =========================
-           TOPBAR
-        ========================= */
-
-        .topbar {
-            height: 82px;
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
-            position: sticky;
-            top: 0;
-            z-index: 500;
-        }
-
-        .page-heading h1 {
-            font-family: Georgia, serif;
-            font-size: 24px;
-            color: var(--sidebar);
-            margin-bottom: 4px;
-        }
-
-        .page-heading p {
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
-
-        .notification {
-            width: 38px;
-            height: 38px;
-            border: 1px solid var(--border);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            background: white;
-            cursor: pointer;
-        }
-
-        .user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .user-info strong {
-            display: block;
-            font-size: 13px;
-        }
-
-        .user-info span {
-            display: block;
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 2px;
-        }
-
-        /* =========================
-           CONTENT
-        ========================= */
-
-        .content {
-            padding: 30px;
-            max-width: 1250px;
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--muted);
-            font-size: 12px;
-            margin-bottom: 18px;
-        }
-
-        .breadcrumb a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        .page-title {
-            margin-bottom: 25px;
-        }
-
-        .page-title h2 {
-            font-family: Georgia, serif;
-            font-size: 27px;
-            color: var(--sidebar);
-            margin-bottom: 7px;
-        }
-
-        .page-title p {
-            font-size: 13px;
-            color: var(--muted);
-        }
-
-        /* =========================
-           FORM CARD
-        ========================= */
-
-        .form-card {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .form-header {
-            padding: 22px 25px;
-            border-bottom: 1px solid var(--border);
-            background: #fbfcfc;
-        }
-
-        .form-header h3 {
-            font-size: 17px;
-            color: var(--sidebar);
-            margin-bottom: 5px;
-        }
-
-        .form-header p {
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        .form-body {
-            padding: 28px 25px;
-        }
-
-        .form-section {
-            margin-bottom: 30px;
-        }
-
-        .form-section:last-child {
-            margin-bottom: 0;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            color: var(--sidebar);
-            font-weight: bold;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .section-number {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px 25px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group.full {
-            grid-column: 1 / -1;
-        }
-
-        .form-group label {
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
-        .required {
-            color: var(--danger);
-        }
-
-        .form-control {
-            width: 100%;
-            height: 43px;
-            border: 1px solid #dce2e5;
-            border-radius: 7px;
-            padding: 0 13px;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 13px;
-            color: var(--text);
-            background: white;
-            outline: none;
-            transition: 0.2s;
-        }
-
-        textarea.form-control {
-            height: 100px;
-            padding: 12px 13px;
-            resize: vertical;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(8,116,67,0.08);
-        }
-
-        .form-control::placeholder {
-            color: #aab2b7;
-        }
-
-        select.form-control {
-            cursor: pointer;
-        }
-
-        .form-help {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 6px;
-        }
-
-        /* =========================
-           INFO BOX
-        ========================= */
-
-        .info-box {
-            margin-top: 25px;
-            padding: 14px 16px;
-            background: var(--primary-light);
-            border: 1px solid #d7ecdf;
-            border-radius: 8px;
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-        }
-
-        .info-icon {
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .info-box p {
-            font-size: 12px;
-            line-height: 1.6;
-            color: #416052;
-        }
-
-        /* =========================
-           FORM FOOTER
-        ========================= */
-
-        .form-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            border-top: 1px solid var(--border);
-            background: #fbfcfc;
-        }
-
-        .required-note {
-            font-size: 11px;
-            color: var(--muted);
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            height: 42px;
-            padding: 0 20px;
-            border-radius: 7px;
-            border: none;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-
-        .btn-secondary {
-            background: white;
-            color: var(--text);
-            border: 1px solid #dce2e5;
-        }
-
-        .btn-secondary:hover {
-            background: #f2f4f5;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
-
-        /* =========================
-           FOOTER
-        ========================= */
-
-        .footer {
-            padding: 25px 30px;
-            margin-top: 15px;
-            font-size: 11px;
-            color: var(--muted);
-            border-top: 1px solid var(--border);
-        }
-
-        /* =========================
-           MOBILE
-        ========================= */
-
-        .mobile-menu {
-            display: none;
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--border);
-            background: white;
-            border-radius: 7px;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-            z-index: 900;
-        }
-
-        @media (max-width: 1100px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .form-group.full {
-                grid-column: auto;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: 0.3s;
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .overlay.show {
-                display: block;
-            }
-
-            .main {
-                margin-left: 0;
-            }
-
-            .mobile-menu {
-                display: block;
-            }
-
-            .topbar {
-                padding: 0 18px;
-            }
-
-            .page-heading {
-                display: none;
-            }
-
-            .content {
-                padding: 20px 18px;
-            }
-
-            .topbar-right {
-                margin-left: auto;
-            }
-
-            .user-info {
-                display: none;
-            }
-
-            .form-body {
-                padding: 22px 18px;
-            }
-
-            .form-header {
-                padding: 20px 18px;
-            }
-
-            .form-footer {
-                padding: 18px;
-                flex-direction: column;
-                align-items: stretch;
-                gap: 15px;
-            }
-
-            .form-actions {
-                width: 100%;
-            }
-
-            .form-actions .btn {
-                flex: 1;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .content {
-                padding: 18px 14px;
-            }
-
-            .page-title h2 {
-                font-size: 23px;
-            }
-
-            .topbar {
-                height: 70px;
-            }
-
-            .notification {
-                display: none;
-            }
-
-            .form-actions {
-                flex-direction: column-reverse;
-            }
-
-            .form-actions .btn {
-                width: 100%;
-            }
-        }
-    </style>
-</head>
-
-<body>
-
-    <!-- OVERLAY -->
-    <div class="overlay" id="overlay"></div>
-
-    <!-- =========================
-         SIDEBAR
-    ========================== -->
-    <aside class="sidebar" id="sidebar">
-
-        <div class="brand">
-            <div class="logo">LOGO</div>
-            <h2>Kelurahan XXXXX</h2>
-            <p>SISTEM INFORMASI KELURAHAN</p>
+
+@extends('Admin.Layout.master')
+
+@section('title', ($isEdit ? 'Edit' : 'Tambah') . ' Data Stunting - Kelurahan Binong')
+
+@section('page_title', ($isEdit ? 'Edit' : 'Tambah') . ' Data Stunting')
+
+@section('page_subtitle', 'Kesejahteraan Sosial · Data Stunting · ' . ($isEdit ? 'Edit Data' : 'Tambah Data'))
+
+@push('styles')
+
+<style>
+.breadcrumb {
+    display: flex;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 12px;
+    margin-bottom: 18px;
+}
+
+.breadcrumb a {
+    color: var(--primary);
+}
+
+.page-title-block {
+    margin-bottom: 25px;
+}
+
+.page-title-block h2 {
+    font: 27px Georgia, serif;
+    color: #18364d;
+}
+
+.page-title-block p,
+.form-header p {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 7px;
+}
+
+.form-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.form-header,
+.form-footer {
+    padding: 22px 25px;
+    background: #fbfcfc;
+    border-bottom: 1px solid var(--border);
+}
+
+.form-header h3 {
+    font-size: 17px;
+    color: #18364d;
+}
+
+.form-body {
+    padding: 28px 25px;
+}
+
+.form-section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    color: #18364d;
+    font-size: 14px;
+    font-weight: bold;
+    padding-bottom: 12px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.section-number {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: var(--primary-light);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px 25px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.required {
+    color: #c0392b;
+}
+
+.form-control {
+    height: 43px;
+    width: 100%;
+    border: 1px solid #dce2e5;
+    border-radius: 7px;
+    padding: 0 13px;
+    font: 13px Arial, sans-serif;
+    box-sizing: border-box;
+    background: #fff;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(8, 116, 67, 0.08);
+}
+
+.form-group.full {
+    grid-column: 1 / -1;
+}
+
+textarea.form-control {
+    height: 100px;
+    padding: 12px;
+    resize: vertical;
+}
+
+.info-box {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--primary-light);
+    border: 1px solid #d7ecdf;
+    border-radius: 8px;
+}
+
+.info-icon {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-box p {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #416052;
+    margin: 0;
+}
+
+.error-message {
+    color: #c0392b;
+    font-size: 11px;
+    margin-top: 6px;
+}
+
+.form-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid var(--border);
+    border-bottom: 0;
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    height: 42px;
+    padding: 0 20px;
+    border-radius: 7px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    border: 0;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    background: #fff;
+    border: 1px solid #dce2e5;
+    color: #263238;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: #fff;
+}
+
+.btn-primary:hover {
+    opacity: 0.92;
+}
+
+@media (max-width: 700px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group.full {
+        grid-column: auto;
+    }
+
+    .form-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .form-actions {
+        width: 100%;
+    }
+
+    .form-actions .btn {
+        flex: 1;
+    }
+}
+</style>
+
+@endpush
+
+@section('content')
+
+<div class="breadcrumb">
+
+<a href="{{ route('dashboard') }}">
+    Beranda
+</a>
+
+<span>›</span>
+
+<a href="{{ route('datastunting.index') }}">
+    Data Stunting
+</a>
+
+<span>›</span>
+
+<span>
+    {{ $isEdit ? 'Edit Data' : 'Tambah Data' }}
+</span>
+
+</div>
+
+<div class="page-title-block">
+
+<h2>
+    {{ $isEdit ? 'Edit' : 'Tambah' }}
+    Data Stunting
+</h2>
+
+<p>
+    {{ $isEdit ? 'Perbarui' : 'Tambahkan' }}
+    data stunting anak Kelurahan Binong.
+</p>
+
+</div>
+
+<div class="form-card">
+
+<div class="form-header">
+
+<h3>
+    {{ $isEdit ? 'Edit' : 'Form' }}
+    Data Stunting
+</h3>
+
+<p>
+    Lengkapi informasi pada kolom yang tersedia.
+</p>
+
+</div>
+
+<form
+    id="stuntingForm"
+    method="POST"
+    action="{{ $isEdit ? route('datastunting.update', $stunting->id) : route('datastunting.store') }}"
+>
+
+@csrf
+
+@if($isEdit)
+@method('PUT')
+@endif
+
+<div class="form-body">
+
+
+<div class="form-section">
+
+    <div class="section-title">
+
+        <span class="section-number">
+            1
+        </span>
+
+        Identitas Anak
+
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group">
+
+            <label for="nik">
+                NIK
+                <span class="required">*</span>
+            </label>
+
+            <input
+                type="text"
+                id="nik"
+                name="nik"
+                class="form-control"
+                placeholder="Masukkan NIK"
+                value="{{ $stuntingValue('nik') }}"
+                maxlength="20"
+                inputmode="numeric"
+                required
+            >
+
+            @error('nik')
+                <div class="error-message">
+                    {{ $message }}
+                </div>
+            @enderror
+
         </div>
 
-        <nav class="menu">
+        <div class="form-group">
 
-            <div class="menu-title">Menu Utama</div>
+            <label for="nama">
+                Nama Anak
+                <span class="required">*</span>
+            </label>
 
-            <a href="dashboard.html">
-                <span class="menu-icon">⌂</span>
-                <span>Beranda</span>
-            </a>
+            <input
+                type="text"
+                id="nama"
+                name="nama"
+                class="form-control"
+                placeholder="Nama lengkap anak"
+                value="{{ $stuntingValue('nama') }}"
+                maxlength="150"
+                required
+            >
 
-            <div class="menu-title">Kesekretariatan</div>
-
-            <div class="submenu">
-                <a href="duk.html" class="active">
-                    <span class="menu-icon">👤</span>
-                    <span>Data Umum Kepegawaian</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">▣</span>
-                    <span>Data BMD</span>
-                </a>
-            </div>
-
-            <div class="menu-title">Kesejahteraan Sosial</div>
-
-            <div class="submenu">
-                <a href="#">
-                    <span class="menu-icon">♙</span>
-                    <span>Posyandu & Posbindu</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">♥</span>
-                    <span>Data Stunting</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">♧</span>
-                    <span>KPM / Bantuan Sosial</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">🎓</span>
-                    <span>Anak Putus Sekolah</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">▤</span>
-                    <span>Data Sekolah</span>
-                </a>
-            </div>
-
-            <div class="menu-title">Ekonomi & Pembangunan</div>
-
-            <div class="submenu">
-                <a href="#">
-                    <span class="menu-icon">◉</span>
-                    <span>Data UMKM</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">⌂</span>
-                    <span>Data Rutillahu</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">♧</span>
-                    <span>Data Buruan Sae</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">♣</span>
-                    <span>Data Pohon</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">▦</span>
-                    <span>Fasilitas Umum & Sosial</span>
-                </a>
-            </div>
-
-            <div class="menu-title">Pemerintahan</div>
-
-            <div class="submenu">
-                <a href="#">
-                    <span class="menu-icon">▤</span>
-                    <span>Laporan Kependudukan</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">⚑</span>
-                    <span>Linmas & Siskamling</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">♟</span>
-                    <span>Data RT/RW & Periode</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">▣</span>
-                    <span>Data PKL</span>
-                </a>
-            </div>
-
-            <div class="menu-title">Sistem</div>
-
-            <a href="#">
-                <span class="menu-icon">⚙</span>
-                <span>Pengaturan</span>
-            </a>
-
-            <a href="login.html">
-                <span class="menu-icon">↪</span>
-                <span>Keluar</span>
-            </a>
-
-        </nav>
-    </aside>
-
-
-    <!-- =========================
-         MAIN
-    ========================== -->
-    <main class="main">
-
-        <!-- TOPBAR -->
-        <header class="topbar">
-
-            <button class="mobile-menu" id="mobileMenu">☰</button>
-
-            <div class="page-heading">
-                <h1>Tambah Data Stunting</h1>
-                <p>Kesejahteraan Sosial · Data Stunting · Tambah Data</p>
-            </div>
-
-            <div class="topbar-right">
-
-                <div class="notification">
-                    ♧
+            @error('nama')
+                <div class="error-message">
+                    {{ $message }}
                 </div>
+            @enderror
 
-                <div class="user">
-                    <div class="avatar">A</div>
+        </div>
 
-                    <div class="user-info">
-                        <strong>Administrator</strong>
-                        <span>Admin Kelurahan</span>
-                    </div>
+        <div class="form-group">
+
+            <label for="tanggal_lahir">
+                Tanggal Lahir
+                <span class="required">*</span>
+            </label>
+
+            <input
+                type="date"
+                id="tanggal_lahir"
+                name="tanggal_lahir"
+                class="form-control"
+                value="{{ $stuntingValue('tanggal_lahir') ? \Illuminate\Support\Carbon::parse($stuntingValue('tanggal_lahir'))->format('Y-m-d') : '' }}"
+                required
+            >
+
+            @error('tanggal_lahir')
+                <div class="error-message">
+                    {{ $message }}
                 </div>
+            @enderror
 
-            </div>
+        </div>
 
-        </header>
+        <div class="form-group">
 
+            <label for="jenis_kelamin">
+                Jenis Kelamin
+                <span class="required">*</span>
+            </label>
 
-        <!-- CONTENT -->
-        <section class="content">
+            <select
+                id="jenis_kelamin"
+                name="jenis_kelamin"
+                class="form-control"
+                required
+            >
 
-            <!-- BREADCRUMB -->
-            <div class="breadcrumb">
-                <a href="dashboard.html">Beranda</a>
-                <span>›</span>
-                <a href="{{ url('/datastunting') }}">Data Stunting</a>
-                <span>›</span>
-                <span>{{ $isEdit ? 'Edit Data' : 'Tambah Data' }}</span>
-            </div>
+                <option value="">
+                    Pilih Jenis Kelamin
+                </option>
 
+                <option
+                    value="Laki-laki"
+                    @selected($stuntingValue('jenis_kelamin') === 'Laki-laki')
+                >
+                    Laki-laki
+                </option>
 
-            <!-- PAGE TITLE -->
-            <div class="page-title">
-                <h2>Tambah Data Stunting</h2>
-                <p>Tambahkan data anak stunting Kelurahan XXXXX.</p>
-            </div>
+                <option
+                    value="Perempuan"
+                    @selected($stuntingValue('jenis_kelamin') === 'Perempuan')
+                >
+                    Perempuan
+                </option>
 
+            </select>
 
-            <!-- FORM CARD -->
-            <div class="form-card">
-
-                <div class="form-header">
-                    <h3>Form Data Stunting</h3>
-                    <p>Silakan lengkapi informasi anak pada kolom yang tersedia.</p>
+            @error('jenis_kelamin')
+                <div class="error-message">
+                    {{ $message }}
                 </div>
+            @enderror
 
+        </div>
 
-                <form id="stuntingForm" method="POST" action="{{ url()->current() }}">
-                    @csrf
-                    @if ($isEdit)
-                        @method('PUT')
-                    @endif
+    </div>
 
-                    <div class="form-body">
+</div>
 
-                        <!-- IDENTITAS ANAK -->
-                        <div class="form-section">
+<div class="form-section">
 
-                            <div class="section-title">
-                                <span class="section-number">1</span>
-                                Identitas Anak
-                            </div>
+    <div class="section-title">
 
-                            <div class="form-grid">
+        <span class="section-number">
+            2
+        </span>
 
-                                <div class="form-group">
-                                    <label for="nama_anak">
-                                        Nama Anak <span class="required">*</span>
-                                    </label>
+        Data Pemantauan
 
-                                    <input
-                                        type="text"
-                                        id="nama_anak"
-                                        name="nama_anak"
-                                        class="form-control"
-                                        placeholder="Nama lengkap anak"
-                                        value="{{ $stuntingValue('nama_anak') }}"
-                                        required
-                                    >
-                                </div>
+    </div>
 
+    <div class="form-grid">
 
-                                <div class="form-group">
-                                    <label for="nik">
-                                        NIK <span class="required">*</span>
-                                    </label>
+        <div class="form-group">
 
-                                    <input type="text" id="nik" name="nik" class="form-control" placeholder="Masukkan NIK anak" value="{{ $stuntingValue('nik') }}" required>
-                                </div>
+            <label for="usia">
+                Usia
+            </label>
 
+            <input
+                type="text"
+                id="usia"
+                class="form-control"
+                placeholder="Otomatis dari tanggal lahir"
+                readonly
+            >
 
-                                <div class="form-group full">
-                                    <label for="rw">
-                                        RW <span class="required">*</span>
-                                    </label>
+        </div>
 
-                                    <input
-                                        type="number"
-                                        id="rw"
-                                        name="rw"
-                                        class="form-control"
-                                        placeholder="Contoh: 05"
-                                        value="{{ $stuntingValue('rw') }}"
-                                        required
-                                    >
-                                </div>
+        <div class="form-group">
 
-                            </div>
+            <label for="status">
+                Status
+                <span class="required">*</span>
+            </label>
 
-                        </div>
+            <select
+                id="status"
+                name="status"
+                class="form-control"
+                required
+            >
 
+                <option value="">
+                    Pilih Status
+                </option>
 
-                        <!-- DATA PENGELOLAAN -->
-                        <div class="form-section">
+                <option
+                    value="Normal"
+                    @selected($stuntingValue('status') === 'Normal')
+                >
+                    Normal
+                </option>
 
-                            <div class="section-title">
-                                <span class="section-number">2</span>
-                                Detail Stunting
-                            </div>
+                <option
+                    value="Berisiko"
+                    @selected($stuntingValue('status') === 'Berisiko')
+                >
+                    Berisiko
+                </option>
 
-                            <div class="form-grid">
+                <option
+                    value="Stunting"
+                    @selected($stuntingValue('status') === 'Stunting')
+                >
+                    Stunting
+                </option>
 
-                                <div class="form-group">
-                                    <label for="usia_bulan">
-                                        Usia Bulan <span class="required">*</span>
-                                    </label>
+            </select>
 
-                                    <input type="number" id="usia_bulan" name="usia_bulan" class="form-control" placeholder="Contoh: 24" min="0" value="{{ $stuntingValue('usia_bulan') }}" required>
-                                </div>
+            @error('status')
+                <div class="error-message">
+                    {{ $message }}
+                </div>
+            @enderror
 
+        </div>
 
-                                <div class="form-group">
-                                    <label for="status">
-                                        Status <span class="required">*</span>
-                                    </label>
+        <div class="form-group full">
 
-                                    <select id="status" name="status" class="form-control" required>
-                                        <option value="">Pilih Status</option>
-                                        <option value="Normal">Normal</option>
-                                        <option value="Risiko Stunting">Risiko Stunting</option>
-                                        <option value="Terindikasi Stunting">Terindikasi Stunting</option>
-                                    </select>
-                                </div>
+            <label for="keterangan">
+                Keterangan
+            </label>
 
+            <textarea
+                id="keterangan"
+                name="keterangan"
+                class="form-control"
+                placeholder="Keterangan atau catatan pemantauan"
+            >{{ $stuntingValue('keterangan') }}</textarea>
 
-                                <div class="form-group full">
-                                    <label for="keterangan">
-                                        Keterangan
-                                    </label>
+            @error('keterangan')
+                <div class="error-message">
+                    {{ $message }}
+                </div>
+            @enderror
 
-                                    <textarea
-                                        id="keterangan"
-                                        name="keterangan"
-                                        class="form-control"
-                                        placeholder="Tambahkan keterangan anak jika diperlukan..."
-                                    >{{ $stuntingValue('keterangan') }}</textarea>
-                                </div>
+        </div>
 
-                            </div>
+    </div>
 
-                        </div>
+</div>
 
+<div class="info-box">
 
-                        <!-- INFO -->
-                        <div class="info-box">
+    <div class="info-icon">
+        i
+    </div>
 
-                            <div class="info-icon">i</div>
+    <p>
+        Pastikan data anak yang dimasukkan sudah benar.
+        Data akan disimpan ke database Kelurahan Binong
+        dan dapat diperbarui kembali melalui menu Edit Data.
+    </p>
 
-                            <p>
-                                Pastikan data anak yang dimasukkan sudah benar sebelum menyimpan.
-                            </p>
+</div>
 
-                        </div>
 
-                    </div>
+</div>
 
+<div class="form-footer">
 
-                    <!-- FORM FOOTER -->
-                    <div class="form-footer">
 
-                        <div class="required-note">
-                            <span class="required">*</span> Wajib diisi
-                        </div>
+<span>
+    <span class="required">*</span>
+    Wajib diisi
+</span>
 
-                        <div class="form-actions">
+<div class="form-actions">
 
-                            <a href="{{ url('/datastunting') }}" class="btn btn-secondary">
-                                Batal
-                            </a>
+    <a
+        href="{{ route('datastunting.index') }}"
+        class="btn btn-secondary"
+    >
+        Batal
+    </a>
 
-                            <button type="submit" class="btn btn-primary">
-                                {{ $isEdit ? 'Perbarui Data' : 'Simpan Data' }}
-                            </button>
+    <button
+        type="submit"
+        class="btn btn-primary"
+    >
+        {{ $isEdit ? 'Perbarui Data' : 'Simpan Data' }}
+    </button>
 
-                        </div>
+</div>
 
-                    </div>
 
-                </form>
+</div>
 
-            </div>
+</form>
 
+</div>
 
-            <!-- FOOTER -->
-            <footer class="footer">
-                © 2026 Sistem Informasi Kelurahan XXXXX · Semua hak dilindungi.
-            </footer>
+@endsection
 
-        </section>
+@push('scripts')
 
-    </main>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    const tanggalLahir = document.getElementById('tanggal_lahir');
+    const usia = document.getElementById('usia');
 
-    <script>
+    function updateUsia() {
 
-        /* =========================
-           MOBILE SIDEBAR
-        ========================== */
+        if (!tanggalLahir.value) {
+            usia.value = '';
+            return;
+        }
 
-        const mobileMenu = document.getElementById('mobileMenu');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
+        const tanggal = new Date(
+            tanggalLahir.value + 'T00:00:00'
+        );
 
-        mobileMenu.addEventListener('click', function () {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        });
+        const hariIni = new Date();
 
-        overlay.addEventListener('click', function () {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('show');
-        });
+        let tahun = hariIni.getFullYear() - tanggal.getFullYear();
 
+        const bulan =
+            hariIni.getMonth() - tanggal.getMonth();
 
-        @if (!$isEdit)
-            const form = document.getElementById('stuntingForm');
+        if (
+            bulan < 0 ||
+            (
+                bulan === 0 &&
+                hariIni.getDate() < tanggal.getDate()
+            )
+        ) {
+            tahun--;
+        }
 
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
+        if (tahun >= 0) {
+            usia.value = tahun + ' tahun';
+        } else {
+            usia.value = '';
+        }
+    }
 
-                const namaAnak = document.getElementById('nama_anak').value;
+    tanggalLahir.addEventListener(
+        'change',
+        updateUsia
+    );
 
-                alert(
-                    'Data Stunting berhasil disimpan!\\n\\n' +
-                    'Nama Anak: ' + namaAnak
-                );
+    updateUsia();
 
-                window.location.href = '{{ url('/datastunting') }}';
-            });
-        @endif
+});
+</script>
 
-    </script>
-
-</body>
-</html>
-```
+@endpush

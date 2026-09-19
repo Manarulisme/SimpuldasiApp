@@ -41,7 +41,7 @@
 
 @section('content')
 <section class="welcome">
-    <small>SISTEM INFORMASI KELURAHAN</small>
+    <small>SISTEM PENGUMPULAN DATA TERINTEGRASI (SIMPULDASI) </small>
     <h2>Selamat Datang, Administrator</h2>
     <p>Kelola data dan informasi Kelurahan Cibinong melalui dashboard ini. Pastikan seluruh data pelayanan dan administrasi selalu diperbarui secara berkala.</p>
 </section>

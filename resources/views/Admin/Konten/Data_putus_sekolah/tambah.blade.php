@@ -1,1025 +1,757 @@
-```html
+@extends('Admin.Layout.master')
+
+@section('title', ($isEdit ? 'Edit Data Anak Putus Sekolah' : 'Tambah Data Anak Putus Sekolah') . ' - Kelurahan Binong')
+
+@section('page_title', $isEdit ? 'Edit Data Anak Putus Sekolah' : 'Tambah Data Anak Putus Sekolah')
+
+@section('page_subtitle', 'Kesejahteraan Sosial · Data Anak Putus Sekolah')
+
 @php
-    $isEdit = false;
-    $putusSekolahValue = fn (string $key, mixed $default = '') => old($key, data_get($putusSekolah ?? null, $key, $default));
+$isEdit = $isEdit ?? false;
+$putusSekolah = $putusSekolah ?? null;
+
+
+$value = function ($field, $default = '') use ($putusSekolah) {
+    return old($field, data_get($putusSekolah, $field, $default));
+};
+
+
 @endphp
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Data Anak Putus Sekolah - Kelurahan XXXXX</title>
 
-    <style>
-        :root {
-            --primary: #087443;
-            --primary-dark: #065c35;
-            --primary-light: #eaf5ef;
-            --sidebar: #102f47;
-            --sidebar-hover: #173c58;
-            --text: #263238;
-            --muted: #7a858d;
-            --border: #e7ebee;
-            --background: #f5f7f8;
-            --white: #ffffff;
-            --danger: #c0392b;
-        }
+@push('styles')
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<style>
+    .form-page {
+        max-width: 1100px;
+        margin: 0 auto;
+    }
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: var(--background);
-            color: var(--text);
-        }
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 22px;
+        font-size: 13px;
+        color: #7a858d;
+        flex-wrap: wrap;
+    }
 
-        /* =========================
-           SIDEBAR
-        ========================= */
+    .breadcrumb a {
+        color: #087443;
+        text-decoration: none;
+        font-weight: 600;
+    }
 
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 270px;
-            height: 100vh;
-            background: var(--sidebar);
-            color: white;
-            z-index: 1000;
-            overflow-y: auto;
-        }
+    .breadcrumb a:hover {
+        text-decoration: underline;
+    }
 
-        .brand {
-            padding: 25px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            text-align: center;
-        }
+    .breadcrumb-separator {
+        color: #aab2b7;
+    }
 
-        .logo {
-            width: 58px;
-            height: 58px;
-            margin: 0 auto 12px;
-            border-radius: 50%;
-            background: white;
-            color: var(--sidebar);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
+    .page-heading {
+        margin-bottom: 24px;
+    }
 
-        .brand h2 {
-            font-size: 17px;
-            margin-bottom: 5px;
-        }
+    .page-heading h1 {
+        margin: 0 0 7px;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 30px;
+        line-height: 1.25;
+        color: #18364d;
+        font-weight: 700;
+    }
 
-        .brand p {
-            font-size: 10px;
-            color: #b9c7d1;
-            letter-spacing: 1px;
-        }
+    .page-heading p {
+        margin: 0;
+        color: #7a858d;
+        font-size: 14px;
+    }
 
-        .menu {
-            padding: 15px 10px 30px;
-        }
+    .form-card {
+        background: #ffffff;
+        border: 1px solid #e7ebee;
+        border-radius: 14px;
+        box-shadow: 0 3px 14px rgba(16, 47, 71, 0.06);
+        overflow: hidden;
+    }
 
-        .menu-title {
-            padding: 12px 15px 7px;
-            font-size: 10px;
-            text-transform: uppercase;
-            color: #7f96a7;
-            letter-spacing: 1px;
-        }
+    .form-section {
+        padding: 26px 28px;
+        border-bottom: 1px solid #edf0f2;
+    }
 
-        .menu a {
-            display: flex;
-            align-items: center;
-            gap: 11px;
-            padding: 11px 15px;
-            margin-bottom: 3px;
-            border-radius: 7px;
-            text-decoration: none;
-            color: #d9e2e8;
-            font-size: 13px;
-            transition: 0.2s;
-        }
+    .form-section:last-of-type {
+        border-bottom: none;
+    }
 
-        .menu a:hover {
-            background: var(--sidebar-hover);
-            color: white;
-        }
+    .section-heading {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        margin-bottom: 22px;
+    }
 
-        .menu a.active {
-            background: var(--primary);
-            color: white;
-            font-weight: bold;
-        }
+    .section-number {
+        width: 34px;
+        height: 34px;
+        min-width: 34px;
+        border-radius: 9px;
+        background: #eaf5ef;
+        color: #087443;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        font-weight: 700;
+    }
 
-        .menu-icon {
-            width: 20px;
-            text-align: center;
-            font-size: 16px;
-        }
+    .section-heading h2 {
+        margin: 0 0 4px;
+        color: #18364d;
+        font-size: 17px;
+        font-weight: 700;
+    }
 
-        .submenu a {
-            padding-left: 46px;
-            font-size: 12px;
-        }
+    .section-heading p {
+        margin: 0;
+        color: #7a858d;
+        font-size: 13px;
+        line-height: 1.5;
+    }
 
-        /* =========================
-           MAIN
-        ========================= */
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
 
-        .main {
-            margin-left: 270px;
-            min-height: 100vh;
-        }
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
 
-        /* =========================
-           TOPBAR
-        ========================= */
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
 
-        .topbar {
-            height: 82px;
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
-            position: sticky;
-            top: 0;
-            z-index: 500;
-        }
+    .form-label {
+        margin-bottom: 8px;
+        color: #263238;
+        font-size: 13px;
+        font-weight: 700;
+    }
 
+    .required {
+        color: #dc3545;
+    }
+
+    .form-control,
+    .form-select {
+        width: 100%;
+        min-height: 44px;
+        padding: 10px 13px;
+        border: 1px solid #dce2e6;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #263238;
+        font-size: 14px;
+        font-family: inherit;
+        outline: none;
+        transition: border-color .2s ease, box-shadow .2s ease;
+        box-sizing: border-box;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        border-color: #087443;
+        box-shadow: 0 0 0 3px rgba(8, 116, 67, 0.10);
+    }
+
+    .form-control::placeholder {
+        color: #a3adb4;
+    }
+
+    textarea.form-control {
+        min-height: 105px;
+        resize: vertical;
+        line-height: 1.5;
+    }
+
+    .form-help {
+        margin-top: 6px;
+        color: #8a949b;
+        font-size: 12px;
+        line-height: 1.45;
+    }
+
+    .input-with-prefix {
+        position: relative;
+    }
+
+    .input-with-prefix .form-control {
+        padding-left: 48px;
+    }
+
+    .input-prefix {
+        position: absolute;
+        left: 13px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #087443;
+        font-size: 13px;
+        font-weight: 700;
+        pointer-events: none;
+    }
+
+    .info-box {
+        margin-top: 22px;
+        padding: 14px 16px;
+        border: 1px solid #d8ebe1;
+        border-radius: 10px;
+        background: #f3faf6;
+        display: flex;
+        align-items: flex-start;
+        gap: 11px;
+    }
+
+    .info-icon {
+        width: 24px;
+        height: 24px;
+        min-width: 24px;
+        border-radius: 50%;
+        background: #087443;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .info-box strong {
+        display: block;
+        margin-bottom: 3px;
+        color: #18364d;
+        font-size: 13px;
+    }
+
+    .info-box span {
+        color: #66747d;
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .error-message {
+        margin-top: 6px;
+        color: #dc3545;
+        font-size: 12px;
+    }
+
+    .has-error {
+        border-color: #dc3545 !important;
+    }
+
+    .form-footer {
+        padding: 20px 28px;
+        background: #fafbfb;
+        border-top: 1px solid #edf0f2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    .footer-note {
+        color: #8a949b;
+        font-size: 12px;
+    }
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .btn {
+        min-height: 42px;
+        padding: 9px 17px;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        cursor: pointer;
+        transition: all .2s ease;
+        box-sizing: border-box;
+    }
+
+    .btn-secondary {
+        background: #ffffff;
+        color: #52616a;
+        border: 1px solid #dce2e6;
+    }
+
+    .btn-secondary:hover {
+        background: #f5f7f8;
+        border-color: #cbd3d8;
+    }
+
+    .btn-primary {
+        background: #087443;
+        color: #ffffff;
+        border: 1px solid #087443;
+        box-shadow: 0 2px 5px rgba(8, 116, 67, 0.16);
+    }
+
+    .btn-primary:hover {
+        background: #075f37;
+        border-color: #075f37;
+    }
+
+    .alert-error {
+        margin-bottom: 20px;
+        padding: 14px 16px;
+        border-radius: 10px;
+        background: #fff4f4;
+        border: 1px solid #f2caca;
+        color: #a52626;
+        font-size: 13px;
+    }
+
+    .alert-error strong {
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .alert-error ul {
+        margin: 5px 0 0 18px;
+        padding: 0;
+    }
+
+    @media (max-width: 768px) {
         .page-heading h1 {
-            font-family: Georgia, serif;
-            font-size: 24px;
-            color: var(--sidebar);
-            margin-bottom: 4px;
-        }
-
-        .page-heading p {
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        .topbar-right {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-        }
-
-        .notification {
-            width: 38px;
-            height: 38px;
-            border: 1px solid var(--border);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            background: white;
-            cursor: pointer;
-        }
-
-        .user {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .avatar {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .user-info strong {
-            display: block;
-            font-size: 13px;
-        }
-
-        .user-info span {
-            display: block;
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 2px;
-        }
-
-        /* =========================
-           CONTENT
-        ========================= */
-
-        .content {
-            padding: 30px;
-            max-width: 1250px;
-        }
-
-        .breadcrumb {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--muted);
-            font-size: 12px;
-            margin-bottom: 18px;
-        }
-
-        .breadcrumb a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        .page-title {
-            margin-bottom: 25px;
-        }
-
-        .page-title h2 {
-            font-family: Georgia, serif;
-            font-size: 27px;
-            color: var(--sidebar);
-            margin-bottom: 7px;
-        }
-
-        .page-title p {
-            font-size: 13px;
-            color: var(--muted);
-        }
-
-        /* =========================
-           FORM CARD
-        ========================= */
-
-        .form-card {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .form-header {
-            padding: 22px 25px;
-            border-bottom: 1px solid var(--border);
-            background: #fbfcfc;
-        }
-
-        .form-header h3 {
-            font-size: 17px;
-            color: var(--sidebar);
-            margin-bottom: 5px;
-        }
-
-        .form-header p {
-            font-size: 12px;
-            color: var(--muted);
-        }
-
-        .form-body {
-            padding: 28px 25px;
+            font-size: 25px;
         }
 
         .form-section {
-            margin-bottom: 30px;
-        }
-
-        .form-section:last-child {
-            margin-bottom: 0;
-        }
-
-        .section-title {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            color: var(--sidebar);
-            font-weight: bold;
-            padding-bottom: 12px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .section-number {
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
+            padding: 22px 18px;
         }
 
         .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px 25px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
+            grid-template-columns: 1fr;
+            gap: 17px;
         }
 
         .form-group.full {
-            grid-column: 1 / -1;
+            grid-column: auto;
         }
-
-        .form-group label {
-            font-size: 12px;
-            font-weight: bold;
-            color: var(--text);
-            margin-bottom: 8px;
-        }
-
-        .required {
-            color: var(--danger);
-        }
-
-        .form-control {
-            width: 100%;
-            height: 43px;
-            border: 1px solid #dce2e5;
-            border-radius: 7px;
-            padding: 0 13px;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 13px;
-            color: var(--text);
-            background: white;
-            outline: none;
-            transition: 0.2s;
-        }
-
-        textarea.form-control {
-            height: 100px;
-            padding: 12px 13px;
-            resize: vertical;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(8,116,67,0.08);
-        }
-
-        .form-control::placeholder {
-            color: #aab2b7;
-        }
-
-        select.form-control {
-            cursor: pointer;
-        }
-
-        .form-help {
-            font-size: 11px;
-            color: var(--muted);
-            margin-top: 6px;
-        }
-
-        /* =========================
-           INFO BOX
-        ========================= */
-
-        .info-box {
-            margin-top: 25px;
-            padding: 14px 16px;
-            background: var(--primary-light);
-            border: 1px solid #d7ecdf;
-            border-radius: 8px;
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
-        }
-
-        .info-icon {
-            width: 24px;
-            height: 24px;
-            flex-shrink: 0;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .info-box p {
-            font-size: 12px;
-            line-height: 1.6;
-            color: #416052;
-        }
-
-        /* =========================
-           FORM FOOTER
-        ========================= */
 
         .form-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 25px;
-            border-top: 1px solid var(--border);
-            background: #fbfcfc;
+            padding: 18px;
+            flex-direction: column;
+            align-items: stretch;
         }
 
-        .required-note {
-            font-size: 11px;
-            color: var(--muted);
+        .footer-note {
+            text-align: center;
         }
 
         .form-actions {
-            display: flex;
-            gap: 10px;
+            width: 100%;
         }
 
-        .btn {
-            height: 42px;
-            padding: 0 20px;
-            border-radius: 7px;
-            border: none;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
+        .form-actions .btn {
+            flex: 1;
         }
+    }
+</style>
 
-        .btn-secondary {
-            background: white;
-            color: var(--text);
-            border: 1px solid #dce2e5;
-        }
+@endpush
 
-        .btn-secondary:hover {
-            background: #f2f4f5;
-        }
+@section('content')
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
+<div class="form-page">
 
-        .btn-primary:hover {
-            background: var(--primary-dark);
-        }
 
-        /* =========================
-           FOOTER
-        ========================= */
+<div class="breadcrumb">
+    <a href="{{ route('dashboard') }}">Beranda</a>
+    <span class="breadcrumb-separator">›</span>
+    <a href="{{ route('dataputussekolah.index') }}">Data Anak Putus Sekolah</a>
+    <span class="breadcrumb-separator">›</span>
+    <span>{{ $isEdit ? 'Edit Data' : 'Tambah Data' }}</span>
+</div>
 
-        .footer {
-            padding: 25px 30px;
-            margin-top: 15px;
-            font-size: 11px;
-            color: var(--muted);
-            border-top: 1px solid var(--border);
-        }
+<div class="page-heading">
+    <h1>{{ $isEdit ? 'Edit Data Anak Putus Sekolah' : 'Tambah Data Anak Putus Sekolah' }}</h1>
+    <p>
+        {{ $isEdit
+            ? 'Perbarui informasi anak putus sekolah di Kelurahan Binong.'
+            : 'Tambahkan data anak putus sekolah di Kelurahan Binong.' }}
+    </p>
+</div>
 
-        /* =========================
-           MOBILE
-        ========================= */
+@if ($errors->any())
+    <div class="alert-error">
+        <strong>Data belum dapat disimpan.</strong>
+        Silakan periksa kembali isian berikut:
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
-        .mobile-menu {
-            display: none;
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--border);
-            background: white;
-            border-radius: 7px;
-            font-size: 20px;
-            cursor: pointer;
-        }
+<form
+    action="{{ $isEdit
+        ? route('dataputussekolah.update', $putusSekolah->id)
+        : route('dataputussekolah.store') }}"
+    method="POST"
+>
 
-        .overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.4);
-            z-index: 900;
-        }
+    @csrf
 
-        @media (max-width: 1100px) {
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
+    @if ($isEdit)
+        @method('PUT')
+    @endif
 
-            .form-group.full {
-                grid-column: auto;
-            }
-        }
+    <div class="form-card">
 
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: 0.3s;
-            }
+        {{-- SECTION 1 --}}
+        <div class="form-section">
 
-            .sidebar.open {
-                transform: translateX(0);
-            }
+            <div class="section-heading">
+                <div class="section-number">01</div>
+                <div>
+                    <h2>Identitas Anak</h2>
+                    <p>Informasi dasar anak yang tercatat dalam data kelurahan.</p>
+                </div>
+            </div>
 
-            .overlay.show {
-                display: block;
-            }
+            <div class="form-grid">
 
-            .main {
-                margin-left: 0;
-            }
+                <div class="form-group">
+                    <label class="form-label" for="id_data">
+                        ID Data <span class="required">*</span>
+                    </label>
 
-            .mobile-menu {
-                display: block;
-            }
+                    <input
+                        type="text"
+                        id="id_data"
+                        name="id_data"
+                        class="form-control @error('id_data') has-error @enderror"
+                        value="{{ $value('id_data') }}"
+                        placeholder="Contoh: APS-001"
+                        maxlength="50"
+                        required
+                    >
 
-            .topbar {
-                padding: 0 18px;
-            }
+                    <div class="form-help">
+                        Gunakan ID unik untuk setiap data anak putus sekolah.
+                    </div>
 
-            .page-heading {
-                display: none;
-            }
+                    @error('id_data')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
 
-            .content {
-                padding: 20px 18px;
-            }
+                <div class="form-group">
+                    <label class="form-label" for="nik">
+                        NIK <span class="required">*</span>
+                    </label>
 
-            .topbar-right {
-                margin-left: auto;
-            }
+                    <input
+                        type="text"
+                        id="nik"
+                        name="nik"
+                        class="form-control @error('nik') has-error @enderror"
+                        value="{{ $value('nik') }}"
+                        placeholder="Masukkan NIK"
+                        maxlength="20"
+                        inputmode="numeric"
+                        required
+                    >
 
-            .user-info {
-                display: none;
-            }
+                    <div class="form-help">
+                        Masukkan Nomor Induk Kependudukan sesuai dokumen kependudukan.
+                    </div>
 
-            .form-body {
-                padding: 22px 18px;
-            }
+                    @error('nik')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
 
-            .form-header {
-                padding: 20px 18px;
-            }
+                <div class="form-group">
+                    <label class="form-label" for="nama">
+                        Nama Anak <span class="required">*</span>
+                    </label>
 
-            .form-footer {
-                padding: 18px;
-                flex-direction: column;
-                align-items: stretch;
-                gap: 15px;
-            }
+                    <input
+                        type="text"
+                        id="nama"
+                        name="nama"
+                        class="form-control @error('nama') has-error @enderror"
+                        value="{{ $value('nama') }}"
+                        placeholder="Masukkan nama lengkap anak"
+                        maxlength="150"
+                        required
+                    >
 
-            .form-actions {
-                width: 100%;
-            }
+                    @error('nama')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
 
-            .form-actions .btn {
-                flex: 1;
-            }
-        }
+                <div class="form-group">
+                    <label class="form-label" for="rw">
+                        RW
+                    </label>
 
-        @media (max-width: 480px) {
-            .content {
-                padding: 18px 14px;
-            }
+                    <input
+                        type="text"
+                        id="rw"
+                        name="rw"
+                        class="form-control @error('rw') has-error @enderror"
+                        value="{{ $value('rw') }}"
+                        placeholder="Contoh: RW 05"
+                        maxlength="10"
+                    >
 
-            .page-title h2 {
-                font-size: 23px;
-            }
+                    <div class="form-help">
+                        Isi sesuai wilayah RW tempat tinggal anak.
+                    </div>
 
-            .topbar {
-                height: 70px;
-            }
+                    @error('rw')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
 
-            .notification {
-                display: none;
-            }
+                <div class="form-group">
+                    <label class="form-label" for="usia">
+                        Usia <span class="required">*</span>
+                    </label>
 
-            .form-actions {
-                flex-direction: column-reverse;
-            }
+                    <div class="input-with-prefix">
+                        <span class="input-prefix">Usia</span>
 
-            .form-actions .btn {
-                width: 100%;
-            }
-        }
-    </style>
-</head>
+                        <input
+                            type="number"
+                            id="usia"
+                            name="usia"
+                            class="form-control @error('usia') has-error @enderror"
+                            value="{{ $value('usia') }}"
+                            placeholder="Masukkan usia"
+                            min="1"
+                            max="30"
+                            required
+                        >
+                    </div>
 
-<body>
+                    <div class="form-help">
+                        Usia anak saat data dicatat, dalam tahun.
+                    </div>
 
-    <!-- OVERLAY -->
-    <div class="overlay" id="overlay"></div>
+                    @error('usia')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
 
-    <!-- =========================
-         SIDEBAR
-    ========================== -->
-    <aside class="sidebar" id="sidebar">
+                <div class="form-group">
+                    <label class="form-label" for="jenjang_terakhir">
+                        Jenjang Terakhir <span class="required">*</span>
+                    </label>
 
-        <div class="brand">
-            <div class="logo">LOGO</div>
-            <h2>Kelurahan XXXXX</h2>
-            <p>SISTEM INFORMASI KELURAHAN</p>
+                    <select
+                        id="jenjang_terakhir"
+                        name="jenjang_terakhir"
+                        class="form-select @error('jenjang_terakhir') has-error @enderror"
+                        required
+                    >
+                        <option value="">Pilih jenjang terakhir</option>
+
+                        <option value="SD Kelas 1" {{ $value('jenjang_terakhir') === 'SD Kelas 1' ? 'selected' : '' }}>
+                            SD Kelas 1
+                        </option>
+
+                        <option value="SD Kelas 2" {{ $value('jenjang_terakhir') === 'SD Kelas 2' ? 'selected' : '' }}>
+                            SD Kelas 2
+                        </option>
+
+                        <option value="SD Kelas 3" {{ $value('jenjang_terakhir') === 'SD Kelas 3' ? 'selected' : '' }}>
+                            SD Kelas 3
+                        </option>
+
+                        <option value="SD Kelas 4" {{ $value('jenjang_terakhir') === 'SD Kelas 4' ? 'selected' : '' }}>
+                            SD Kelas 4
+                        </option>
+
+                        <option value="SD Kelas 5" {{ $value('jenjang_terakhir') === 'SD Kelas 5' ? 'selected' : '' }}>
+                            SD Kelas 5
+                        </option>
+
+                        <option value="SD Kelas 6" {{ $value('jenjang_terakhir') === 'SD Kelas 6' ? 'selected' : '' }}>
+                            SD Kelas 6
+                        </option>
+
+                        <option value="SMP Kelas 7" {{ $value('jenjang_terakhir') === 'SMP Kelas 7' ? 'selected' : '' }}>
+                            SMP Kelas 7
+                        </option>
+
+                        <option value="SMP Kelas 8" {{ $value('jenjang_terakhir') === 'SMP Kelas 8' ? 'selected' : '' }}>
+                            SMP Kelas 8
+                        </option>
+
+                        <option value="SMP Kelas 9" {{ $value('jenjang_terakhir') === 'SMP Kelas 9' ? 'selected' : '' }}>
+                            SMP Kelas 9
+                        </option>
+
+                        <option value="SMA/SMK Kelas 10" {{ $value('jenjang_terakhir') === 'SMA/SMK Kelas 10' ? 'selected' : '' }}>
+                            SMA/SMK Kelas 10
+                        </option>
+
+                        <option value="SMA/SMK Kelas 11" {{ $value('jenjang_terakhir') === 'SMA/SMK Kelas 11' ? 'selected' : '' }}>
+                            SMA/SMK Kelas 11
+                        </option>
+
+                        <option value="SMA/SMK Kelas 12" {{ $value('jenjang_terakhir') === 'SMA/SMK Kelas 12' ? 'selected' : '' }}>
+                            SMA/SMK Kelas 12
+                        </option>
+
+                        <option value="Tidak Tamat SD" {{ $value('jenjang_terakhir') === 'Tidak Tamat SD' ? 'selected' : '' }}>
+                            Tidak Tamat SD
+                        </option>
+
+                        <option value="Tidak Tamat SMP" {{ $value('jenjang_terakhir') === 'Tidak Tamat SMP' ? 'selected' : '' }}>
+                            Tidak Tamat SMP
+                        </option>
+
+                        <option value="Tidak Tamat SMA/SMK" {{ $value('jenjang_terakhir') === 'Tidak Tamat SMA/SMK' ? 'selected' : '' }}>
+                            Tidak Tamat SMA/SMK
+                        </option>
+                    </select>
+
+                    @error('jenjang_terakhir')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
+                </div>
+
+            </div>
+
         </div>
 
-        <nav class="menu">
+        {{-- SECTION 2 --}}
+        <div class="form-section">
 
-            <div class="menu-title">Menu Utama</div>
-
-            <a href="dashboard.html">
-                <span class="menu-icon">⌂</span>
-                <span>Beranda</span>
-            </a>
-
-            <div class="menu-title">Kesekretariatan</div>
-
-            <div class="submenu">
-                <a href="duk.html" class="active">
-                    <span class="menu-icon">👤</span>
-                    <span>Data Umum Kepegawaian</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">▣</span>
-                    <span>Data BMD</span>
-                </a>
+            <div class="section-heading">
+                <div class="section-number">02</div>
+                <div>
+                    <h2>Data Putus Sekolah</h2>
+                    <p>Informasi mengenai kondisi dan alasan anak tidak melanjutkan pendidikan.</p>
+                </div>
             </div>
 
-            <div class="menu-title">Kesejahteraan Sosial</div>
+            <div class="form-grid">
 
-            <div class="submenu">
-                <a href="#">
-                    <span class="menu-icon">♙</span>
-                    <span>Posyandu & Posbindu</span>
-                </a>
+                <div class="form-group full">
+                    <label class="form-label" for="alasan">
+                        Alasan Putus Sekolah <span class="required">*</span>
+                    </label>
 
-                <a href="#">
-                    <span class="menu-icon">♥</span>
-                    <span>Data Stunting</span>
-                </a>
+                    <input
+                        type="text"
+                        id="alasan"
+                        name="alasan"
+                        class="form-control @error('alasan') has-error @enderror"
+                        value="{{ $value('alasan') }}"
+                        placeholder="Contoh: Kondisi ekonomi keluarga"
+                        maxlength="255"
+                        required
+                    >
 
-                <a href="#">
-                    <span class="menu-icon">♧</span>
-                    <span>KPM / Bantuan Sosial</span>
-                </a>
+                    <div class="form-help">
+                        Jelaskan alasan utama anak berhenti atau tidak melanjutkan sekolah.
+                    </div>
 
-                <a href="#">
-                    <span class="menu-icon">🎓</span>
-                    <span>Anak Putus Sekolah</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">▤</span>
-                    <span>Data Sekolah</span>
-                </a>
-            </div>
-
-            <div class="menu-title">Ekonomi & Pembangunan</div>
-
-            <div class="submenu">
-                <a href="#">
-                    <span class="menu-icon">◉</span>
-                    <span>Data UMKM</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">⌂</span>
-                    <span>Data Rutillahu</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">♧</span>
-                    <span>Data Buruan Sae</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">♣</span>
-                    <span>Data Pohon</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">▦</span>
-                    <span>Fasilitas Umum & Sosial</span>
-                </a>
-            </div>
-
-            <div class="menu-title">Pemerintahan</div>
-
-            <div class="submenu">
-                <a href="#">
-                    <span class="menu-icon">▤</span>
-                    <span>Laporan Kependudukan</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">⚑</span>
-                    <span>Linmas & Siskamling</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">♟</span>
-                    <span>Data RT/RW & Periode</span>
-                </a>
-
-                <a href="#">
-                    <span class="menu-icon">▣</span>
-                    <span>Data PKL</span>
-                </a>
-            </div>
-
-            <div class="menu-title">Sistem</div>
-
-            <a href="#">
-                <span class="menu-icon">⚙</span>
-                <span>Pengaturan</span>
-            </a>
-
-            <a href="login.html">
-                <span class="menu-icon">↪</span>
-                <span>Keluar</span>
-            </a>
-
-        </nav>
-    </aside>
-
-
-    <!-- =========================
-         MAIN
-    ========================== -->
-    <main class="main">
-
-        <!-- TOPBAR -->
-        <header class="topbar">
-
-            <button class="mobile-menu" id="mobileMenu">☰</button>
-
-            <div class="page-heading">
-                <h1>Tambah Data Anak Putus Sekolah</h1>
-                <p>Kesejahteraan Sosial · Anak Putus Sekolah · Tambah Data</p>
-            </div>
-
-            <div class="topbar-right">
-
-                <div class="notification">
-                    ♧
+                    @error('alasan')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </div>
 
-                <div class="user">
-                    <div class="avatar">A</div>
+                <div class="form-group full">
+                    <label class="form-label" for="keterangan">
+                        Keterangan
+                    </label>
 
-                    <div class="user-info">
-                        <strong>Administrator</strong>
-                        <span>Admin Kelurahan</span>
+                    <textarea
+                        id="keterangan"
+                        name="keterangan"
+                        class="form-control @error('keterangan') has-error @enderror"
+                        placeholder="Tambahkan keterangan atau informasi lain yang diperlukan"
+                    >{{ $value('keterangan') }}</textarea>
+
+                    <div class="form-help">
+                        Kolom ini dapat digunakan untuk mencatat informasi tambahan terkait kondisi anak.
                     </div>
+
+                    @error('keterangan')
+                        <div class="error-message">{{ $message }}</div>
+                    @enderror
                 </div>
 
             </div>
 
-        </header>
-
-
-        <!-- CONTENT -->
-        <section class="content">
-
-            <!-- BREADCRUMB -->
-            <div class="breadcrumb">
-                <a href="dashboard.html">Beranda</a>
-                <span>›</span>
-                <a href="{{ url('/dataputussekolah') }}">Anak Putus Sekolah</a>
-                <span>›</span>
-                <span>{{ $isEdit ? 'Edit Data' : 'Tambah Data' }}</span>
-            </div>
-
-
-            <!-- PAGE TITLE -->
-            <div class="page-title">
-                <h2>Tambah Data Anak Putus Sekolah</h2>
-                <p>Tambahkan data anak putus sekolah Kelurahan XXXXX.</p>
-            </div>
-
-
-            <!-- FORM CARD -->
-            <div class="form-card">
-
-                <div class="form-header">
-                    <h3>Form Data Anak Putus Sekolah</h3>
-                    <p>Silakan lengkapi informasi anak pada kolom yang tersedia.</p>
+            <div class="info-box">
+                <div class="info-icon">i</div>
+                <div>
+                    <strong>Informasi Data</strong>
+                    <span>
+                        Pastikan data yang dimasukkan sesuai dengan kondisi dan informasi
+                        terbaru yang dimiliki Kelurahan Binong.
+                    </span>
                 </div>
+            </div>
 
+        </div>
 
-                <form id="putusSekolahForm" method="POST" action="{{ url()->current() }}">
-                    @csrf
-                    @if ($isEdit)
-                        @method('PUT')
-                    @endif
+        {{-- FOOTER --}}
+        <div class="form-footer">
 
-                    <div class="form-body">
+            <div class="footer-note">
+                <span class="required">*</span> Wajib diisi
+            </div>
 
-                        <!-- IDENTITAS ANAK -->
-                        <div class="form-section">
+            <div class="form-actions">
 
-                            <div class="section-title">
-                                <span class="section-number">1</span>
-                                Identitas Anak
-                            </div>
+                <a
+                    href="{{ route('dataputussekolah.index') }}"
+                    class="btn btn-secondary"
+                >
+                    Batal
+                </a>
 
-                            <div class="form-grid">
-
-                                <div class="form-group">
-                                    <label for="nama_anak">
-                                        Nama Anak <span class="required">*</span>
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        id="nama_anak"
-                                        name="nama_anak"
-                                        class="form-control"
-                                        placeholder="Nama lengkap anak"
-                                        value="{{ $putusSekolahValue('nama_anak') }}"
-                                        required
-                                    >
-                                </div>
-
-
-                                <div class="form-group">
-                                    <label for="nik">
-                                        NIK <span class="required">*</span>
-                                    </label>
-
-                                    <input type="text" id="nik" name="nik" class="form-control" placeholder="Masukkan NIK" value="{{ $putusSekolahValue('nik') }}" required>
-                                </div>
-
-
-                                <div class="form-group full">
-                                    <label for="rw">
-                                        RW <span class="required">*</span>
-                                    </label>
-
-                                    <input
-                                        type="number"
-                                        id="rw"
-                                        name="rw"
-                                        class="form-control"
-                                        placeholder="Contoh: RW 04"
-                                        value="{{ $putusSekolahValue('rw') }}"
-                                        required
-                                    >
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- DATA PENGELOLAAN -->
-                        <div class="form-section">
-
-                            <div class="section-title">
-                                <span class="section-number">2</span>
-                                Detail Pendidikan
-                            </div>
-
-                            <div class="form-grid">
-
-                                <div class="form-group">
-                                    <label for="usia_tahun">
-                                        Usia (Tahun) <span class="required">*</span>
-                                    </label>
-
-                                    <input type="number" id="usia_tahun" name="usia_tahun" class="form-control" placeholder="Contoh: 14" min="1" value="{{ $putusSekolahValue('usia_tahun') }}" required>
-                                </div>
-
-
-                                <div class="form-group">
-                                    <label for="jenjang_terakhir">
-                                        Jenjang Terakhir <span class="required">*</span>
-                                    </label>
-
-                                    <input type="text" id="jenjang_terakhir" name="jenjang_terakhir" class="form-control" placeholder="Contoh: SMP Kelas 8" value="{{ $putusSekolahValue('jenjang_terakhir') }}" required>
-                                </div>
-
-
-                                <div class="form-group full">
-                                    <label for="keterangan">
-                                        Keterangan
-                                    </label>
-
-                                    <textarea
-                                        id="keterangan"
-                                        name="keterangan"
-                                        class="form-control"
-                                        placeholder="Alasan anak putus sekolah"
-                                    >{{ $putusSekolahValue('alasan') }}</textarea>
-                                </div>
-
-                            </div>
-
-                        </div>
-
-
-                        <!-- INFO -->
-                        <div class="info-box">
-
-                            <div class="info-icon">i</div>
-
-                            <p>
-                                Pastikan data anak yang dimasukkan sudah benar sebelum menyimpan.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- FORM FOOTER -->
-                    <div class="form-footer">
-
-                        <div class="required-note">
-                            <span class="required">*</span> Wajib diisi
-                        </div>
-
-                        <div class="form-actions">
-
-                            <a href="{{ url('/dataputussekolah') }}" class="btn btn-secondary">
-                                Batal
-                            </a>
-
-                            <button type="submit" class="btn btn-primary">
-                                {{ $isEdit ? 'Perbarui Data' : 'Simpan Data' }}
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </form>
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    {{ $isEdit ? 'Perbarui Data' : 'Simpan Data' }}
+                </button>
 
             </div>
 
+        </div>
 
-            <!-- FOOTER -->
-            <footer class="footer">
-                © 2026 Sistem Informasi Kelurahan XXXXX · Semua hak dilindungi.
-            </footer>
+    </div>
 
-        </section>
-
-    </main>
+</form>
 
 
-    <script>
+</div>
 
-        /* =========================
-           MOBILE SIDEBAR
-        ========================== */
-
-        const mobileMenu = document.getElementById('mobileMenu');
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('overlay');
-
-        mobileMenu.addEventListener('click', function () {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        });
-
-        overlay.addEventListener('click', function () {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('show');
-        });
-
-
-        @if (!$isEdit)
-            const form = document.getElementById('putusSekolahForm');
-
-            form.addEventListener('submit', function (event) {
-                event.preventDefault();
-
-                const namaAnak = document.getElementById('nama_anak').value;
-
-                alert(
-                    'Data Anak Putus Sekolah berhasil disimpan!\\n\\n' +
-                    'Nama Anak: ' + namaAnak
-                );
-
-                window.location.href = '{{ url('/dataputussekolah') }}';
-            });
-        @endif
-
-    </script>
-
-</body>
-</html>
-```
+@endsection

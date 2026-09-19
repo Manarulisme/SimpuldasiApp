@@ -162,6 +162,29 @@
         line-height: 1.5;
     }
 
+    /* TERAKHIR PERUBAHAN */
+
+    .last-update {
+        min-width: 125px;
+        line-height: 1.5;
+    }
+
+    .last-update-date {
+        color: #52616b;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .last-update-time {
+        color: #8a969d;
+        font-size: 10px;
+        margin-top: 2px;
+        white-space: nowrap;
+    }
+
+    /* ACTION */
+
     .action-buttons {
         display: flex;
         gap: 6px;
@@ -179,7 +202,21 @@
         justify-content: center;
         text-decoration: none;
         font-size: 15px;
+        transition: all 0.15s ease;
     }
+
+    /* SHOW */
+
+    .action-show {
+        color: #52616b;
+    }
+
+    .action-show:hover {
+        background: #f1f3f4;
+        color: #18364d;
+    }
+
+    /* EDIT */
 
     .action-edit {
         color: var(--primary);
@@ -189,6 +226,8 @@
         background: var(--primary-light);
         color: var(--primary);
     }
+
+    /* DELETE */
 
     .action-delete {
         color: #c0392b;
@@ -209,11 +248,66 @@
         font-family: inherit;
     }
 
+    /* DATATABLES */
+
+    .dt-container {
+        font-size: 12px;
+        color: #52616b;
+    }
+
+    .dt-layout-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .dt-length,
+    .dt-search {
+        font-size: 12px;
+    }
+
+    .dt-length select,
+    .dt-search input {
+        border: 1px solid var(--border) !important;
+        border-radius: 6px !important;
+        padding: 7px 10px !important;
+        font-size: 12px !important;
+        outline: none;
+    }
+
+    .dt-length select:focus,
+    .dt-search input:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 2px rgba(8, 116, 67, 0.08);
+    }
+
+    .dt-search input {
+        margin-left: 6px !important;
+        min-width: 190px;
+    }
+
+    .dt-info {
+        color: #8a969d !important;
+        font-size: 11px !important;
+    }
+
+    .dt-paging button {
+        border-radius: 5px !important;
+        font-size: 11px !important;
+    }
+
     @media (max-width: 700px) {
 
         .content-header {
             align-items: flex-start;
             flex-direction: column;
+        }
+
+        .dt-layout-row {
+            gap: 10px;
+        }
+
+        .dt-search input {
+            min-width: 150px;
         }
 
     }
@@ -302,6 +396,8 @@
 
                 <th>Keterangan</th>
 
+                <th>Terakhir Perubahan</th>
+
                 <th>Aksi</th>
 
             </tr>
@@ -316,6 +412,7 @@
                 <tr>
 
                     {{-- ID BMD --}}
+
                     <td>
 
                         <div class="bmd-name">
@@ -330,6 +427,7 @@
 
 
                     {{-- NAMA BARANG --}}
+
                     <td>
 
                         <div class="bmd-name">
@@ -340,6 +438,7 @@
 
 
                     {{-- TYPE --}}
+
                     <td>
 
                         @if ($item->type)
@@ -360,12 +459,16 @@
 
 
                     {{-- TAHUN PEROLEHAN --}}
+
                     <td>
+
                         {{ $item->tahun_perolehan ?: '-' }}
+
                     </td>
 
 
                     {{-- SUMBER DANA --}}
+
                     <td>
 
                         @if ($item->sumber_dana)
@@ -386,6 +489,7 @@
 
 
                     {{-- KONDISI --}}
+
                     <td>
 
                         @if ($item->kondisi === 'Baik')
@@ -424,6 +528,7 @@
 
 
                     {{-- KETERANGAN --}}
+
                     <td>
 
                         <div class="bmd-keterangan">
@@ -433,12 +538,58 @@
                     </td>
 
 
+                    {{-- TERAKHIR PERUBAHAN --}}
+
+                    <td>
+
+                        @if ($item->updated_at)
+
+                            <div
+                                class="last-update"
+                                data-order="{{ $item->updated_at->timestamp }}"
+                            >
+
+                                <div class="last-update-date">
+                                    {{ $item->updated_at->locale('id')->translatedFormat('d M Y') }}
+                                </div>
+
+                                <div class="last-update-time">
+                                    {{ $item->updated_at->format('H:i') }} WIB
+                                </div>
+
+                            </div>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
                     {{-- AKSI --}}
+
                     <td>
 
                         <div class="action-buttons">
 
+
+                            {{-- SHOW --}}
+
+                            <a
+                                href="{{ route('databmd.show', $item->id) }}"
+                                class="action-btn action-show"
+                                title="Lihat Detail"
+                            >
+                                ◉
+                            </a>
+
+
                             {{-- EDIT --}}
+
                             <a
                                 href="{{ route('databmd.edit', $item->id) }}"
                                 class="action-btn action-edit"
@@ -449,6 +600,7 @@
 
 
                             {{-- DELETE --}}
+
                             <form
                                 action="{{ route('databmd.destroy', $item->id) }}"
                                 method="POST"
@@ -470,18 +622,20 @@
 
                             </form>
 
+
                         </div>
 
                     </td>
 
                 </tr>
 
+
             @empty
 
                 <tr>
 
                     <td
-                        colspan="8"
+                        colspan="9"
                         style="text-align: center; padding: 30px; color: #8a969d;"
                     >
                         Belum ada data BMD.
@@ -514,18 +668,53 @@
 
         pageLength: 10,
 
-        /*
-         * Jangan beri sorting default ke kolom tertentu.
-         * Urutan awal mengikuti hasil dari Controller.
-         */
+        lengthMenu: [
+            [10, 25, 50, 100],
+            [10, 25, 50, 100]
+        ],
+
         order: [],
+
+        language: {
+
+            lengthMenu: 'Tampilkan _MENU_ data',
+
+            search: 'Cari:',
+
+            searchPlaceholder: 'Cari data BMD...',
+
+            info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+
+            infoEmpty: 'Tidak ada data',
+
+            infoFiltered: '(difilter dari _MAX_ total data)',
+
+            zeroRecords: 'Data tidak ditemukan',
+
+            paginate: {
+
+                first: '«',
+
+                last: '»',
+
+                next: '›',
+
+                previous: '‹'
+
+            }
+
+        },
 
         columnDefs: [
 
             {
+
                 orderable: false,
+
                 searchable: false,
-                targets: 7
+
+                targets: 8
+
             }
 
         ]
