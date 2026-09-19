@@ -10,6 +10,21 @@ use App\Http\Controllers\DataStuntingController;
 use App\Http\Controllers\DataKpmController;
 use App\Http\Controllers\DataAnakPutusSekolahController;
 use App\Http\Controllers\DataSekolahController;
+use App\Http\Controllers\DataUmkmController;
+use App\Http\Controllers\DataRutilahuController;
+use App\Http\Controllers\DataBuruanSaeController;
+use App\Http\Controllers\DataPohonController;
+use App\Http\Controllers\DataFasilitasUmumController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DataLaporanPendudukController;
+use App\Http\Controllers\DataLinmasController;
+use App\Http\Controllers\DataRtRwController;
+use App\Http\Controllers\DataPklController;
+use App\Http\Controllers\LaporanController;
+
+
+
+
 
 
 
@@ -43,9 +58,8 @@ Route::post('/logout', [AuthController::class, 'logout'])
 
 Route::middleware('auth')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('Admin.Konten.dashboard');
-    })->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 
     // Data Umum Pegawai
 // Route::get('/dataumumpegawai', function () {
@@ -87,16 +101,36 @@ Route::resource(
 DataSekolahController::class
 );
 
+Route::resource(
+'dataumkm',
+DataUmkmController::class
+);
 
 
+Route::resource(
+'datarutilahu',
+DataRutilahuController::class
+);
 
+Route::resource(
+'databuruansae',
+DataBuruanSaeController::class);
 
+Route::resource(
+'datapohon',
+DataPohonController::class);
 
+Route::resource(
+'datafasilitasumum',
+DataFasilitasUmumController::class);
 
+Route::resource('datalaporanpenduduk', DataLaporanPendudukController::class);
 
+Route::resource('datalinmas', DataLinmasController::class);
 
+Route::resource('datartrw', DataRtRwController::class);
 
-
+Route::resource('datapkl', DataPklController::class);
 
 
 Route::resource(
@@ -106,7 +140,14 @@ UserController::class
 'pengaturan_user' => 'user',
 ]);
 
+Route::get('/laporan', [LaporanController::class, 'index'])
+->name('laporan.index');
 
+Route::post('/laporan/preview', [LaporanController::class, 'preview'])
+->name('laporan.preview');
+
+Route::post('/laporan/pdf', [LaporanController::class, 'pdf'])
+->name('laporan.pdf');
 
 
 // Route::get('/tambah-data-umum-kepegawaian', function () {
@@ -214,55 +255,55 @@ UserController::class
 
 
 //Data UMKM
-Route::get('/dataumkm', function () {
-    return view('Admin.Konten.Data_umkm.index');
-});
+// Route::get('/dataumkm', function () {
+//     return view('Admin.Konten.Data_umkm.index');
+// });
 
-Route::get('/tambah-data-umkm', function () {
-    return view('Admin.Konten.Data_umkm.tambah');
-});
+// Route::get('/tambah-data-umkm', function () {
+//     return view('Admin.Konten.Data_umkm.tambah');
+// });
 
-// Data Rutilahu
-Route::get('/datarutilahu', function () {
-    return view('Admin.Konten.Data_rutilahu.index');
-});
+// // Data Rutilahu
+// Route::get('/datarutilahu', function () {
+//     return view('Admin.Konten.Data_rutilahu.index');
+// });
 
 
 // Data Buruan Sae
-Route::get('/databuruansae', function () {
-    return view('Admin.Konten.Data_buruan_sae.index');
-});
+// Route::get('/databuruansae', function () {
+//     return view('Admin.Konten.Data_buruan_sae.index');
+// });
 
 // Data Pohon
-Route::get('/datapohon', function () {
-    return view('Admin.Konten.Data_pohon.index');
-});
+// Route::get('/datapohon', function () {
+//     return view('Admin.Konten.Data_pohon.index');
+// });
 
 
 // Data Fasilitas Umum
-Route::get('/datafasilitasumum', function () {
-    return view('Admin.Konten.Data_fasilitas_umum.index');
-});
+// Route::get('/datafasilitasumum', function () {
+//     return view('Admin.Konten.Data_fasilitas_umum.index');
+// });
 
 // Data Laporan Kependudukan
-Route::get('/datalaporankependudukan', function () {
-    return view('Admin.Konten.Data_laporan_penduduk.index');
-});
+// Route::get('/datalaporankependudukan', function () {
+//     return view('Admin.Konten.Data_laporan_penduduk.index');
+// });
 
 // Data Linmas & Siskamling
-Route::get('/datalinmas', function () {
-    return view('Admin.Konten.Data_linmas.index');
-});
+// Route::get('/datalinmas', function () {
+//     return view('Admin.Konten.Data_linmas.index');
+// });
 
 // Data RT & RW
-Route::get('/datartrw', function () {
-    return view('Admin.Konten.Data_rt_rw.index');
-});
+// Route::get('/datartrw', function () {
+//     return view('Admin.Konten.Data_rt_rw.index');
+// });
 
 // Data PKL
-Route::get('/datapkl', function () {
-    return view('Admin.Konten.Data_pkl.index');
-});
+// Route::get('/datapkl', function () {
+//     return view('Admin.Konten.Data_pkl.index');
+// });
 
 Route::get('/php-info', function () {
     return [

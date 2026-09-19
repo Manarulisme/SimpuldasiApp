@@ -1,98 +1,86 @@
 @extends('Admin.Layout.master')
 
-@section('title', 'Data Linmas & Siskamling - Kelurahan XXXXX')
+@section('title', 'Data Linmas & Siskamling - Kelurahan Binong')
 @section('page_title', 'Data Linmas & Siskamling')
 @section('page_subtitle', 'Keamanan · Linmas & Siskamling')
 
-@section('content')
+@push('styles')
+
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
 
 <style>
-    .content {
-        padding: 24px;
-    }
-
-    .content-header {
+    .content-header,
+    .table-panel-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 20px;
-        margin-bottom: 20px;
+        gap: 18px;
+    }
+
+    .content-header {
+        margin-bottom: 25px;
     }
 
     .content-header h2 {
-        margin: 0 0 5px;
-        font-family: Georgia, 'Times New Roman', serif;
-        font-size: 22px;
-        color: #24332b;
+        color: #18364d;
+        font-family: Georgia, serif;
+        font-size: 26px;
+        margin: 0;
     }
 
-    .content-header p {
-        margin: 0;
-        color: #7a8580;
-        font-size: 13px;
+    .content-header p,
+    .table-panel-header p {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 6px;
+        margin-bottom: 0;
     }
 
     .btn-add {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        border: none;
-        background: #2f6b4f;
-        color: #fff;
-        padding: 10px 16px;
+        background: var(--primary);
+        color: white;
+        border: 0;
         border-radius: 7px;
-        font-size: 13px;
-        font-weight: 600;
+        padding: 11px 16px;
+        font-size: 12px;
+        font-weight: bold;
         cursor: pointer;
-        transition: 0.2s ease;
+        text-decoration: none;
         white-space: nowrap;
     }
 
     .btn-add:hover {
-        background: #24563f;
-    }
-
-    .btn-add-icon {
-        font-size: 18px;
-        line-height: 1;
+        background: #065c35;
+        color: white;
     }
 
     .table-panel {
-        background: #fff;
-        border: 1px solid #e7ebee;
+        background: white;
+        border: 1px solid var(--border);
         border-radius: 10px;
         overflow: hidden;
     }
 
     .table-panel-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-        padding: 19px 22px;
-        border-bottom: 1px solid #eef1f3;
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--border);
     }
 
     .table-panel-header h3 {
-        margin: 0 0 4px;
+        color: #18364d;
         font-size: 16px;
-        color: #27352d;
-    }
-
-    .table-panel-header p {
         margin: 0;
-        color: #8a9490;
-        font-size: 12px;
     }
 
     .total-data {
-        display: inline-flex;
-        align-items: center;
-        padding: 6px 11px;
+        color: var(--primary);
+        background: var(--primary-light);
         border-radius: 20px;
-        background: #eef7f1;
-        color: #2f6b4f;
-        font-size: 12px;
+        padding: 6px 10px;
+        font-size: 11px;
         font-weight: 600;
         white-space: nowrap;
     }
@@ -103,360 +91,341 @@
     }
 
     #linmasTable {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 15px;
-        font-size: 13px;
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin-top: 15px !important;
     }
 
     #linmasTable thead th {
-        background: #f7f9f8;
-        color: #52605a;
-        font-weight: 600;
+        background: #f8faf9;
+        color: #52616b;
+        font-size: 11px;
         padding: 13px 12px;
-        border-bottom: 1px solid #e5e9e7;
-        text-align: left;
         white-space: nowrap;
     }
 
     #linmasTable tbody td {
         padding: 14px 12px;
-        border-bottom: 1px solid #eef1f0;
-        color: #56625c;
+        font-size: 12px;
+        border-bottom: 1px solid #f0f2f3;
         vertical-align: middle;
     }
 
     #linmasTable tbody tr:last-child td {
-        border-bottom: none;
+        border-bottom: 0;
     }
 
-    #linmasTable tbody tr:hover {
-        background: #fafcfb;
+    /* =========================
+       DATATABLES
+    ========================= */
+
+    #linmasTable_wrapper {
+        font-size: 12px;
     }
 
-    .rw-name {
-        color: #27352d;
-        font-weight: 600;
-        white-space: nowrap;
+    #linmasTable_wrapper .dt-layout-row {
+        margin: 12px 0;
     }
 
-    .number-data {
-        color: #59655f;
-        min-width: 120px;
+    #linmasTable_wrapper .dt-length,
+    #linmasTable_wrapper .dt-search {
+        color: #52616b;
+        font-size: 12px;
     }
 
-    .description {
-        color: #59655f;
-        min-width: 220px;
+    #linmasTable_wrapper .dt-length select,
+    #linmasTable_wrapper .dt-search input {
+        border: 1px solid #dfe5e8;
+        border-radius: 6px;
+        background: white;
+        color: #52616b;
+        font-size: 12px;
+        padding: 7px 9px;
+        outline: none;
     }
+
+    #linmasTable_wrapper .dt-length select {
+        margin: 0 5px;
+    }
+
+    #linmasTable_wrapper .dt-search input {
+        margin-left: 7px;
+        width: 200px;
+    }
+
+    #linmasTable_wrapper .dt-length select:focus,
+    #linmasTable_wrapper .dt-search input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(8, 116, 67, 0.08);
+    }
+
+    #linmasTable_wrapper .dt-info {
+        color: #7a858d;
+        font-size: 11px;
+    }
+
+    #linmasTable_wrapper .dt-paging-button {
+        border: 1px solid #dfe5e8 !important;
+        border-radius: 6px !important;
+        background: white !important;
+        color: #52616b !important;
+        font-size: 11px !important;
+    }
+
+    #linmasTable_wrapper .dt-paging-button:hover {
+        background: var(--primary-light) !important;
+        color: var(--primary) !important;
+        border-color: var(--primary) !important;
+    }
+
+    #linmasTable_wrapper .dt-paging-button.current {
+        background: var(--primary) !important;
+        color: white !important;
+        border-color: var(--primary) !important;
+    }
+
+    /* =========================
+       BADGE
+    ========================= */
 
     .badge {
-        display: inline-flex;
-        align-items: center;
+        display: inline-block;
         padding: 5px 9px;
-        border-radius: 20px;
-        font-size: 11px;
+        border-radius: 5px;
+        font-size: 10px;
         font-weight: 600;
         white-space: nowrap;
     }
 
     .badge-rw {
-        background: #f1f4f3;
-        color: #5e6964;
+        background: #edf4fb;
+        color: #3971a9;
     }
 
-    .action-buttons {
-        display: flex;
-        align-items: center;
-        gap: 6px;
+    .badge-count {
+        background: #eaf5ef;
+        color: #087443;
+    }
+
+    .badge-pos {
+        background: #fff7e6;
+        color: #a66a00;
+    }
+
+    .badge-default {
+        background: #f1f3f4;
+        color: #58636a;
+    }
+
+    /* =========================
+       TITIK POSKAMLING
+    ========================= */
+
+    .poskamling-location {
+        min-width: 150px;
+        line-height: 1.5;
+    }
+
+    .poskamling-coordinate {
+        color: #52616b;
+        font-size: 10px;
+        margin-bottom: 5px;
         white-space: nowrap;
     }
 
-    .btn-action {
+    .poskamling-map {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        color: #3971a9;
+        font-size: 10px;
+        font-weight: 600;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .poskamling-map:hover {
+        color: #24577f;
+        text-decoration: underline;
+    }
+
+    /* =========================
+       DATA LINMAS
+    ========================= */
+
+    .linmas-name {
+        color: #18364d;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .linmas-id {
+        color: #8a969d;
+        font-size: 10px;
+        margin-top: 3px;
+    }
+
+    .nik {
+        color: #52616b;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .address {
+        color: #52616b;
+        font-size: 11px;
+        line-height: 1.5;
+        min-width: 180px;
+        max-width: 280px;
+    }
+
+    .occupation {
+        color: #52616b;
+        font-size: 11px;
+        line-height: 1.5;
+        min-width: 120px;
+        max-width: 200px;
+    }
+
+    .description {
+        color: #52616b;
+        font-size: 11px;
+        line-height: 1.5;
+        min-width: 180px;
+        max-width: 280px;
+    }
+
+    /* =========================
+       TERAKHIR PERUBAHAN
+    ========================= */
+
+    .last-update {
+        min-width: 125px;
+        line-height: 1.5;
+    }
+
+    .last-update-date {
+        color: #52616b;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .last-update-time {
+        color: #8a969d;
+        font-size: 10px;
+        margin-top: 2px;
+        white-space: nowrap;
+    }
+
+    /* =========================
+       ACTION
+    ========================= */
+
+    .action-buttons {
+        display: flex;
+        gap: 6px;
+    }
+
+    .action-btn {
         width: 31px;
         height: 31px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: white;
+        cursor: pointer;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        border-radius: 6px;
-        border: 1px solid transparent;
-        cursor: pointer;
-        font-size: 14px;
-        transition: 0.2s ease;
+        text-decoration: none;
+        font-size: 15px;
+        padding: 0;
     }
 
-    .btn-view {
-        background: #eef6ff;
-        color: #3675ad;
-        border-color: #dcecfb;
+    .action-view {
+        color: #2d6a9f;
     }
 
-    .btn-view:hover {
-        background: #dcecff;
+    .action-view:hover {
+        background: #edf5fb;
+        color: #2d6a9f;
     }
 
-    .btn-edit {
-        background: #edf8f1;
-        color: #34734e;
-        border-color: #dcefe3;
+    .action-edit {
+        color: var(--primary);
     }
 
-    .btn-edit:hover {
-        background: #dff1e5;
+    .action-edit:hover {
+        background: var(--primary-light);
+        color: var(--primary);
     }
 
-    .btn-delete {
-        background: #fff0f0;
-        color: #c44d4d;
-        border-color: #f7dddd;
+    .action-delete {
+        color: #c0392b;
     }
 
-    .btn-delete:hover {
-        background: #ffe0e0;
+    .action-delete:hover {
+        background: #fff0ee;
+        color: #c0392b;
     }
 
-    .dashboard-footer {
-        text-align: center;
-        padding: 22px 0 5px;
-        color: #98a19d;
-        font-size: 11px;
-    }
-
-    /* DATATABLES */
-
-    .dt-container {
-        font-size: 12px;
-        color: #68736e;
-    }
-
-    .dt-layout-row {
-        margin-top: 15px;
-        margin-bottom: 10px;
-    }
-
-    .dt-search input,
-    .dt-length select {
-        border: 1px solid #dfe5e2 !important;
-        border-radius: 6px !important;
-        padding: 7px 10px !important;
-        outline: none;
-        color: #52605a;
-        background: #fff;
-    }
-
-    .dt-search input:focus,
-    .dt-length select:focus {
-        border-color: #9dbdac !important;
-        box-shadow: 0 0 0 2px rgba(47, 107, 79, 0.08);
-    }
-
-    .dt-paging-button {
-        border-radius: 5px !important;
-        border: 1px solid transparent !important;
-        color: #5d6963 !important;
-        padding: 5px 9px !important;
-    }
-
-    .dt-paging-button:hover {
-        background: #eef6f1 !important;
-        border-color: #dcebe1 !important;
-        color: #2f6b4f !important;
-    }
-
-    .dt-paging-button.current {
-        background: #2f6b4f !important;
-        color: #fff !important;
-        border-color: #2f6b4f !important;
-    }
-
-    /* MODAL */
-
-    .modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(25, 35, 30, 0.48);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        z-index: 9999;
-    }
-
-    .modal-overlay.show {
-        display: flex;
-    }
-
-    .modal {
-        width: 100%;
-        max-width: 680px;
-        background: #fff;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
-        max-height: 90vh;
-        overflow-y: auto;
-    }
-
-    .modal-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 17px 20px;
-        border-bottom: 1px solid #edf0ef;
-    }
-
-    .modal-header h3 {
+    .delete-form {
+        display: inline;
         margin: 0;
-        color: #27352d;
-        font-size: 16px;
+        padding: 0;
     }
 
-    .modal-close {
-        width: 30px;
-        height: 30px;
-        border: none;
-        border-radius: 6px;
-        background: #f3f5f4;
-        color: #68736e;
-        font-size: 18px;
-        cursor: pointer;
-    }
-
-    .modal-close:hover {
-        background: #e9edeb;
-    }
-
-    .modal-body {
-        padding: 20px;
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
-    }
-
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 7px;
-    }
-
-    .form-group.full {
-        grid-column: 1 / -1;
-    }
-
-    .form-group label {
-        font-size: 12px;
-        font-weight: 600;
-        color: #53605a;
-    }
-
-    .form-group input,
-    .form-group textarea,
-    .form-group select {
-        width: 100%;
-        box-sizing: border-box;
-        border: 1px solid #dfe5e2;
-        border-radius: 7px;
-        padding: 10px 11px;
+    .delete-form button {
         font-family: inherit;
-        font-size: 13px;
-        color: #4f5d56;
-        outline: none;
-        background: #fff;
     }
 
-    .form-group textarea {
-        resize: vertical;
-        min-height: 90px;
-    }
+    /* =========================
+       ALERT
+    ========================= */
 
-    .form-group input:focus,
-    .form-group textarea:focus,
-    .form-group select:focus {
-        border-color: #8eae9d;
-        box-shadow: 0 0 0 2px rgba(47, 107, 79, 0.08);
-    }
-
-    .modal-footer {
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 8px;
-        padding: 15px 20px;
-        border-top: 1px solid #edf0ef;
-        background: #fafbfa;
-    }
-
-    .btn-cancel,
-    .btn-save {
-        border: none;
-        border-radius: 6px;
-        padding: 9px 15px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
-    }
-
-    .btn-cancel {
-        background: #eef1ef;
-        color: #5f6b65;
-    }
-
-    .btn-cancel:hover {
-        background: #e3e8e5;
-    }
-
-    .btn-save {
-        background: #2f6b4f;
-        color: #fff;
-    }
-
-    .btn-save:hover {
-        background: #24563f;
-    }
-
-    /* DETAIL */
-
-    .detail-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 15px;
-    }
-
-    .detail-item {
-        padding: 13px 14px;
-        border: 1px solid #edf0ef;
+    .alert-success,
+    .alert-error {
+        margin-bottom: 20px;
+        padding: 12px 15px;
         border-radius: 7px;
-        background: #fafcfb;
+        font-size: 12px;
     }
 
-    .detail-item.full {
-        grid-column: 1 / -1;
+    .alert-success {
+        background: #eaf5ef;
+        color: #087443;
+        border: 1px solid #cce7d9;
     }
 
-    .detail-label {
-        display: block;
-        margin-bottom: 5px;
-        color: #8a9490;
-        font-size: 11px;
+    .alert-error {
+        background: #fff0ee;
+        color: #c0392b;
+        border: 1px solid #f3d0cc;
     }
 
-    .detail-value {
-        color: #34413a;
-        font-size: 13px;
-        font-weight: 600;
+    /* =========================
+       EMPTY
+    ========================= */
+
+    .empty-state {
+        text-align: center;
+        padding: 30px !important;
+        color: #8a969d;
     }
 
-    @media (max-width: 768px) {
-        .content {
-            padding: 18px;
-        }
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 700px) {
 
         .content-header {
             align-items: flex-start;
             flex-direction: column;
+        }
+
+        .content-header h2 {
+            font-size: 23px;
         }
 
         .btn-add {
@@ -469,1106 +438,566 @@
             flex-direction: column;
         }
 
-        .form-grid,
-        .detail-grid {
-            grid-template-columns: 1fr;
+        #linmasTable_wrapper .dt-layout-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
         }
 
-        .form-group.full,
-        .detail-item.full {
-            grid-column: auto;
+        #linmasTable_wrapper .dt-search {
+            width: 100%;
         }
 
-        .modal-overlay {
-            padding: 12px;
-        }
-
-        .modal {
-            max-height: 94vh;
+        #linmasTable_wrapper .dt-search input {
+            width: 100%;
+            margin-left: 5px;
         }
     }
 </style>
 
-<div class="content">
+@endpush
 
-    <div class="content-header">
-        <div>
-            <h2>Data Linmas &amp; Siskamling</h2>
-            <p>Kelola data Linmas dan Siskamling Kelurahan XXXXX.</p>
-        </div>
+@section('content')
 
-        <button type="button" class="btn-add" id="btnTambah">
-            <span class="btn-add-icon">+</span>
-            Tambah Data
-        </button>
-    </div>
+@if(session('success'))
 
-    <section class="table-panel">
+<div class="alert-success">
+    {{ session('success') }}
+</div>
 
-        <div class="table-panel-header">
-            <div>
-                <h3>Daftar Linmas &amp; Siskamling</h3>
-                <p>Data Linmas dan Poskamling Kelurahan XXXXX</p>
-            </div>
+@endif
 
-            <span class="total-data" id="totalData">5 Data</span>
-        </div>
+@if(session('error'))
 
-        <div class="table-wrapper">
+<div class="alert-error">
+    {{ session('error') }}
+</div>
 
-            <table id="linmasTable" class="display">
+@endif
 
-                <thead>
-                    <tr>
-                        <th>RW</th>
-                        <th>Jumlah Linmas</th>
-                        <th>Jumlah Poskamling</th>
-                        <th>Keterangan</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
+@if(session('warning'))
 
-                <tbody>
+<div class="alert-error">
+    {{ session('warning') }}
+</div>
 
-                    <tr>
-                        <td>
-                            <span class="rw-name">RW 01</span>
-                        </td>
-                        <td>
-                            <span class="number-data">12 Orang</span>
-                        </td>
-                        <td>
-                            <span class="number-data">2 Pos</span>
-                        </td>
-                        <td>
-                            <span class="description">
-                                Kondisi keamanan lingkungan baik
-                            </span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button type="button"
-                                    class="btn-action btn-view"
-                                    title="Lihat"
-                                    data-action="view">👁</button>
+@endif
 
-                                <button type="button"
-                                    class="btn-action btn-edit"
-                                    title="Edit"
-                                    data-action="edit">✏</button>
+<div class="content-header">
 
-                                <button type="button"
-                                    class="btn-action btn-delete"
-                                    title="Hapus"
-                                    data-action="delete">🗑</button>
-                            </div>
-                        </td>
-                    </tr>
+<div>
 
-                    <tr>
-                        <td>
-                            <span class="rw-name">RW 02</span>
-                        </td>
-                        <td>
-                            <span class="number-data">10 Orang</span>
-                        </td>
-                        <td>
-                            <span class="number-data">2 Pos</span>
-                        </td>
-                        <td>
-                            <span class="description">
-                                Siskamling aktif setiap malam
-                            </span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button type="button"
-                                    class="btn-action btn-view"
-                                    title="Lihat"
-                                    data-action="view">👁</button>
 
-                                <button type="button"
-                                    class="btn-action btn-edit"
-                                    title="Edit"
-                                    data-action="edit">✏</button>
+<h2>
+    Data Linmas &amp; Siskamling
+</h2>
 
-                                <button type="button"
-                                    class="btn-action btn-delete"
-                                    title="Hapus"
-                                    data-action="delete">🗑</button>
-                            </div>
-                        </td>
-                    </tr>
+<p>
+    Kelola data Linmas dan Siskamling Kelurahan Binong.
+</p>
 
-                    <tr>
-                        <td>
-                            <span class="rw-name">RW 03</span>
-                        </td>
-                        <td>
-                            <span class="number-data">15 Orang</span>
-                        </td>
-                        <td>
-                            <span class="number-data">3 Pos</span>
-                        </td>
-                        <td>
-                            <span class="description">
-                                Kegiatan ronda berjalan rutin
-                            </span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button type="button"
-                                    class="btn-action btn-view"
-                                    title="Lihat"
-                                    data-action="view">👁</button>
-
-                                <button type="button"
-                                    class="btn-action btn-edit"
-                                    title="Edit"
-                                    data-action="edit">✏</button>
-
-                                <button type="button"
-                                    class="btn-action btn-delete"
-                                    title="Hapus"
-                                    data-action="delete">🗑</button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <span class="rw-name">RW 04</span>
-                        </td>
-                        <td>
-                            <span class="number-data">11 Orang</span>
-                        </td>
-                        <td>
-                            <span class="number-data">2 Pos</span>
-                        </td>
-                        <td>
-                            <span class="description">
-                                Poskamling dalam kondisi baik
-                            </span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button type="button"
-                                    class="btn-action btn-view"
-                                    title="Lihat"
-                                    data-action="view">👁</button>
-
-                                <button type="button"
-                                    class="btn-action btn-edit"
-                                    title="Edit"
-                                    data-action="edit">✏</button>
-
-                                <button type="button"
-                                    class="btn-action btn-delete"
-                                    title="Hapus"
-                                    data-action="delete">🗑</button>
-                            </div>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <span class="rw-name">RW 05</span>
-                        </td>
-                        <td>
-                            <span class="number-data">14 Orang</span>
-                        </td>
-                        <td>
-                            <span class="number-data">3 Pos</span>
-                        </td>
-                        <td>
-                            <span class="description">
-                                Kegiatan keamanan lingkungan aktif
-                            </span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <button type="button"
-                                    class="btn-action btn-view"
-                                    title="Lihat"
-                                    data-action="view">👁</button>
-
-                                <button type="button"
-                                    class="btn-action btn-edit"
-                                    title="Edit"
-                                    data-action="edit">✏</button>
-
-                                <button type="button"
-                                    class="btn-action btn-delete"
-                                    title="Hapus"
-                                    data-action="delete">🗑</button>
-                            </div>
-                        </td>
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </section>
-
-    <div class="dashboard-footer">
-        © {{ date('Y') }} Kelurahan XXXXX · Sistem Informasi Kelurahan
-    </div>
 
 </div>
 
+<a
+href="{{ route('datalinmas.create') }}"
+class="btn-add"
 
-<!-- ========================= -->
-<!-- MODAL TAMBAH DATA -->
-<!-- ========================= -->
+>
 
-<div class="modal-overlay" id="modalOverlay">
 
-    <div class="modal">
++ Tambah Data
 
-        <div class="modal-header">
-            <h3>Tambah Data Linmas &amp; Siskamling</h3>
 
-            <button type="button"
-                class="modal-close"
-                data-close="modalOverlay">×</button>
-        </div>
-
-        <form id="formData">
-
-            <div class="modal-body">
-
-                <div class="form-grid">
-
-                    <div class="form-group">
-
-                        <label for="rw">
-                            RW
-                        </label>
-
-                        <select id="rw" required>
-
-                            <option value="">
-                                Pilih RW
-                            </option>
-
-                            <option value="RW 01">RW 01</option>
-                            <option value="RW 02">RW 02</option>
-                            <option value="RW 03">RW 03</option>
-                            <option value="RW 04">RW 04</option>
-                            <option value="RW 05">RW 05</option>
-                            <option value="RW 06">RW 06</option>
-                            <option value="RW 07">RW 07</option>
-                            <option value="RW 08">RW 08</option>
-                            <option value="RW 09">RW 09</option>
-                            <option value="RW 10">RW 10</option>
-
-                        </select>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="jumlahLinmas">
-                            Jumlah Linmas
-                        </label>
-
-                        <input
-                            type="number"
-                            id="jumlahLinmas"
-                            min="0"
-                            placeholder="Contoh: 12"
-                            required
-                        >
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="jumlahPoskamling">
-                            Jumlah Poskamling
-                        </label>
-
-                        <input
-                            type="number"
-                            id="jumlahPoskamling"
-                            min="0"
-                            placeholder="Contoh: 2"
-                            required
-                        >
-
-                    </div>
-
-                    <div class="form-group full">
-
-                        <label for="keterangan">
-                            Keterangan
-                        </label>
-
-                        <textarea
-                            id="keterangan"
-                            placeholder="Masukkan keterangan data..."
-                            required
-                        ></textarea>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button type="button"
-                    class="btn-cancel"
-                    data-close="modalOverlay">
-                    Batal
-                </button>
-
-                <button type="submit"
-                    class="btn-save">
-                    Simpan Data
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
+</a>
 
 </div>
 
+<section class="table-panel">
 
-<!-- ========================= -->
-<!-- MODAL EDIT DATA -->
-<!-- ========================= -->
+<div class="table-panel-header">
 
-<div class="modal-overlay" id="modalEditOverlay">
 
-    <div class="modal">
+<div>
 
-        <div class="modal-header">
+    <h3>
+        Daftar Linmas &amp; Siskamling
+    </h3>
 
-            <h3>Edit Data Linmas &amp; Siskamling</h3>
-
-            <button type="button"
-                class="modal-close"
-                data-close="modalEditOverlay">
-                ×
-            </button>
-
-        </div>
-
-        <form id="formEdit">
-
-            <div class="modal-body">
-
-                <div class="form-grid">
-
-                    <div class="form-group">
-
-                        <label for="editRw">
-                            RW
-                        </label>
-
-                        <select id="editRw" required>
-
-                            <option value="RW 01">RW 01</option>
-                            <option value="RW 02">RW 02</option>
-                            <option value="RW 03">RW 03</option>
-                            <option value="RW 04">RW 04</option>
-                            <option value="RW 05">RW 05</option>
-                            <option value="RW 06">RW 06</option>
-                            <option value="RW 07">RW 07</option>
-                            <option value="RW 08">RW 08</option>
-                            <option value="RW 09">RW 09</option>
-                            <option value="RW 10">RW 10</option>
-
-                        </select>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="editJumlahLinmas">
-                            Jumlah Linmas
-                        </label>
-
-                        <input
-                            type="number"
-                            id="editJumlahLinmas"
-                            min="0"
-                            required
-                        >
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label for="editJumlahPoskamling">
-                            Jumlah Poskamling
-                        </label>
-
-                        <input
-                            type="number"
-                            id="editJumlahPoskamling"
-                            min="0"
-                            required
-                        >
-
-                    </div>
-
-                    <div class="form-group full">
-
-                        <label for="editKeterangan">
-                            Keterangan
-                        </label>
-
-                        <textarea
-                            id="editKeterangan"
-                            required
-                        ></textarea>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button type="button"
-                    class="btn-cancel"
-                    data-close="modalEditOverlay">
-                    Batal
-                </button>
-
-                <button type="submit"
-                    class="btn-save">
-                    Simpan Perubahan
-                </button>
-
-            </div>
-
-        </form>
-
-    </div>
+    <p>
+        Data anggota Linmas dan fasilitas Poskamling Kelurahan Binong.
+    </p>
 
 </div>
 
+<span
+    class="total-data"
+    id="totalData"
+>
+    {{ $dataLinmas->count() }} Data
+</span>
 
-<!-- ========================= -->
-<!-- MODAL VIEW DATA -->
-<!-- ========================= -->
-
-<div class="modal-overlay" id="modalViewOverlay">
-
-    <div class="modal">
-
-        <div class="modal-header">
-
-            <h3>Detail Linmas &amp; Siskamling</h3>
-
-            <button type="button"
-                class="modal-close"
-                data-close="modalViewOverlay">
-                ×
-            </button>
-
-        </div>
-
-        <div class="modal-body">
-
-            <div class="detail-grid">
-
-                <div class="detail-item">
-
-                    <span class="detail-label">
-                        RW
-                    </span>
-
-                    <span class="detail-value"
-                        id="viewRw">
-                        -
-                    </span>
-
-                </div>
-
-                <div class="detail-item">
-
-                    <span class="detail-label">
-                        Jumlah Linmas
-                    </span>
-
-                    <span class="detail-value"
-                        id="viewJumlahLinmas">
-                        -
-                    </span>
-
-                </div>
-
-                <div class="detail-item">
-
-                    <span class="detail-label">
-                        Jumlah Poskamling
-                    </span>
-
-                    <span class="detail-value"
-                        id="viewJumlahPoskamling">
-                        -
-                    </span>
-
-                </div>
-
-                <div class="detail-item full">
-
-                    <span class="detail-label">
-                        Keterangan
-                    </span>
-
-                    <span class="detail-value"
-                        id="viewKeterangan">
-                        -
-                    </span>
-
-                </div>
-
-            </div>
-
-        </div>
-
-        <div class="modal-footer">
-
-            <button type="button"
-                class="btn-cancel"
-                data-close="modalViewOverlay">
-                Tutup
-            </button>
-
-        </div>
-
-    </div>
 
 </div>
 
+<div class="table-wrapper">
+
+
+<table
+    id="linmasTable"
+    class="display"
+>
+
+    <thead>
+
+        <tr>
+
+            <th>No</th>
+
+            <th>RW</th>
+
+            <th>Jumlah Linmas</th>
+
+            <th>Nama</th>
+
+            <th>NIK</th>
+
+            <th>Alamat</th>
+
+            <th>Pekerjaan</th>
+
+            <th>Jumlah Poskamling</th>
+
+            <th>Titik Poskamling</th>
+
+            <th>Keterangan</th>
+
+            <th>Terakhir Perubahan</th>
+
+            <th>Aksi</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        @forelse ($dataLinmas as $item)
+
+        <tr>
+
+            {{-- NO --}}
+
+            <td>
+
+                <div style="text-align:center;color:#7a858d;font-size:11px;">
+                    {{ $loop->iteration }}
+                </div>
+
+            </td>
+
+            {{-- RW --}}
+
+            <td>
+
+                @if($item->rw)
+
+                    <span class="badge badge-rw">
+                        {{ $item->rw }}
+                    </span>
+
+                @else
+
+                    <span class="badge badge-default">
+                        -
+                    </span>
+
+                @endif
+
+            </td>
+
+            {{-- JUMLAH LINMAS --}}
+
+            <td>
+
+                @if($item->jumlah_linmas !== null)
+
+                    <span class="badge badge-count">
+                        {{ number_format($item->jumlah_linmas, 0, ',', '.') }}
+                        Orang
+                    </span>
+
+                @else
+
+                    <span class="badge badge-default">
+                        -
+                    </span>
+
+                @endif
+
+            </td>
+
+            {{-- NAMA --}}
+
+            <td>
+
+                @if($item->nama)
+
+                    <div class="linmas-name">
+                        {{ $item->nama }}
+                    </div>
+
+                    <div class="linmas-id">
+                        ID {{ $item->id }}
+                    </div>
+
+                @else
+
+                    <span class="badge badge-default">
+                        -
+                    </span>
+
+                @endif
+
+            </td>
+
+            {{-- NIK --}}
+
+            <td>
+
+                @if($item->nik)
+
+                    <div class="nik">
+                        {{ $item->nik }}
+                    </div>
+
+                @else
+
+                    <span class="badge badge-default">
+                        -
+                    </span>
+
+                @endif
+
+            </td>
+
+            {{-- ALAMAT --}}
+
+            <td>
+
+                @if($item->alamat)
+
+                    <div class="address">
+                        {{ $item->alamat }}
+                    </div>
+
+                @else
+
+                    <span class="badge badge-default">
+                        -
+                    </span>
+
+                @endif
+
+            </td>
+
+            {{-- PEKERJAAN --}}
+
+            <td>
+
+                @if($item->pekerjaan)
+
+                    <div class="occupation">
+                        {{ $item->pekerjaan }}
+                    </div>
+
+                @else
+
+                    <span class="badge badge-default">
+                        -
+                    </span>
+
+                @endif
+
+            </td>
+
+            {{-- JUMLAH POSKAMLING --}}
+
+            <td>
+
+                @if($item->jumlah_poskamling !== null)
+
+                    <span class="badge badge-pos">
+                        {{ number_format($item->jumlah_poskamling, 0, ',', '.') }}
+                        Pos
+                    </span>
+
+                @else
+
+                    <span class="badge badge-default">
+                        -
+                    </span>
+
+                @endif
+
+            </td>
+
+            {{-- TITIK POSKAMLING --}}
+
+            <td>
+
+                @if($item->titik_poskamling)
+
+                    <div class="poskamling-location">
+
+                        <div class="poskamling-coordinate">
+                            {{ $item->titik_poskamling }}
+                        </div>
+
+                        <a
+                            href="https://www.google.com/maps/search/?api=1&query={{ urlencode($item->titik_poskamling) }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="poskamling-map"
+                        >
+                            📍 Lihat Lokasi
+                        </a>
+
+                    </div>
+
+                @else
+
+                    <span class="badge badge-default">
+                        Belum diisi
+                    </span>
+
+                @endif
+
+            </td>
+
+            {{-- KETERANGAN --}}
+
+            <td>
+
+                @if($item->keterangan)
+
+                    <div class="description">
+                        {{ $item->keterangan }}
+                    </div>
+
+                @else
+
+                    <span class="badge badge-default">
+                        -
+                    </span>
+
+                @endif
+
+            </td>
+
+            {{-- TERAKHIR PERUBAHAN --}}
+
+            <td>
+
+                @if($item->updated_at)
+
+                    <div
+                        class="last-update"
+                        data-order="{{ $item->updated_at->timestamp }}"
+                    >
+
+                        <div class="last-update-date">
+                            {{ $item->updated_at->locale('id')->translatedFormat('d M Y') }}
+                        </div>
+
+                        <div class="last-update-time">
+                            {{ $item->updated_at->format('H:i') }} WIB
+                        </div>
+
+                    </div>
+
+                @else
+
+                    <span class="badge badge-default">
+                        -
+                    </span>
+
+                @endif
+
+            </td>
+
+            {{-- AKSI --}}
+
+            <td>
+
+                <div class="action-buttons">
+
+                    {{-- LIHAT --}}
+
+                    <a
+                        href="{{ route('datalinmas.show', ['datalinma' => $item->id]) }}"
+                        class="action-btn action-view"
+                        title="Lihat Detail"
+                        aria-label="Lihat Detail"
+                    >
+                        ◉
+                    </a>
+
+                    {{-- EDIT --}}
+
+                    <a
+                        href="{{ route('datalinmas.edit', ['datalinma' => $item->id]) }}"
+                        class="action-btn action-edit"
+                        title="Ubah Data"
+                        aria-label="Ubah Data"
+                    >
+                        ✎
+                    </a>
+
+                    {{-- HAPUS --}}
+
+                    <form
+                        action="{{ route('datalinmas.destroy', ['datalinma' => $item->id]) }}"
+                        method="POST"
+                        class="delete-form"
+                        onsubmit="return confirm('Yakin ingin menghapus data Linmas {{ $item->nama ?? $item->rw }}? Data yang dihapus hanya akan dihapus dari sistem lokal.')"
+                    >
+
+                        @csrf
+
+                        @method('DELETE')
+
+                        <button
+                            type="submit"
+                            class="action-btn action-delete"
+                            title="Hapus Data"
+                            aria-label="Hapus Data"
+                        >
+                            ×
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </td>
+
+        </tr>
+
+        @empty
+
+        <tr>
+
+            <td
+                colspan="12"
+                class="empty-state"
+            >
+                Belum ada data Linmas &amp; Siskamling.
+            </td>
+
+        </tr>
+
+        @endforelse
+
+    </tbody>
+
+</table>
+
+
+</div>
+
+</section>
 
 @endsection
 
-
 @push('scripts')
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 
 <script>
 
-document.addEventListener('DOMContentLoaded', function () {
+    const linmasTable = new DataTable(
+        '#linmasTable',
+        {
+            pageLength: 10,
 
-    const table = new DataTable('#linmasTable', {
+            lengthMenu: [
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
+            ],
 
-        pageLength: 10,
+            language: {
 
-        lengthMenu: [
-            [5, 10, 25, 50],
-            [5, 10, 25, 50]
-        ],
+                lengthMenu:
+                    'Tampilkan _MENU_ data',
 
-        language: {
+                search:
+                    'Cari:',
 
-            search: 'Cari:',
+                searchPlaceholder:
+                    'Cari data Linmas & Siskamling...',
 
-            lengthMenu: 'Tampilkan _MENU_ data',
+                info:
+                    'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
 
-            info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+                infoEmpty:
+                    'Tidak ada data',
 
-            infoEmpty: 'Tidak ada data',
+                infoFiltered:
+                    '(difilter dari _MAX_ total data)',
 
-            zeroRecords: 'Data tidak ditemukan',
+                zeroRecords:
+                    'Data tidak ditemukan',
 
-            emptyTable: 'Belum ada data',
+                emptyTable:
+                    'Belum ada data',
 
-            paginate: {
-                first: 'Awal',
-                last: 'Akhir',
-                next: '›',
-                previous: '‹'
-            }
+                paginate: {
 
-        },
+                    first: '«',
 
-        columnDefs: [
+                    last: '»',
 
-            {
-                orderable: false,
-                searchable: false,
-                targets: 4
-            }
+                    next: '›',
 
-        ]
-
-    });
-
-
-    const modalOverlay =
-        document.getElementById('modalOverlay');
-
-    const modalEditOverlay =
-        document.getElementById('modalEditOverlay');
-
-    const modalViewOverlay =
-        document.getElementById('modalViewOverlay');
-
-    const btnTambah =
-        document.getElementById('btnTambah');
-
-    const formData =
-        document.getElementById('formData');
-
-    const formEdit =
-        document.getElementById('formEdit');
-
-
-    let selectedRow = null;
-
-
-    /* =========================
-       UPDATE TOTAL DATA
-    ========================= */
-
-    function updateTotal() {
-
-        const info = table.page.info();
-
-        document.getElementById('totalData').textContent =
-            info.recordsDisplay + ' Data';
-
-    }
-
-
-    table.on('draw', function () {
-
-        updateTotal();
-
-    });
-
-
-    updateTotal();
-
-
-    /* =========================
-       TAMBAH DATA
-    ========================= */
-
-    btnTambah.addEventListener('click', function () {
-
-        formData.reset();
-
-        modalOverlay.classList.add('show');
-
-    });
-
-
-    /* =========================
-       CLOSE MODAL
-    ========================= */
-
-    document
-        .querySelectorAll('[data-close]')
-        .forEach(function (button) {
-
-            button.addEventListener('click', function () {
-
-                const target =
-                    document.getElementById(
-                        button.getAttribute('data-close')
-                    );
-
-                if (target) {
-
-                    target.classList.remove('show');
+                    previous: '‹'
 
                 }
 
-            });
+            },
 
-        });
+            order: [],
 
+            columnDefs: [
 
-    [
-        modalOverlay,
-        modalEditOverlay,
-        modalViewOverlay
-    ].forEach(function (modal) {
+                {
+                    orderable: false,
+                    searchable: false,
+                    targets: 0
+                },
 
-        modal.addEventListener('click', function (event) {
+                {
+                    orderable: false,
+                    searchable: false,
+                    targets: 11
+                }
 
-            if (event.target === modal) {
-
-                modal.classList.remove('show');
-
-            }
-
-        });
-
-    });
-
-
-    /* =========================
-       ESCAPE
-    ========================= */
-
-    document.addEventListener('keydown', function (event) {
-
-        if (event.key === 'Escape') {
-
-            modalOverlay.classList.remove('show');
-
-            modalEditOverlay.classList.remove('show');
-
-            modalViewOverlay.classList.remove('show');
+            ]
 
         }
+    );
 
-    });
+    linmasTable.on(
+        'draw',
+        function () {
 
-
-    /* =========================
-       GET ROW DATA
-    ========================= */
-
-    function getRowData(row) {
-
-        const cells =
-            row.querySelectorAll('td');
-
-        return {
-
-            rw:
-                cells[0].innerText.trim(),
-
-            jumlahLinmas:
-                cells[1].innerText
-                    .replace(' Orang', '')
-                    .trim(),
-
-            jumlahPoskamling:
-                cells[2].innerText
-                    .replace(' Pos', '')
-                    .trim(),
-
-            keterangan:
-                cells[3].innerText.trim()
-
-        };
-
-    }
-
-
-    /* =========================
-       TABLE ACTION
-    ========================= */
-
-    document
-        .querySelector('#linmasTable tbody')
-        .addEventListener('click', function (event) {
-
-            const button =
-                event.target.closest('.btn-action');
-
-            if (!button) return;
-
-
-            const row =
-                button.closest('tr');
-
-            if (!row) return;
-
-
-            selectedRow = row;
-
-
-            const data =
-                getRowData(row);
-
-
-            const action =
-                button.getAttribute('data-action');
-
-
-            /* VIEW */
-
-            if (action === 'view') {
-
-                document.getElementById('viewRw')
-                    .textContent = data.rw;
-
-                document.getElementById('viewJumlahLinmas')
-                    .textContent =
-                    data.jumlahLinmas + ' Orang';
-
-                document.getElementById('viewJumlahPoskamling')
-                    .textContent =
-                    data.jumlahPoskamling + ' Pos';
-
-                document.getElementById('viewKeterangan')
-                    .textContent =
-                    data.keterangan;
-
-                modalViewOverlay.classList.add('show');
-
-            }
-
-
-            /* EDIT */
-
-            if (action === 'edit') {
-
-                document.getElementById('editRw')
-                    .value = data.rw;
-
-                document.getElementById('editJumlahLinmas')
-                    .value = data.jumlahLinmas;
-
-                document.getElementById('editJumlahPoskamling')
-                    .value = data.jumlahPoskamling;
-
-                document.getElementById('editKeterangan')
-                    .value = data.keterangan;
-
-                modalEditOverlay.classList.add('show');
-
-            }
-
-
-            /* DELETE */
-
-            if (action === 'delete') {
-
-                const confirmDelete =
-                    confirm(
-                        'Apakah Anda yakin ingin menghapus data ' +
-                        data.rw + '?'
-                    );
-
-
-                if (!confirmDelete) return;
-
-
-                table
-                    .row(row)
-                    .remove()
-                    .draw();
-
-
-                updateTotal();
-
-
-                alert(
-                    'Data Linmas & Siskamling berhasil dihapus.'
-                );
-
-            }
-
-        });
-
-
-    /* =========================
-       FORM TAMBAH
-    ========================= */
-
-    formData.addEventListener('submit', function (event) {
-
-        event.preventDefault();
-
-
-        const rw =
-            document.getElementById('rw')
-                .value;
-
-        const jumlahLinmas =
-            document.getElementById('jumlahLinmas')
-                .value.trim();
-
-        const jumlahPoskamling =
-            document.getElementById('jumlahPoskamling')
-                .value.trim();
-
-        const keterangan =
-            document.getElementById('keterangan')
-                .value.trim();
-
-
-        if (
-            !rw ||
-            !jumlahLinmas ||
-            !jumlahPoskamling ||
-            !keterangan
-        ) {
-
-            alert(
-                'Mohon lengkapi seluruh data.'
-            );
-
-            return;
+            document.getElementById('totalData').textContent =
+                linmasTable.page.info().recordsDisplay + ' Data';
 
         }
-
-
-        const rowData = [
-
-            `<span class="rw-name">${rw}</span>`,
-
-            `<span class="number-data">${jumlahLinmas} Orang</span>`,
-
-            `<span class="number-data">${jumlahPoskamling} Pos</span>`,
-
-            `<span class="description">${keterangan}</span>`,
-
-            `
-            <div class="action-buttons">
-
-                <button type="button"
-                    class="btn-action btn-view"
-                    title="Lihat"
-                    data-action="view">👁</button>
-
-                <button type="button"
-                    class="btn-action btn-edit"
-                    title="Edit"
-                    data-action="edit">✏</button>
-
-                <button type="button"
-                    class="btn-action btn-delete"
-                    title="Hapus"
-                    data-action="delete">🗑</button>
-
-            </div>
-            `
-
-        ];
-
-
-        table
-            .row
-            .add(rowData)
-            .draw(false);
-
-
-        formData.reset();
-
-        modalOverlay.classList.remove('show');
-
-        updateTotal();
-
-
-        alert(
-            'Data Linmas & Siskamling berhasil ditambahkan.'
-        );
-
-    });
-
-
-    /* =========================
-       FORM EDIT
-    ========================= */
-
-    formEdit.addEventListener('submit', function (event) {
-
-        event.preventDefault();
-
-
-        if (!selectedRow) return;
-
-
-        const rw =
-            document.getElementById('editRw')
-                .value;
-
-        const jumlahLinmas =
-            document.getElementById('editJumlahLinmas')
-                .value.trim();
-
-        const jumlahPoskamling =
-            document.getElementById('editJumlahPoskamling')
-                .value.trim();
-
-        const keterangan =
-            document.getElementById('editKeterangan')
-                .value.trim();
-
-
-        if (
-            !rw ||
-            !jumlahLinmas ||
-            !jumlahPoskamling ||
-            !keterangan
-        ) {
-
-            alert(
-                'Mohon lengkapi seluruh data.'
-            );
-
-            return;
-
-        }
-
-
-        const rowData = [
-
-            `<span class="rw-name">${rw}</span>`,
-
-            `<span class="number-data">${jumlahLinmas} Orang</span>`,
-
-            `<span class="number-data">${jumlahPoskamling} Pos</span>`,
-
-            `<span class="description">${keterangan}</span>`,
-
-            `
-            <div class="action-buttons">
-
-                <button type="button"
-                    class="btn-action btn-view"
-                    title="Lihat"
-                    data-action="view">👁</button>
-
-                <button type="button"
-                    class="btn-action btn-edit"
-                    title="Edit"
-                    data-action="edit">✏</button>
-
-                <button type="button"
-                    class="btn-action btn-delete"
-                    title="Hapus"
-                    data-action="delete">🗑</button>
-
-            </div>
-            `
-
-        ];
-
-
-        table
-            .row(selectedRow)
-            .data(rowData)
-            .draw(false);
-
-
-        modalEditOverlay.classList.remove('show');
-
-        updateTotal();
-
-
-        alert(
-            'Data Linmas & Siskamling berhasil diperbarui.'
-        );
-
-
-        selectedRow = null;
-
-    });
-
-});
+    );
 
 </script>
 

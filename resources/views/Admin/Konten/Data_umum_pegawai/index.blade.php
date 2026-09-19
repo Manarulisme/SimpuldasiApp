@@ -6,9 +6,15 @@
 
 @push('styles')
 
-<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+<link
+    rel="stylesheet"
+    href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css"
+>
 
 <style>
+    /* =========================================
+       CONTENT HEADER
+    ========================================= */
 
     .content-header,
     .table-panel-header {
@@ -35,6 +41,10 @@
         margin-top: 6px;
     }
 
+    /* =========================================
+       BUTTON TAMBAH
+    ========================================= */
+
     .btn-add {
         display: inline-flex;
         align-items: center;
@@ -54,6 +64,10 @@
         background: #065c35;
         color: white;
     }
+
+    /* =========================================
+       TABLE PANEL
+    ========================================= */
 
     .table-panel {
         background: white;
@@ -87,6 +101,10 @@
         overflow-x: auto;
     }
 
+    /* =========================================
+       TABLE
+    ========================================= */
+
     #pegawaiTable {
         width: 100% !important;
         border-collapse: collapse !important;
@@ -108,9 +126,9 @@
         vertical-align: middle;
     }
 
-    /* =========================
+    /* =========================================
        BADGE
-    ========================== */
+    ========================================= */
 
     .badge {
         display: inline-block;
@@ -140,9 +158,9 @@
         color: #58636a;
     }
 
-    /* =========================
+    /* =========================================
        NAMA PEGAWAI
-    ========================== */
+    ========================================= */
 
     .employee-name {
         color: #18364d;
@@ -155,9 +173,9 @@
         margin-top: 3px;
     }
 
-    /* =========================
+    /* =========================================
        LAST UPDATE
-    ========================== */
+    ========================================= */
 
     .last-update {
         min-width: 125px;
@@ -178,9 +196,9 @@
         white-space: nowrap;
     }
 
-    /* =========================
+    /* =========================================
        ACTION BUTTON
-    ========================== */
+    ========================================= */
 
     .action-buttons {
         display: flex;
@@ -234,7 +252,9 @@
         color: #c0392b;
     }
 
-    /* DELETE FORM */
+    /* =========================================
+       DELETE FORM
+    ========================================= */
 
     .delete-form {
         display: inline;
@@ -246,9 +266,9 @@
         font-family: inherit;
     }
 
-    /* =========================
+    /* =========================================
        DATATABLES
-    ========================== */
+    ========================================= */
 
     .dt-container {
         font-size: 12px;
@@ -306,6 +326,10 @@
         border-color: var(--primary) !important;
     }
 
+    /* =========================================
+       MOBILE
+    ========================================= */
+
     @media (max-width: 700px) {
 
         .content-header {
@@ -333,7 +357,6 @@
         }
 
     }
-
 </style>
 
 @endpush
@@ -354,7 +377,6 @@
     </p>
 
 </div>
-
 
 <a
     href="{{ route('dataumumpegawai.create') }}"
@@ -383,7 +405,6 @@
 
     </div>
 
-
     <span
         class="total-data"
         id="totalData"
@@ -395,7 +416,6 @@
 
 
 <div class="table-wrapper">
-
 
     <table
         id="pegawaiTable"
@@ -449,10 +469,7 @@
 
                 <tr>
 
-
-                    {{-- =========================
-                         JENIS
-                    ========================== --}}
+                    {{-- JENIS --}}
 
                     <td>
 
@@ -489,9 +506,7 @@
                     </td>
 
 
-                    {{-- =========================
-                         NIP / NRP / TT
-                    ========================== --}}
+                    {{-- NIP / NRP / TT --}}
 
                     <td>
 
@@ -510,31 +525,23 @@
                     </td>
 
 
-                    {{-- =========================
-                         NAMA
-                    ========================== --}}
+                    {{-- NAMA --}}
 
                     <td>
 
                         <div class="employee-name">
-
                             {{ $item->nama }}
-
                         </div>
 
                         <div class="employee-id">
-
                             Pegawai
                             {{ str_pad($item->id, 3, '0', STR_PAD_LEFT) }}
-
                         </div>
 
                     </td>
 
 
-                    {{-- =========================
-                         GOLONGAN
-                    ========================== --}}
+                    {{-- GOLONGAN --}}
 
                     <td>
 
@@ -555,31 +562,21 @@
                     </td>
 
 
-                    {{-- =========================
-                         PANGKAT
-                    ========================== --}}
+                    {{-- PANGKAT --}}
 
                     <td>
-
                         {{ $item->pangkat ?: '-' }}
-
                     </td>
 
 
-                    {{-- =========================
-                         JABATAN
-                    ========================== --}}
+                    {{-- JABATAN --}}
 
                     <td>
-
                         {{ $item->jabatan ?: '-' }}
-
                     </td>
 
 
-                    {{-- =========================
-                         TERAKHIR PERUBAHAN
-                    ========================== --}}
+                    {{-- TERAKHIR PERUBAHAN --}}
 
                     <td>
 
@@ -619,14 +616,11 @@
                     </td>
 
 
-                    {{-- =========================
-                         AKSI
-                    ========================== --}}
+                    {{-- AKSI --}}
 
                     <td>
 
                         <div class="action-buttons">
-
 
                             {{-- SHOW --}}
 
@@ -673,11 +667,9 @@
 
                             </form>
 
-
                         </div>
 
                     </td>
-
 
                 </tr>
 
@@ -693,9 +685,7 @@
                             color:#8a969d;
                         "
                     >
-
                         Belum ada data pegawai.
-
                     </td>
 
                 </tr>
@@ -733,6 +723,7 @@
         /*
          * Urutan awal mengikuti hasil dari Controller.
          */
+
         order: [],
 
         language: {

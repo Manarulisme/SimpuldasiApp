@@ -1,256 +1,268 @@
 <aside class="sidebar" id="sidebar">
 
-
 {{-- BRAND --}}
+
 <div class="sidebar-brand">
 
-    <img
-        src="{{ asset('Assets/Image/logo_simpuldasi.png') }}"
-        alt="Logo SIMPULDASI"
-        width="40"
-        height="auto"
-    >
 
-    <div class="brand-name">
-        <strong>Kelurahan Binong</strong>
+<img
+    src="{{ asset('Assets/Image/logo_simpuldasi.png') }}"
+    alt="Logo SIMPULDASI"
+    width="40"
+    height="auto"
+>
 
-        <span>
-            Sistem Pengumpulan Data Terintegrasi (SIMPULDASI)
-        </span>
-    </div>
+<div class="brand-name">
+    <strong>Kelurahan Binong</strong>
 
-    {{-- TOMBOL HIDE MOBILE --}}
-    <button
-        type="button"
-        class="sidebar-close"
-        id="sidebarClose"
-        aria-label="Tutup menu"
-    >
-        ×
-    </button>
+    <span>
+        Sistem Pengumpulan Data Terintegrasi (SIMPULDASI)
+    </span>
+</div>
+
+{{-- TOMBOL HIDE MOBILE --}}
+<button
+    type="button"
+    class="sidebar-close"
+    id="sidebarClose"
+    aria-label="Tutup menu"
+>
+    ×
+</button>
+
 
 </div>
 
-
 {{-- MENU --}}
+
 <nav class="sidebar-menu">
 
-    {{-- ================================
-         BERANDA
-    ================================= --}}
-    <a
-        href="{{ url('/dashboard') }}"
-        class="menu-item {{ request()->is('dashboard') ? 'active' : '' }}"
+
+{{-- ================================
+     BERANDA
+================================= --}}
+<a
+    href="{{ url('/dashboard') }}"
+    class="menu-item {{ request()->is('dashboard') ? 'active' : '' }}"
+>
+    <span class="menu-icon">⌂</span>
+    <span>Beranda</span>
+</a>
+
+
+{{-- ================================
+     KESEKRETARIATAN
+================================= --}}
+<div class="menu-title">
+    Kesekretariatan
+</div>
+
+<a
+    href="{{ url('/dataumumpegawai') }}"
+    class="menu-item {{ request()->is('dataumumpegawai*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">👤</span>
+    <span>Data Umum Kepegawaian</span>
+</a>
+
+<a
+    href="{{ url('/databmd') }}"
+    class="menu-item {{ request()->is('databmd*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">▣</span>
+    <span>Data BMD</span>
+</a>
+
+
+{{-- ================================
+     KESEJAHTERAAN SOSIAL
+================================= --}}
+<div class="menu-title">
+    Kesejahteraan Sosial
+</div>
+
+<a
+    href="{{ url('/dataposyandu') }}"
+    class="menu-item {{ request()->is('dataposyandu*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">♡</span>
+    <span>Posyandu &amp; Posbindu</span>
+</a>
+
+<a
+    href="{{ url('/datastunting') }}"
+    class="menu-item {{ request()->is('datastunting*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">♧</span>
+    <span>Data Stunting</span>
+</a>
+
+<a
+    href="{{ url('/datakpm') }}"
+    class="menu-item {{ request()->is('datakpm*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">♢</span>
+    <span>KPM / Bantuan Sosial</span>
+</a>
+
+<a
+    href="{{ url('/dataputussekolah') }}"
+    class="menu-item {{ request()->is('dataputussekolah*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">◉</span>
+    <span>Anak Putus Sekolah</span>
+</a>
+
+<a
+    href="{{ url('/datasekolah') }}"
+    class="menu-item {{ request()->is('datasekolah*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">▤</span>
+    <span>Data Sekolah</span>
+</a>
+
+
+{{-- ================================
+     EKONOMI & PEMBANGUNAN
+================================= --}}
+<div class="menu-title">
+    Ekonomi &amp; Pembangunan
+</div>
+
+<a
+    href="{{ url('/dataumkm') }}"
+    class="menu-item {{ request()->is('dataumkm*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">♙</span>
+    <span>Data UMKM</span>
+</a>
+
+<a
+    href="{{ url('/datarutilahu') }}"
+    class="menu-item {{ request()->is('datarutilahu*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">◈</span>
+    <span>Data Rutilahu</span>
+</a>
+
+<a
+    href="{{ url('/databuruansae') }}"
+    class="menu-item {{ request()->is('databuruansae*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">🌱</span>
+    <span>Data Buruan Sae</span>
+</a>
+
+<a
+    href="{{ url('/datapohon') }}"
+    class="menu-item {{ request()->is('datapohon*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">♣</span>
+    <span>Data Pohon</span>
+</a>
+
+<a
+    href="{{ url('/datafasilitasumum') }}"
+    class="menu-item {{ request()->is('datafasilitasumum*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">▦</span>
+    <span>Fasilitas Umum &amp; Sosial</span>
+</a>
+
+
+{{-- ================================
+     PEMERINTAHAN
+================================= --}}
+<div class="menu-title">
+    Pemerintahan
+</div>
+
+<a
+    href="{{ url('/datalaporanpenduduk') }}"
+    class="menu-item {{ request()->is('datalaporanpendudukan*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">◫</span>
+    <span>Laporan Kependudukan</span>
+</a>
+
+<a
+    href="{{ url('/datalinmas') }}"
+    class="menu-item {{ request()->is('datalinmas*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">⚑</span>
+    <span>Linmas &amp; Siskamling</span>
+</a>
+
+<a
+    href="{{ url('/datartrw') }}"
+    class="menu-item {{ request()->is('datartrw*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">▥</span>
+    <span>Data RT/RW &amp; Periode</span>
+</a>
+
+<a
+    href="{{ url('/datapkl') }}"
+    class="menu-item {{ request()->is('datapkl*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">◉</span>
+    <span>Data PKL</span>
+</a>
+
+
+{{-- ================================
+     SISTEM
+================================= --}}
+<div class="menu-title">
+    Sistem
+</div>
+
+{{-- LAPORAN BULANAN --}}
+<a
+    href="{{ route('laporan.index') }}"
+    class="menu-item {{ request()->is('laporan*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">▤</span>
+    <span>Laporan Bulanan</span>
+</a>
+
+<a
+    href="{{ url('/pengaturan_user') }}"
+    class="menu-item {{ request()->is('pengaturan_user*') ? 'active' : '' }}"
+>
+    <span class="menu-icon">⚙</span>
+    <span>Pengaturan</span>
+</a>
+
+
+{{-- KELUAR --}}
+<form
+    action="{{ route('logout') }}"
+    method="POST"
+    style="margin: 0;"
+>
+    @csrf
+
+    <button
+        type="submit"
+        class="menu-item"
+        style="
+            width: 100%;
+            border: 0;
+            background: transparent;
+            text-align: left;
+            font: inherit;
+            color: inherit;
+            cursor: pointer;
+        "
     >
-        <span class="menu-icon">⌂</span>
-        <span>Beranda</span>
-    </a>
+        <span class="menu-icon">↪</span>
+        <span>Keluar</span>
+    </button>
+</form>
 
-
-    {{-- ================================
-         KESEKRETARIATAN
-    ================================= --}}
-    <div class="menu-title">
-        Kesekretariatan
-    </div>
-
-    <a
-        href="{{ url('/dataumumpegawai') }}"
-        class="menu-item {{ request()->is('dataumumpegawai*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">👤</span>
-        <span>Data Umum Kepegawaian</span>
-    </a>
-
-    <a
-        href="{{ url('/databmd') }}"
-        class="menu-item {{ request()->is('databmd*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">▣</span>
-        <span>Data BMD</span>
-    </a>
-
-
-    {{-- ================================
-         KESEJAHTERAAN SOSIAL
-    ================================= --}}
-    <div class="menu-title">
-        Kesejahteraan Sosial
-    </div>
-
-    <a
-        href="{{ url('/dataposyandu') }}"
-        class="menu-item {{ request()->is('dataposyandu*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">♡</span>
-        <span>Posyandu &amp; Posbindu</span>
-    </a>
-
-    <a
-        href="{{ url('/datastunting') }}"
-        class="menu-item {{ request()->is('datastunting*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">♧</span>
-        <span>Data Stunting</span>
-    </a>
-
-    <a
-        href="{{ url('/datakpm') }}"
-        class="menu-item {{ request()->is('datakpm*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">♢</span>
-        <span>KPM / Bantuan Sosial</span>
-    </a>
-
-    <a
-        href="{{ url('/dataputussekolah') }}"
-        class="menu-item {{ request()->is('dataputussekolah*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">◉</span>
-        <span>Anak Putus Sekolah</span>
-    </a>
-
-    <a
-        href="{{ url('/datasekolah') }}"
-        class="menu-item {{ request()->is('datasekolah*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">▤</span>
-        <span>Data Sekolah</span>
-    </a>
-
-
-    {{-- ================================
-         EKONOMI & PEMBANGUNAN
-    ================================= --}}
-    <div class="menu-title">
-        Ekonomi &amp; Pembangunan
-    </div>
-
-    <a
-        href="{{ url('/dataumkm') }}"
-        class="menu-item {{ request()->is('dataumkm*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">♙</span>
-        <span>Data UMKM</span>
-    </a>
-
-    <a
-        href="{{ url('/datarutilahu') }}"
-        class="menu-item {{ request()->is('datarutilahu*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">◈</span>
-        <span>Data Rutilahu</span>
-    </a>
-
-    <a
-        href="{{ url('/databuruansae') }}"
-        class="menu-item {{ request()->is('databuruansae*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">🌱</span>
-        <span>Data Buruan Sae</span>
-    </a>
-
-    <a
-        href="{{ url('/datapohon') }}"
-        class="menu-item {{ request()->is('datapohon*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">♣</span>
-        <span>Data Pohon</span>
-    </a>
-
-    <a
-        href="{{ url('/datafasilitasumum') }}"
-        class="menu-item {{ request()->is('datafasilitasumum*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">▦</span>
-        <span>Fasilitas Umum &amp; Sosial</span>
-    </a>
-
-
-    {{-- ================================
-         PEMERINTAHAN
-    ================================= --}}
-    <div class="menu-title">
-        Pemerintahan
-    </div>
-
-    <a
-        href="{{ url('/datalaporankependudukan') }}"
-        class="menu-item {{ request()->is('datalaporankependudukan*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">◫</span>
-        <span>Laporan Kependudukan</span>
-    </a>
-
-    <a
-        href="{{ url('/datalinmas') }}"
-        class="menu-item {{ request()->is('datalinmas*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">⚑</span>
-        <span>Linmas &amp; Siskamling</span>
-    </a>
-
-    <a
-        href="{{ url('/datartrw') }}"
-        class="menu-item {{ request()->is('datartrw*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">▥</span>
-        <span>Data RT/RW &amp; Periode</span>
-    </a>
-
-    <a
-        href="{{ url('/datapkl') }}"
-        class="menu-item {{ request()->is('datapkl*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">◉</span>
-        <span>Data PKL</span>
-    </a>
-
-
-    {{-- ================================
-         SISTEM
-    ================================= --}}
-    <div class="menu-title">
-        Sistem
-    </div>
-
-    <a
-        href="{{ url('/pengaturan_user') }}"
-        class="menu-item {{ request()->is('pengaturan_user*') ? 'active' : '' }}"
-    >
-        <span class="menu-icon">⚙</span>
-        <span>Pengaturan</span>
-    </a>
-
-
-    {{-- KELUAR --}}
-    <form
-        action="{{ route('logout') }}"
-        method="POST"
-        style="margin: 0;"
-    >
-        @csrf
-
-        <button
-            type="submit"
-            class="menu-item"
-            style="
-                width: 100%;
-                border: 0;
-                background: transparent;
-                text-align: left;
-                font: inherit;
-                color: inherit;
-                cursor: pointer;
-            "
-        >
-            <span class="menu-icon">↪</span>
-            <span>Keluar</span>
-        </button>
-    </form>
 
 </nav>
-
 
 </aside>
 

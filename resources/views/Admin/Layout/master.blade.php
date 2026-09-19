@@ -15,6 +15,7 @@
     @yield('title', 'Sistem Pengumpulan Data Terintegrasi (SIMPULDASI) - Kelurahan Binong')
 </title>
 
+
 <link
     rel="icon"
     type="image/png"

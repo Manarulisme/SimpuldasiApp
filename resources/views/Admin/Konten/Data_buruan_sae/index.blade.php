@@ -1,2578 +1,853 @@
 @extends('Admin.Layout.master')
 
-@section('title', 'Data Buruan Sae - Kelurahan XXXXX')
+@section('title', 'Data Buruan Sae - Kelurahan Binong')
 @section('page_title', 'Data Buruan Sae')
 @section('page_subtitle', 'Ketahanan Pangan · Data Buruan Sae')
 
+@push('styles')
+
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+
+<style>
+    .content-header,
+    .table-panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+    }
+
+    .content-header {
+        margin-bottom: 25px;
+    }
+
+    .content-header h2 {
+        color: #18364d;
+        font-family: Georgia, serif;
+        font-size: 26px;
+        margin: 0;
+    }
+
+    .content-header p,
+    .table-panel-header p {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 6px;
+        margin-bottom: 0;
+    }
+
+    .btn-add {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--primary);
+        color: white;
+        border: 0;
+        border-radius: 7px;
+        padding: 11px 16px;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .btn-add:hover {
+        background: #065c35;
+        color: white;
+    }
+
+    .table-panel {
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .table-panel-header {
+        padding: 20px 22px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .table-panel-header h3 {
+        color: #18364d;
+        font-size: 16px;
+        margin: 0;
+    }
+
+    .total-data {
+        color: var(--primary);
+        background: var(--primary-light);
+        border-radius: 20px;
+        padding: 6px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .table-wrapper {
+        padding: 0 22px 20px;
+        overflow-x: auto;
+    }
+
+    #buruanSaeTable {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        margin-top: 15px !important;
+    }
+
+    #buruanSaeTable thead th {
+        background: #f8faf9;
+        color: #52616b;
+        font-size: 11px;
+        padding: 13px 12px;
+        white-space: nowrap;
+    }
+
+    #buruanSaeTable tbody td {
+        padding: 14px 12px;
+        font-size: 12px;
+        border-bottom: 1px solid #f0f2f3;
+        vertical-align: middle;
+    }
+
+    #buruanSaeTable tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+
+    /* =========================
+       DATATABLES
+    ========================= */
+
+    #buruanSaeTable_wrapper {
+        font-size: 12px;
+    }
+
+    #buruanSaeTable_wrapper .dt-layout-row {
+        margin: 12px 0;
+    }
+
+    #buruanSaeTable_wrapper .dt-length,
+    #buruanSaeTable_wrapper .dt-search {
+        color: #52616b;
+        font-size: 12px;
+    }
+
+    #buruanSaeTable_wrapper .dt-length select,
+    #buruanSaeTable_wrapper .dt-search input {
+        border: 1px solid #dfe5e8;
+        border-radius: 6px;
+        background: white;
+        color: #52616b;
+        font-size: 12px;
+        padding: 7px 9px;
+        outline: none;
+    }
+
+    #buruanSaeTable_wrapper .dt-length select {
+        margin: 0 5px;
+    }
+
+    #buruanSaeTable_wrapper .dt-search input {
+        margin-left: 7px;
+        width: 200px;
+    }
+
+    #buruanSaeTable_wrapper .dt-length select:focus,
+    #buruanSaeTable_wrapper .dt-search input:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(8, 116, 67, 0.08);
+    }
+
+    #buruanSaeTable_wrapper .dt-info {
+        color: #7a858d;
+        font-size: 11px;
+    }
+
+    #buruanSaeTable_wrapper .dt-paging-button {
+        border: 1px solid #dfe5e8 !important;
+        border-radius: 6px !important;
+        background: white !important;
+        color: #52616b !important;
+        font-size: 11px !important;
+    }
+
+    #buruanSaeTable_wrapper .dt-paging-button:hover {
+        background: var(--primary-light) !important;
+        color: var(--primary) !important;
+        border-color: var(--primary) !important;
+    }
+
+    #buruanSaeTable_wrapper .dt-paging-button.current {
+        background: var(--primary) !important;
+        color: white !important;
+        border-color: var(--primary) !important;
+    }
+
+
+    /* =========================
+       BADGE
+    ========================= */
+
+    .badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 5px;
+        font-size: 10px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .badge-rw {
+        background: #eef6fc;
+        color: #2d6a9f;
+    }
+
+    .badge-plant {
+        background: var(--primary-light);
+        color: var(--primary);
+    }
+
+    .badge-default {
+        background: #f1f3f4;
+        color: #58636a;
+    }
+
+
+    /* =========================
+       BURUAN SAE DATA
+    ========================= */
+
+    .sae-name {
+        color: #18364d;
+        font-weight: 600;
+    }
+
+    .sae-id {
+        color: #8a969d;
+        font-size: 10px;
+        margin-top: 3px;
+    }
+
+    .location {
+        color: #52616b;
+        font-size: 11px;
+        line-height: 1.5;
+        min-width: 180px;
+        max-width: 300px;
+    }
+
+    .rw {
+        color: #52616b;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .plant {
+        color: #52616b;
+        font-size: 11px;
+        line-height: 1.5;
+        min-width: 150px;
+        max-width: 250px;
+    }
+
+    .area {
+        color: #52616b;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+
+    /* =========================
+       TERAKHIR PERUBAHAN
+    ========================= */
+
+    .last-update {
+        min-width: 125px;
+        line-height: 1.5;
+    }
+
+    .last-update-date {
+        color: #52616b;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .last-update-time {
+        color: #8a969d;
+        font-size: 10px;
+        margin-top: 2px;
+        white-space: nowrap;
+    }
+
+
+    /* =========================
+       ACTION
+    ========================= */
+
+    .action-buttons {
+        display: flex;
+        gap: 6px;
+    }
+
+    .action-btn {
+        width: 31px;
+        height: 31px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: white;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        font-size: 15px;
+        padding: 0;
+    }
+
+    .action-view {
+        color: #2d6a9f;
+    }
+
+    .action-view:hover {
+        background: #edf5fb;
+        color: #2d6a9f;
+    }
+
+    .action-edit {
+        color: var(--primary);
+    }
+
+    .action-edit:hover {
+        background: var(--primary-light);
+        color: var(--primary);
+    }
+
+    .action-delete {
+        color: #c0392b;
+    }
+
+    .action-delete:hover {
+        background: #fff0ee;
+        color: #c0392b;
+    }
+
+    .delete-form {
+        display: inline;
+        margin: 0;
+        padding: 0;
+    }
+
+    .delete-form button {
+        font-family: inherit;
+    }
+
+
+    /* =========================
+       ALERT
+    ========================= */
+
+    .alert-success,
+    .alert-error {
+        margin-bottom: 20px;
+        padding: 12px 15px;
+        border-radius: 7px;
+        font-size: 12px;
+    }
+
+    .alert-success {
+        background: #eaf5ef;
+        color: #087443;
+        border: 1px solid #cce7d9;
+    }
+
+    .alert-error {
+        background: #fff0ee;
+        color: #c0392b;
+        border: 1px solid #f3d0cc;
+    }
+
+
+    /* =========================
+       EMPTY
+    ========================= */
+
+    .empty-state {
+        text-align: center;
+        padding: 30px !important;
+        color: #8a969d;
+    }
+
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 700px) {
+
+        .content-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .content-header h2 {
+            font-size: 23px;
+        }
+
+        .btn-add {
+            width: 100%;
+            justify-content: center;
+        }
+
+        .table-panel-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        #buruanSaeTable_wrapper .dt-layout-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        #buruanSaeTable_wrapper .dt-search {
+            width: 100%;
+        }
+
+        #buruanSaeTable_wrapper .dt-search input {
+            width: 100%;
+            margin-left: 5px;
+        }
+    }
+</style>
+
+@endpush
 
 @section('content')
 
-<style>
+@if(session('success'))
 
-    /* =====================================================
-       PAGE HEADER
-    ====================================================== */
+<div class="alert-success">
+    {{ session('success') }}
+</div>
 
-    .content-header {
+@endif
 
-        display: flex;
+@if(session('error'))
 
-        align-items: center;
+<div class="alert-error">
+    {{ session('error') }}
+</div>
 
-        justify-content: space-between;
+@endif
 
-        gap: 20px;
+@if(session('warning'))
 
-        margin-bottom: 22px;
+<div class="alert-error">
+    {{ session('warning') }}
+</div>
 
-    }
+@endif
 
+<div class="content-header">
 
-    .content-header h2 {
 
-        font-family: Georgia, serif;
+<div>
 
-        font-size: 22px;
+    <h2>
+        Data Buruan Sae
+    </h2>
 
-        color: #18364d;
-
-        margin-bottom: 5px;
-
-    }
-
-
-    .content-header p {
-
-        color: #7a858d;
-
-        font-size: 12px;
-
-        line-height: 1.6;
-
-    }
-
-
-    /* =====================================================
-       BUTTON TAMBAH
-    ====================================================== */
-
-    .btn-add {
-
-        display: inline-flex;
-
-        align-items: center;
-
-        gap: 8px;
-
-        background: #087443;
-
-        color: white;
-
-        border: none;
-
-        border-radius: 7px;
-
-        padding: 11px 16px;
-
-        font-size: 12px;
-
-        font-weight: 600;
-
-        cursor: pointer;
-
-        white-space: nowrap;
-
-        transition: 0.2s;
-
-    }
-
-
-    .btn-add:hover {
-
-        background: #065c35;
-
-        color: white;
-
-        transform: translateY(-1px);
-
-    }
-
-
-    .btn-add-icon {
-
-        font-size: 17px;
-
-        line-height: 1;
-
-    }
-
-
-    /* =====================================================
-       TABLE PANEL
-    ====================================================== */
-
-    .table-panel {
-
-        background: white;
-
-        border: 1px solid #e7ebee;
-
-        border-radius: 10px;
-
-        overflow: hidden;
-
-    }
-
-
-    .table-panel-header {
-
-        padding: 19px 22px;
-
-        border-bottom: 1px solid #e7ebee;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-    }
-
-
-    .table-panel-header h3 {
-
-        font-size: 15px;
-
-        color: #18364d;
-
-    }
-
-
-    .table-panel-header p {
-
-        font-size: 11px;
-
-        color: #7a858d;
-
-        margin-top: 4px;
-
-    }
-
-
-    .total-data {
-
-        font-size: 11px;
-
-        background: #eaf5ef;
-
-        color: #087443;
-
-        padding: 6px 10px;
-
-        border-radius: 20px;
-
-        font-weight: 600;
-
-    }
-
-
-    .table-wrapper {
-
-        padding: 0 22px 20px;
-
-        overflow-x: auto;
-
-    }
-
-
-    /* =====================================================
-       DATATABLE
-    ====================================================== */
-
-    #buruanSaeTable {
-
-        width: 100% !important;
-
-        border-collapse: separate !important;
-
-        border-spacing: 0;
-
-        margin-top: 15px !important;
-
-    }
-
-
-    #buruanSaeTable thead th {
-
-        background: #f8faf9;
-
-        color: #52616b;
-
-        font-size: 11px;
-
-        font-weight: 600;
-
-        padding: 13px 16px !important;
-
-        border-bottom: 1px solid #e7ebee;
-
-        white-space: nowrap;
-
-    }
-
-
-    #buruanSaeTable tbody td {
-
-        padding: 14px 18px !important;
-
-        font-size: 12px;
-
-        border-bottom: 1px solid #f0f2f3;
-
-        color: #39474f;
-
-        vertical-align: middle;
-
-    }
-
-
-    #buruanSaeTable tbody tr:hover {
-
-        background: #fafcfb;
-
-    }
-
-
-    #buruanSaeTable tbody tr:last-child td {
-
-        border-bottom: none;
-
-    }
-
-
-    /* =====================================================
-       DATA STYLE
-    ====================================================== */
-
-    .plant-name {
-
-        font-weight: 600;
-
-        color: #18364d;
-
-        white-space: nowrap;
-
-    }
-
-
-    .location {
-
-        min-width: 220px;
-
-        max-width: 280px;
-
-        line-height: 1.5;
-
-        color: #52616b;
-
-    }
-
-
-    .badge {
-
-        display: inline-block;
-
-        padding: 5px 9px;
-
-        border-radius: 5px;
-
-        font-size: 10px;
-
-        font-weight: 600;
-
-    }
-
-
-    .badge-rw {
-
-        background: #eef6fc;
-
-        color: #2d6a9f;
-
-        white-space: nowrap;
-
-    }
-
-
-    .badge-plant {
-
-        background: #eaf5ef;
-
-        color: #087443;
-
-        white-space: nowrap;
-
-    }
-
-
-    .area {
-
-        font-weight: 600;
-
-        color: #18364d;
-
-        white-space: nowrap;
-
-    }
-
-
-    /* =====================================================
-       ACTION BUTTON
-    ====================================================== */
-
-    .action-buttons {
-
-        display: flex;
-
-        align-items: center;
-
-        gap: 6px;
-
-        white-space: nowrap;
-
-    }
-
-
-    .action-btn {
-
-        width: 31px;
-
-        height: 31px;
-
-        border-radius: 6px;
-
-        border: 1px solid #e7ebee;
-
-        background: white;
-
-        cursor: pointer;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: center;
-
-        font-size: 13px;
-
-        transition: 0.2s;
-
-    }
-
-
-    .action-view {
-
-        color: #2d6a9f;
-
-    }
-
-
-    .action-view:hover {
-
-        background: #eef6fc;
-
-        border-color: #c2dced;
-
-    }
-
-
-    .action-edit {
-
-        color: #087443;
-
-    }
-
-
-    .action-edit:hover {
-
-        background: #eaf5ef;
-
-        border-color: #b9ddca;
-
-    }
-
-
-    .action-delete {
-
-        color: #c0392b;
-
-    }
-
-
-    .action-delete:hover {
-
-        background: #fdf0ef;
-
-        border-color: #edc5c1;
-
-    }
-
-
-    /* =====================================================
-       DATATABLE CONTROLS
-    ====================================================== */
-
-    .dt-container {
-
-        font-size: 11px;
-
-    }
-
-
-    .dt-layout-row {
-
-        margin-top: 14px !important;
-
-    }
-
-
-    .dt-length select,
-    .dt-search input {
-
-        border: 1px solid #e7ebee !important;
-
-        border-radius: 6px !important;
-
-        font-size: 11px !important;
-
-        padding: 7px 9px !important;
-
-        outline: none !important;
-
-    }
-
-
-    .dt-search input:focus {
-
-        border-color: #087443 !important;
-
-        box-shadow:
-            0 0 0 2px
-            rgba(8,116,67,0.08);
-
-    }
-
-
-    .dt-info {
-
-        color: #7a858d !important;
-
-        font-size: 11px !important;
-
-    }
-
-
-    .dt-paging button {
-
-        border-radius: 5px !important;
-
-        font-size: 11px !important;
-
-        min-width: 30px;
-
-    }
-
-
-    .dt-paging button.current {
-
-        background: #087443 !important;
-
-        color: white !important;
-
-        border-color: #087443 !important;
-
-    }
-
-
-    /* =====================================================
-       MODAL
-    ====================================================== */
-
-    .modal-overlay {
-
-        position: fixed;
-
-        inset: 0;
-
-        background: rgba(16,47,71,0.48);
-
-        display: none;
-
-        align-items: center;
-
-        justify-content: center;
-
-        padding: 20px;
-
-        z-index: 500;
-
-    }
-
-
-    .modal-overlay.active {
-
-        display: flex;
-
-    }
-
-
-    .modal {
-
-        width: 100%;
-
-        max-width: 680px;
-
-        background: white;
-
-        border-radius: 10px;
-
-        box-shadow:
-            0 20px 60px
-            rgba(0,0,0,0.18);
-
-        overflow: hidden;
-
-        animation: modalShow 0.2s ease;
-
-    }
-
-
-    @keyframes modalShow {
-
-        from {
-
-            opacity: 0;
-
-            transform: translateY(10px);
-
-        }
-
-        to {
-
-            opacity: 1;
-
-            transform: translateY(0);
-
-        }
-
-    }
-
-
-    .modal-header {
-
-        padding: 19px 22px;
-
-        border-bottom: 1px solid #e7ebee;
-
-        display: flex;
-
-        align-items: center;
-
-        justify-content: space-between;
-
-    }
-
-
-    .modal-header h3 {
-
-        font-family: Georgia, serif;
-
-        font-size: 18px;
-
-        color: #18364d;
-
-    }
-
-
-    .modal-close {
-
-        width: 32px;
-
-        height: 32px;
-
-        border: none;
-
-        background: #f4f6f7;
-
-        color: #69767d;
-
-        border-radius: 6px;
-
-        cursor: pointer;
-
-        font-size: 18px;
-
-    }
-
-
-    .modal-close:hover {
-
-        background: #e9edef;
-
-    }
-
-
-    .modal-body {
-
-        padding: 22px;
-
-    }
-
-
-    .form-grid {
-
-        display: grid;
-
-        grid-template-columns: repeat(2, 1fr);
-
-        gap: 17px;
-
-    }
-
-
-    .form-group {
-
-        display: flex;
-
-        flex-direction: column;
-
-        gap: 7px;
-
-    }
-
-
-    .form-group.full {
-
-        grid-column: 1 / -1;
-
-    }
-
-
-    .form-label {
-
-        font-size: 11px;
-
-        font-weight: 600;
-
-        color: #52616b;
-
-    }
-
-
-    .form-control {
-
-        width: 100%;
-
-        border: 1px solid #e7ebee;
-
-        border-radius: 6px;
-
-        padding: 10px 11px;
-
-        font-size: 12px;
-
-        color: #263238;
-
-        outline: none;
-
-        background: white;
-
-        transition: 0.2s;
-
-    }
-
-
-    .form-control:focus {
-
-        border-color: #087443;
-
-        box-shadow:
-            0 0 0 2px
-            rgba(8,116,67,0.08);
-
-    }
-
-
-    textarea.form-control {
-
-        min-height: 85px;
-
-        resize: vertical;
-
-    }
-
-
-    .modal-footer {
-
-        padding: 16px 22px;
-
-        border-top: 1px solid #e7ebee;
-
-        display: flex;
-
-        justify-content: flex-end;
-
-        gap: 8px;
-
-    }
-
-
-    .btn-cancel {
-
-        border: 1px solid #e7ebee;
-
-        background: white;
-
-        color: #65727a;
-
-        padding: 10px 15px;
-
-        border-radius: 6px;
-
-        font-size: 12px;
-
-        cursor: pointer;
-
-    }
-
-
-    .btn-save {
-
-        border: none;
-
-        background: #087443;
-
-        color: white;
-
-        padding: 10px 16px;
-
-        border-radius: 6px;
-
-        font-size: 12px;
-
-        font-weight: 600;
-
-        cursor: pointer;
-
-    }
-
-
-    .btn-save:hover {
-
-        background: #065c35;
-
-    }
-
-
-    /* =====================================================
-       VIEW MODAL
-    ====================================================== */
-
-    .detail-grid {
-
-        display: grid;
-
-        grid-template-columns: repeat(2, 1fr);
-
-        gap: 16px;
-
-    }
-
-
-    .detail-item {
-
-        border: 1px solid #e7ebee;
-
-        border-radius: 7px;
-
-        padding: 12px;
-
-        background: #fafcfb;
-
-    }
-
-
-    .detail-item.full {
-
-        grid-column: 1 / -1;
-
-    }
-
-
-    .detail-label {
-
-        display: block;
-
-        font-size: 10px;
-
-        color: #7a858d;
-
-        margin-bottom: 5px;
-
-    }
-
-
-    .detail-value {
-
-        font-size: 12px;
-
-        font-weight: 600;
-
-        color: #18364d;
-
-    }
-
-
-    /* =====================================================
-       FOOTER
-    ====================================================== */
-
-    .dashboard-footer {
-
-        margin-top: 25px;
-
-        text-align: center;
-
-        color: #9aa3a9;
-
-        font-size: 11px;
-
-        padding: 10px;
-
-    }
-
-
-    /* =====================================================
-       RESPONSIVE
-    ====================================================== */
-
-    @media (max-width: 768px) {
-
-        .content-header {
-
-            align-items: flex-start;
-
-            flex-direction: column;
-
-        }
-
-
-        .btn-add {
-
-            width: 100%;
-
-            justify-content: center;
-
-        }
-
-
-        .table-panel-header {
-
-            align-items: flex-start;
-
-            gap: 10px;
-
-        }
-
-
-        .table-wrapper {
-
-            padding-left: 15px;
-
-            padding-right: 15px;
-
-        }
-
-
-        .form-grid,
-        .detail-grid {
-
-            grid-template-columns: 1fr;
-
-        }
-
-
-        .form-group.full,
-        .detail-item.full {
-
-            grid-column: auto;
-
-        }
-
-    }
-
-
-    @media (max-width: 480px) {
-
-        .content-header h2 {
-
-            font-size: 19px;
-
-        }
-
-
-        .table-panel-header {
-
-            flex-direction: column;
-
-        }
-
-
-        .total-data {
-
-            align-self: flex-start;
-
-        }
-
-
-        .modal-body {
-
-            padding: 18px;
-
-        }
-
-    }
-
-</style>
-
-
-<!-- =====================================================
-     CONTENT
-====================================================== -->
-
-<div class="content">
-
-
-    <!-- =================================================
-         PAGE HEADER
-    ================================================== -->
-
-    <div class="content-header">
-
-        <div>
-
-            <h2>
-                Data Buruan Sae
-            </h2>
-
-            <p>
-                Kelola data Buruan Sae
-                Kelurahan XXXXX.
-            </p>
-
-        </div>
-
-
-        <button
-            type="button"
-            class="btn-add"
-            id="btnTambah"
-        >
-
-            <span class="btn-add-icon">
-                +
-            </span>
-
-            Tambah Data
-
-        </button>
-
-    </div>
-
-
-    <!-- =================================================
-         TABLE
-    ================================================== -->
-
-    <section class="table-panel">
-
-
-        <div class="table-panel-header">
-
-            <div>
-
-                <h3>
-                    Daftar Buruan Sae
-                </h3>
-
-                <p>
-                    Data Buruan Sae Kelurahan XXXXX
-                </p>
-
-            </div>
-
-
-            <span
-                class="total-data"
-                id="totalData"
-            >
-                5 Data
-            </span>
-
-        </div>
-
-
-        <div class="table-wrapper">
-
-
-            <table
-                id="buruanSaeTable"
-                class="display"
-            >
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Nama
-                        </th>
-
-                        <th>
-                            Lokasi
-                        </th>
-
-                        <th>
-                            RW
-                        </th>
-
-                        <th>
-                            Jenis Tanaman
-                        </th>
-
-                        <th>
-                            Luas Area
-                        </th>
-
-                        <th>
-                            Aksi
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-
-                    <!-- =================================================
-                         DATA 1
-                    ================================================== -->
-
-                    <tr>
-
-                        <td>
-
-                            <div class="plant-name">
-                                Kelompok Tani Mekar Jaya
-                            </div>
-
-                        </td>
-
-                        <td>
-
-                            <div class="location">
-                                Kp. Sukamaju RT 02
-                            </div>
-
-                        </td>
-
-                        <td>
-
-                            <span class="badge badge-rw">
-                                RW 01
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <span class="badge badge-plant">
-                                Sayuran
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <span class="area">
-                                500 m²
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <div class="action-buttons">
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-view"
-                                    onclick="viewData(this)"
-                                    title="Lihat Data"
-                                >
-                                    ◉
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-edit"
-                                    onclick="editData(this)"
-                                    title="Ubah Data"
-                                >
-                                    ✎
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-delete"
-                                    onclick="hapusData(this)"
-                                    title="Hapus Data"
-                                >
-                                    ×
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    <!-- =================================================
-                         DATA 2
-                    ================================================== -->
-
-                    <tr>
-
-                        <td>
-
-                            <div class="plant-name">
-                                Kelompok Wanita Tani Sejahtera
-                            </div>
-
-                        </td>
-
-                        <td>
-
-                            <div class="location">
-                                Kp. Mekarsari RT 04
-                            </div>
-
-                        </td>
-
-                        <td>
-
-                            <span class="badge badge-rw">
-                                RW 02
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <span class="badge badge-plant">
-                                Cabai & Tomat
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <span class="area">
-                                350 m²
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <div class="action-buttons">
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-view"
-                                    onclick="viewData(this)"
-                                    title="Lihat Data"
-                                >
-                                    ◉
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-edit"
-                                    onclick="editData(this)"
-                                    title="Ubah Data"
-                                >
-                                    ✎
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-delete"
-                                    onclick="hapusData(this)"
-                                    title="Hapus Data"
-                                >
-                                    ×
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    <!-- =================================================
-                         DATA 3
-                    ================================================== -->
-
-                    <tr>
-
-                        <td>
-
-                            <div class="plant-name">
-                                Kelompok Tani Harapan
-                            </div>
-
-                        </td>
-
-                        <td>
-
-                            <div class="location">
-                                Jl. Melati RT 01
-                            </div>
-
-                        </td>
-
-                        <td>
-
-                            <span class="badge badge-rw">
-                                RW 03
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <span class="badge badge-plant">
-                                Kangkung
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <span class="area">
-                                250 m²
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <div class="action-buttons">
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-view"
-                                    onclick="viewData(this)"
-                                    title="Lihat Data"
-                                >
-                                    ◉
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-edit"
-                                    onclick="editData(this)"
-                                    title="Ubah Data"
-                                >
-                                    ✎
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-delete"
-                                    onclick="hapusData(this)"
-                                    title="Hapus Data"
-                                >
-                                    ×
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    <!-- =================================================
-                         DATA 4
-                    ================================================== -->
-
-                    <tr>
-
-                        <td>
-
-                            <div class="plant-name">
-                                Kelompok Tani Cipta Mandiri
-                            </div>
-
-                        </td>
-
-                        <td>
-
-                            <div class="location">
-                                Kp. Cibogo RT 03
-                            </div>
-
-                        </td>
-
-                        <td>
-
-                            <span class="badge badge-rw">
-                                RW 04
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <span class="badge badge-plant">
-                                Sawi & Pakcoy
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <span class="area">
-                                420 m²
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <div class="action-buttons">
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-view"
-                                    onclick="viewData(this)"
-                                    title="Lihat Data"
-                                >
-                                    ◉
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-edit"
-                                    onclick="editData(this)"
-                                    title="Ubah Data"
-                                >
-                                    ✎
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-delete"
-                                    onclick="hapusData(this)"
-                                    title="Hapus Data"
-                                >
-                                    ×
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                    <!-- =================================================
-                         DATA 5
-                    ================================================== -->
-
-                    <tr>
-
-                        <td>
-
-                            <div class="plant-name">
-                                Kelompok Tani Sukajaya
-                            </div>
-
-                        </td>
-
-                        <td>
-
-                            <div class="location">
-                                Kp. Sukajaya RT 05
-                            </div>
-
-                        </td>
-
-                        <td>
-
-                            <span class="badge badge-rw">
-                                RW 05
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <span class="badge badge-plant">
-                                Terong & Kacang
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <span class="area">
-                                300 m²
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <div class="action-buttons">
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-view"
-                                    onclick="viewData(this)"
-                                    title="Lihat Data"
-                                >
-                                    ◉
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-edit"
-                                    onclick="editData(this)"
-                                    title="Ubah Data"
-                                >
-                                    ✎
-                                </button>
-
-                                <button
-                                    type="button"
-                                    class="action-btn action-delete"
-                                    onclick="hapusData(this)"
-                                    title="Hapus Data"
-                                >
-                                    ×
-                                </button>
-
-                            </div>
-
-                        </td>
-
-                    </tr>
-
-
-                </tbody>
-
-            </table>
-
-
-        </div>
-
-    </section>
-
-
-    <!-- =================================================
-         FOOTER
-    ================================================== -->
-
-    <div class="dashboard-footer">
-
-        © {{ date('Y') }} Kelurahan XXXXX ·
-        Sistem Informasi Kelurahan
-
-    </div>
-
+    <p>
+        Kelola data Buruan Sae Kelurahan Binong.
+    </p>
 
 </div>
 
-
-
-<!-- =====================================================
-     MODAL TAMBAH DATA
-====================================================== -->
-
-<div
-    class="modal-overlay"
-    id="modalOverlay"
+<a
+    href="{{ route('databuruansae.create') }}"
+    class="btn-add"
 >
-
-    <div class="modal">
-
-
-        <div class="modal-header">
-
-            <h3>
-                Tambah Data Buruan Sae
-            </h3>
-
-            <button
-                type="button"
-                class="modal-close"
-                id="modalClose"
-            >
-                ×
-            </button>
-
-        </div>
+    + Tambah Data
+</a>
 
 
-        <div class="modal-body">
+</div>
+
+<section class="table-panel">
 
 
-            <form id="formData">
+<div class="table-panel-header">
 
+    <div>
 
-                <div class="form-grid">
+        <h3>
+            Daftar Data Buruan Sae
+        </h3>
 
-
-                    <div class="form-group">
-
-                        <label
-                            class="form-label"
-                            for="nama"
-                        >
-                            Nama
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="nama"
-                            placeholder="Masukkan nama kelompok/pengelola"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label
-                            class="form-label"
-                            for="rw"
-                        >
-                            RW
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="rw"
-                            placeholder="Contoh: RW 01"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="form-group full">
-
-                        <label
-                            class="form-label"
-                            for="lokasi"
-                        >
-                            Lokasi
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="lokasi"
-                            placeholder="Masukkan lokasi Buruan Sae"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label
-                            class="form-label"
-                            for="jenis_tanaman"
-                        >
-                            Jenis Tanaman
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="jenis_tanaman"
-                            placeholder="Contoh: Sayuran"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label
-                            class="form-label"
-                            for="luas_area"
-                        >
-                            Luas Area
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="luas_area"
-                            placeholder="Contoh: 500 m²"
-                            required
-                        >
-
-                    </div>
-
-
-                </div>
-
-
-            </form>
-
-
-        </div>
-
-
-        <div class="modal-footer">
-
-            <button
-                type="button"
-                class="btn-cancel"
-                id="btnBatal"
-            >
-                Batal
-            </button>
-
-            <button
-                type="button"
-                class="btn-save"
-                id="btnSimpan"
-            >
-                Simpan Data
-            </button>
-
-        </div>
-
+        <p>
+            Data kegiatan ketahanan pangan Kelurahan Binong
+        </p>
 
     </div>
+
+    <span
+        class="total-data"
+        id="totalData"
+    >
+        {{ $dataBuruanSae->count() }} Data
+    </span>
+
+</div>
+
+<div class="table-wrapper">
+
+    <table
+        id="buruanSaeTable"
+        class="display"
+    >
+
+        <thead>
+
+            <tr>
+
+                <th>
+                    No
+                </th>
+
+                <th>
+                    Nama
+                </th>
+
+                <th>
+                    Lokasi
+                </th>
+
+                <th>
+                    RW
+                </th>
+
+                <th>
+                    Jenis Tanaman
+                </th>
+
+                <th>
+                    Luas Area
+                </th>
+
+                <th>
+                    Terakhir Perubahan
+                </th>
+
+                <th>
+                    Aksi
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            @forelse ($dataBuruanSae as $item)
+
+                <tr>
+
+                    {{-- NO --}}
+
+                    <td>
+
+                        <div
+                            style="text-align:center;color:#7a858d;font-size:11px;"
+                        >
+                            {{ $loop->iteration }}
+                        </div>
+
+                    </td>
+
+
+                    {{-- NAMA --}}
+
+                    <td>
+
+                        <div class="sae-name">
+                            {{ $item->nama ?: '-' }}
+                        </div>
+
+                        <div class="sae-id">
+                            ID {{ $item->id }}
+                        </div>
+
+                    </td>
+
+
+                    {{-- LOKASI --}}
+
+                    <td>
+
+                        @if($item->lokasi)
+
+                            <div class="location">
+                                {{ $item->lokasi }}
+                            </div>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- RW --}}
+
+                    <td>
+
+                        @if($item->rw)
+
+                            <span class="badge badge-rw">
+                                RW {{ $item->rw }}
+                            </span>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- JENIS TANAMAN --}}
+
+                    <td>
+
+                        @if($item->jenis_tanaman)
+
+                            <div class="plant">
+                                {{ $item->jenis_tanaman }}
+                            </div>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- LUAS AREA --}}
+
+                    <td>
+
+                        @if($item->luas_area)
+
+                            <div class="area">
+                                {{ $item->luas_area }}
+                            </div>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- TERAKHIR PERUBAHAN --}}
+
+                    <td>
+
+                        @if($item->updated_at)
+
+                            <div
+                                class="last-update"
+                                data-order="{{ $item->updated_at->timestamp }}"
+                            >
+
+                                <div class="last-update-date">
+                                    {{ $item->updated_at->locale('id')->translatedFormat('d M Y') }}
+                                </div>
+
+                                <div class="last-update-time">
+                                    {{ $item->updated_at->format('H:i') }} WIB
+                                </div>
+
+                            </div>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- AKSI --}}
+
+                    <td>
+
+                        <div class="action-buttons">
+
+                            <a
+                                href="{{ route('databuruansae.show', $item->id) }}"
+                                class="action-btn action-view"
+                                title="Lihat Detail"
+                                aria-label="Lihat Detail"
+                            >
+                                ◉
+                            </a>
+
+                            <a
+                                href="{{ route('databuruansae.edit', $item->id) }}"
+                                class="action-btn action-edit"
+                                title="Ubah Data"
+                                aria-label="Ubah Data"
+                            >
+                                ✎
+                            </a>
+
+                            <form
+                                action="{{ route('databuruansae.destroy', $item->id) }}"
+                                method="POST"
+                                class="delete-form"
+                                onsubmit="return confirm('Yakin ingin menghapus data Buruan Sae ini? Data yang dihapus hanya akan dihapus dari sistem lokal.')"
+                            >
+
+                                @csrf
+
+                                @method('DELETE')
+
+                                <button
+                                    type="submit"
+                                    class="action-btn action-delete"
+                                    title="Hapus Data"
+                                    aria-label="Hapus Data"
+                                >
+                                    ×
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            @empty
+
+                <tr>
+
+                    <td
+                        colspan="8"
+                        class="empty-state"
+                    >
+                        Belum ada data Buruan Sae.
+                    </td>
+
+                </tr>
+
+            @endforelse
+
+        </tbody>
+
+    </table>
 
 </div>
 
 
-
-<!-- =====================================================
-     MODAL EDIT DATA
-====================================================== -->
-
-<div
-    class="modal-overlay"
-    id="modalEditOverlay"
->
-
-    <div class="modal">
-
-
-        <div class="modal-header">
-
-            <h3>
-                Edit Data Buruan Sae
-            </h3>
-
-            <button
-                type="button"
-                class="modal-close"
-                id="modalEditClose"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <div class="modal-body">
-
-
-            <form id="formEdit">
-
-
-                <div class="form-grid">
-
-
-                    <div class="form-group">
-
-                        <label
-                            class="form-label"
-                            for="editNama"
-                        >
-                            Nama
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="editNama"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label
-                            class="form-label"
-                            for="editRW"
-                        >
-                            RW
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="editRW"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="form-group full">
-
-                        <label
-                            class="form-label"
-                            for="editLokasi"
-                        >
-                            Lokasi
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="editLokasi"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label
-                            class="form-label"
-                            for="editJenisTanaman"
-                        >
-                            Jenis Tanaman
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="editJenisTanaman"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label
-                            class="form-label"
-                            for="editLuasArea"
-                        >
-                            Luas Area
-                        </label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="editLuasArea"
-                            required
-                        >
-
-                    </div>
-
-
-                </div>
-
-
-            </form>
-
-
-        </div>
-
-
-        <div class="modal-footer">
-
-            <button
-                type="button"
-                class="btn-cancel"
-                id="btnEditBatal"
-            >
-                Batal
-            </button>
-
-            <button
-                type="button"
-                class="btn-save"
-                id="btnEditSimpan"
-            >
-                Perbarui Data
-            </button>
-
-        </div>
-
-
-    </div>
-
-</div>
-
-
-
-<!-- =====================================================
-     MODAL VIEW DATA
-====================================================== -->
-
-<div
-    class="modal-overlay"
-    id="modalViewOverlay"
->
-
-    <div class="modal">
-
-
-        <div class="modal-header">
-
-            <h3>
-                Detail Buruan Sae
-            </h3>
-
-            <button
-                type="button"
-                class="modal-close"
-                id="modalViewClose"
-            >
-                ×
-            </button>
-
-        </div>
-
-
-        <div class="modal-body">
-
-
-            <div class="detail-grid">
-
-
-                <div class="detail-item">
-
-                    <span class="detail-label">
-                        Nama
-                    </span>
-
-                    <span
-                        class="detail-value"
-                        id="viewNama"
-                    >
-                    </span>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <span class="detail-label">
-                        RW
-                    </span>
-
-                    <span
-                        class="detail-value"
-                        id="viewRW"
-                    >
-                    </span>
-
-                </div>
-
-
-                <div class="detail-item full">
-
-                    <span class="detail-label">
-                        Lokasi
-                    </span>
-
-                    <span
-                        class="detail-value"
-                        id="viewLokasi"
-                    >
-                    </span>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <span class="detail-label">
-                        Jenis Tanaman
-                    </span>
-
-                    <span
-                        class="detail-value"
-                        id="viewJenisTanaman"
-                    >
-                    </span>
-
-                </div>
-
-
-                <div class="detail-item">
-
-                    <span class="detail-label">
-                        Luas Area
-                    </span>
-
-                    <span
-                        class="detail-value"
-                        id="viewLuasArea"
-                    >
-                    </span>
-
-                </div>
-
-
-            </div>
-
-
-        </div>
-
-
-        <div class="modal-footer">
-
-            <button
-                type="button"
-                class="btn-cancel"
-                id="btnViewTutup"
-            >
-                Tutup
-            </button>
-
-        </div>
-
-
-    </div>
-
-</div>
-
-
+</section>
 
 @endsection
 
-
-
 @push('scripts')
 
-<script
-    src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js">
-</script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
 
 <script>
 
-document.addEventListener(
-    'DOMContentLoaded',
-    function () {
+    const buruanSaeTable = new DataTable('#buruanSaeTable', {
 
+        pageLength: 10,
 
-        /* =================================================
-           DATATABLE
-        ================================================= */
+        lengthMenu: [
+            [10, 25, 50, 100],
+            [10, 25, 50, 100]
+        ],
 
-        const table =
-            new DataTable(
-                '#buruanSaeTable',
-                {
+        language: {
 
-                    pageLength: 10,
+            lengthMenu: 'Tampilkan _MENU_ data',
 
-                    lengthMenu: [
-                        [5, 10, 25, 50],
-                        [5, 10, 25, 50]
-                    ],
+            search: 'Cari:',
 
-                    language: {
+            searchPlaceholder: 'Cari data Buruan Sae...',
 
-                        search:
-                            'Cari:',
+            info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
 
-                        lengthMenu:
-                            'Tampilkan _MENU_ data',
+            infoEmpty: 'Tidak ada data',
 
-                        info:
-                            'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+            infoFiltered: '(difilter dari _MAX_ total data)',
 
-                        infoEmpty:
-                            'Tidak ada data',
+            zeroRecords: 'Data tidak ditemukan',
 
-                        zeroRecords:
-                            'Data tidak ditemukan',
+            emptyTable: 'Belum ada data',
 
-                        emptyTable:
-                            'Belum ada data',
-
-                        paginate: {
-
-                            first:
-                                'Awal',
-
-                            last:
-                                'Akhir',
-
-                            next:
-                                '›',
-
-                            previous:
-                                '‹'
-
-                        }
-
-                    },
-
-                    columnDefs: [
-
-                        {
-                            orderable: false,
-                            searchable: false,
-                            targets: 5
-                        }
-
-                    ]
-
-                }
-            );
-
-
-        /* =================================================
-           ELEMENT MODAL
-        ================================================= */
-
-        const modalTambah =
-            document.getElementById(
-                'modalOverlay'
-            );
-
-
-        const modalEdit =
-            document.getElementById(
-                'modalEditOverlay'
-            );
-
-
-        const modalView =
-            document.getElementById(
-                'modalViewOverlay'
-            );
-
-
-        let selectedRow = null;
-
-
-        /* =================================================
-           TAMBAH DATA
-        ================================================= */
-
-        document.getElementById(
-            'btnTambah'
-        ).addEventListener(
-            'click',
-            function () {
-
-                modalTambah.classList.add(
-                    'active'
-                );
-
+            paginate: {
+                first: '«',
+                last: '»',
+                next: '›',
+                previous: '‹'
             }
-        );
 
+        },
 
-        document.getElementById(
-            'modalClose'
-        ).addEventListener(
-            'click',
-            tutupTambah
-        );
+        order: [],
 
+        columnDefs: [
 
-        document.getElementById(
-            'btnBatal'
-        ).addEventListener(
-            'click',
-            tutupTambah
-        );
-
-
-        function tutupTambah()
-        {
-
-            modalTambah.classList.remove(
-                'active'
-            );
-
-            document.getElementById(
-                'formData'
-            ).reset();
-
-        }
-
-
-        /* =================================================
-           SIMPAN DATA DUMMY
-        ================================================= */
-
-        document.getElementById(
-            'btnSimpan'
-        ).addEventListener(
-            'click',
-            function () {
-
-
-                const form =
-                    document.getElementById(
-                        'formData'
-                    );
-
-
-                if (!form.checkValidity()) {
-
-                    form.reportValidity();
-
-                    return;
-
-                }
-
-
-                const nama =
-                    document.getElementById(
-                        'nama'
-                    ).value;
-
-
-                alert(
-                    'Data berhasil disimpan.\n\n' +
-                    'Nama: ' +
-                    nama
-                );
-
-
-                tutupTambah();
-
-            }
-        );
-
-
-        /* =================================================
-           EDIT DATA
-        ================================================= */
-
-        window.editData =
-            function (button)
             {
+                orderable: false,
+                searchable: false,
+                targets: 0
+            },
 
-                selectedRow =
-                    button.closest('tr');
-
-
-                const cells =
-                    selectedRow.cells;
-
-
-                document.getElementById(
-                    'editNama'
-                ).value =
-                    cells[0].innerText.trim();
-
-
-                document.getElementById(
-                    'editLokasi'
-                ).value =
-                    cells[1].innerText.trim();
-
-
-                document.getElementById(
-                    'editRW'
-                ).value =
-                    cells[2].innerText.trim();
-
-
-                document.getElementById(
-                    'editJenisTanaman'
-                ).value =
-                    cells[3].innerText.trim();
-
-
-                document.getElementById(
-                    'editLuasArea'
-                ).value =
-                    cells[4].innerText.trim();
-
-
-                modalEdit.classList.add(
-                    'active'
-                );
-
-            };
-
-
-        document.getElementById(
-            'modalEditClose'
-        ).addEventListener(
-            'click',
-            tutupEdit
-        );
-
-
-        document.getElementById(
-            'btnEditBatal'
-        ).addEventListener(
-            'click',
-            tutupEdit
-        );
-
-
-        function tutupEdit()
-        {
-
-            modalEdit.classList.remove(
-                'active'
-            );
-
-            document.getElementById(
-                'formEdit'
-            ).reset();
-
-            selectedRow = null;
-
-        }
-
-
-        document.getElementById(
-            'btnEditSimpan'
-        ).addEventListener(
-            'click',
-            function ()
             {
-
-                const form =
-                    document.getElementById(
-                        'formEdit'
-                    );
-
-
-                if (!form.checkValidity()) {
-
-                    form.reportValidity();
-
-                    return;
-
-                }
-
-
-                if (!selectedRow) {
-
-                    return;
-
-                }
-
-
-                selectedRow.cells[0].innerHTML =
-
-                    '<div class="plant-name">' +
-                    document.getElementById(
-                        'editNama'
-                    ).value +
-                    '</div>';
-
-
-                selectedRow.cells[1].innerHTML =
-
-                    '<div class="location">' +
-                    document.getElementById(
-                        'editLokasi'
-                    ).value +
-                    '</div>';
-
-
-                selectedRow.cells[2].innerHTML =
-
-                    '<span class="badge badge-rw">' +
-                    document.getElementById(
-                        'editRW'
-                    ).value +
-                    '</span>';
-
-
-                selectedRow.cells[3].innerHTML =
-
-                    '<span class="badge badge-plant">' +
-                    document.getElementById(
-                        'editJenisTanaman'
-                    ).value +
-                    '</span>';
-
-
-                selectedRow.cells[4].innerHTML =
-
-                    '<span class="area">' +
-                    document.getElementById(
-                        'editLuasArea'
-                    ).value +
-                    '</span>';
-
-
-                alert(
-                    'Data berhasil diperbarui.'
-                );
-
-
-                tutupEdit();
-
-                table.draw(false);
-
+                orderable: false,
+                searchable: false,
+                targets: 7
             }
-        );
 
+        ]
 
-        /* =================================================
-           VIEW DATA
-        ================================================= */
+    });
 
-        window.viewData =
-            function (button)
-            {
 
-                const row =
-                    button.closest('tr');
+    buruanSaeTable.on('draw', function () {
 
+        document.getElementById('totalData').textContent =
+            buruanSaeTable.page.info().recordsDisplay + ' Data';
 
-                const cells =
-                    row.cells;
-
-
-                document.getElementById(
-                    'viewNama'
-                ).innerText =
-                    cells[0].innerText.trim();
-
-
-                document.getElementById(
-                    'viewLokasi'
-                ).innerText =
-                    cells[1].innerText.trim();
-
-
-                document.getElementById(
-                    'viewRW'
-                ).innerText =
-                    cells[2].innerText.trim();
-
-
-                document.getElementById(
-                    'viewJenisTanaman'
-                ).innerText =
-                    cells[3].innerText.trim();
-
-
-                document.getElementById(
-                    'viewLuasArea'
-                ).innerText =
-                    cells[4].innerText.trim();
-
-
-                modalView.classList.add(
-                    'active'
-                );
-
-            };
-
-
-        document.getElementById(
-            'modalViewClose'
-        ).addEventListener(
-            'click',
-            tutupView
-        );
-
-
-        document.getElementById(
-            'btnViewTutup'
-        ).addEventListener(
-            'click',
-            tutupView
-        );
-
-
-        function tutupView()
-        {
-
-            modalView.classList.remove(
-                'active'
-            );
-
-        }
-
-
-        /* =================================================
-           HAPUS DATA
-        ================================================= */
-
-        window.hapusData =
-            function (button)
-            {
-
-                const row =
-                    button.closest('tr');
-
-
-                const nama =
-                    row.cells[0]
-                    .innerText
-                    .trim();
-
-
-                const konfirmasi =
-                    confirm(
-
-                        'Apakah Anda yakin ingin menghapus data:\n\n' +
-                        nama +
-                        '?'
-
-                    );
-
-
-                if (konfirmasi) {
-
-                    table
-                        .row(row)
-                        .remove()
-                        .draw();
-
-                }
-
-            };
-
-
-        /* =================================================
-           CLOSE MODAL CLICK OUTSIDE
-        ================================================= */
-
-        modalTambah.addEventListener(
-            'click',
-            function (event) {
-
-                if (
-                    event.target ===
-                    modalTambah
-                ) {
-
-                    tutupTambah();
-
-                }
-
-            }
-        );
-
-
-        modalEdit.addEventListener(
-            'click',
-            function (event) {
-
-                if (
-                    event.target ===
-                    modalEdit
-                ) {
-
-                    tutupEdit();
-
-                }
-
-            }
-        );
-
-
-        modalView.addEventListener(
-            'click',
-            function (event) {
-
-                if (
-                    event.target ===
-                    modalView
-                ) {
-
-                    tutupView();
-
-                }
-
-            }
-        );
-
-
-        /* =================================================
-           UPDATE TOTAL
-        ================================================= */
-
-        function updateTotal()
-        {
-
-            const info =
-                table.page.info();
-
-
-            document.getElementById(
-                'totalData'
-            ).textContent =
-
-                info.recordsDisplay +
-                ' Data';
-
-        }
-
-
-        table.on(
-            'draw',
-            updateTotal
-        );
-
-
-        updateTotal();
-
-
-    }
-
-);
+    });
 
 </script>
 
