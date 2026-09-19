@@ -140,14 +140,14 @@ UserController::class
 'pengaturan_user' => 'user',
 ]);
 
-Route::get('/laporan', [LaporanController::class, 'index'])
-->name('laporan.index');
+Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 
-Route::post('/laporan/preview', [LaporanController::class, 'preview'])
-->name('laporan.preview');
+Route::post('/laporan/preview', [LaporanController::class, 'preview'])->name('laporan.preview');
 
-Route::post('/laporan/pdf', [LaporanController::class, 'pdf'])
-->name('laporan.pdf');
+Route::post('/laporan/pdf', [LaporanController::class, 'pdf'])->name('laporan.pdf');
+
+
+
 
 
 // Route::get('/tambah-data-umum-kepegawaian', function () {

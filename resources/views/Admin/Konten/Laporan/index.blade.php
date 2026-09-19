@@ -2,291 +2,17 @@
 
 @section('title', 'Laporan Bulanan - Kelurahan Binong')
 
-@section('content')
+@section('page_title', 'Laporan Bulanan')
 
-<div class="content-header">
-    <div>
-        <h1>Laporan Bulanan</h1>
-        <p>Pembuatan dan riwayat laporan data Kelurahan Binong</p>
-    </div>
-</div>
-
-@if(session('success')) <div class="alert alert-success"> <i class="fas fa-check-circle"></i> <span>{{ session('success') }}</span> </div>
-@endif
-
-@if(session('error')) <div class="alert alert-danger"> <i class="fas fa-exclamation-circle"></i> <span>{{ session('error') }}</span> </div>
-@endif
-
-<div class="report-layout">
-
-
-{{-- FORM PEMBUATAN LAPORAN --}}
-<div class="report-card">
-
-    <div class="report-card-header">
-        <div class="report-icon">
-            <i class="fas fa-file-pdf"></i>
-        </div>
-
-        <div>
-            <h2>Buat Laporan Bulanan</h2>
-            <p>Pilih data, bulan, dan tahun laporan</p>
-        </div>
-    </div>
-
-    <form action="{{ route('laporan.preview') }}" method="POST">
-        @csrf
-
-        <div class="form-group">
-            <label for="menu">
-                Data yang Dilaporkan
-                <span class="required">*</span>
-            </label>
-
-            <select
-                name="menu"
-                id="menu"
-                class="form-control"
-                required
-            >
-                <option value="">-- Pilih Data --</option>
-
-                @foreach($daftarMenu as $key => $menu)
-                    <option
-                        value="{{ $key }}"
-                        {{ old('menu') == $key ? 'selected' : '' }}
-                    >
-                        {{ is_array($menu) ? $menu['nama'] : $menu }}
-                    </option>
-                @endforeach
-            </select>
-
-            @error('menu')
-                <small class="error-text">{{ $message }}</small>
-            @enderror
-        </div>
-
-        <div class="form-row">
-
-            <div class="form-group">
-                <label for="bulan">
-                    Bulan
-                    <span class="required">*</span>
-                </label>
-
-                <select
-                    name="bulan"
-                    id="bulan"
-                    class="form-control"
-                    required
-                >
-                    <option value="">-- Pilih Bulan --</option>
-
-                    @foreach($daftarBulan as $nomor => $nama)
-                        <option
-                            value="{{ $nomor }}"
-                            {{ old('bulan', now()->month) == $nomor ? 'selected' : '' }}
-                        >
-                            {{ $nama }}
-                        </option>
-                    @endforeach
-                </select>
-
-                @error('bulan')
-                    <small class="error-text">{{ $message }}</small>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <label for="tahun">
-                    Tahun
-                    <span class="required">*</span>
-                </label>
-
-                <select
-                    name="tahun"
-                    id="tahun"
-                    class="form-control"
-                    required
-                >
-                    @for($tahun = $tahunSekarang; $tahun >= $tahunSekarang - 5; $tahun--)
-                        <option
-                            value="{{ $tahun }}"
-                            {{ old('tahun', $tahunSekarang) == $tahun ? 'selected' : '' }}
-                        >
-                            {{ $tahun }}
-                        </option>
-                    @endfor
-                </select>
-
-                @error('tahun')
-                    <small class="error-text">{{ $message }}</small>
-                @enderror
-            </div>
-
-        </div>
-
-        <div class="report-info">
-            <div class="report-info-icon">
-                <i class="fas fa-info-circle"></i>
-            </div>
-
-            <div>
-                <strong>Informasi Laporan</strong>
-                <p>
-                    Pilih data dan periode yang ingin dibuatkan laporan.
-                    Setelah itu sistem akan menampilkan preview sebelum
-                    laporan diunduh dalam format PDF.
-                </p>
-            </div>
-        </div>
-
-        <div class="form-footer">
-            <a href="{{ url('/dashboard') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left"></i>
-                Kembali
-            </a>
-
-            <button type="submit" class="btn btn-primary">
-                <i class="fas fa-eye"></i>
-                Tampilkan Preview
-            </button>
-        </div>
-
-    </form>
-
-</div>
-
-{{-- RIWAYAT LAPORAN --}}
-<div class="report-card">
-
-    <div class="table-panel-header">
-        <div>
-            <h2>Riwayat Laporan</h2>
-            <p>Daftar laporan yang pernah dibuat</p>
-        </div>
-
-        <div class="total-data">
-            {{ $laporan->count() }} Laporan
-        </div>
-    </div>
-
-    <div class="table-wrapper">
-
-        <table id="tableLaporan" class="display laporan-table">
-
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Data</th>
-                    <th>Periode</th>
-                    <th>Nama File</th>
-                    <th>Status</th>
-                    <th>Dibuat</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-                @forelse($laporan as $index => $item)
-
-                    <tr>
-
-                        <td>{{ $index + 1 }}</td>
-
-                        <td>
-                            <div class="report-name">
-                                {{ $daftarMenu[$item->menu]['nama'] ?? $item->menu }}
-                            </div>
-                        </td>
-
-                        <td>
-                            <span class="period-badge">
-                                {{ $daftarBulan[$item->bulan] ?? '-' }}
-                                {{ $item->tahun }}
-                            </span>
-                        </td>
-
-                        <td>
-                            @if($item->nama_file)
-                                <span class="file-name">
-                                    <i class="fas fa-file-pdf"></i>
-                                    {{ $item->nama_file }}
-                                </span>
-                            @else
-                                <span class="text-muted">-</span>
-                            @endif
-                        </td>
-
-                        <td>
-
-                            @if($item->status === 'generated')
-
-                                <span class="status-badge status-success">
-                                    <i class="fas fa-check-circle"></i>
-                                    Berhasil
-                                </span>
-
-                            @elseif($item->status === 'failed')
-
-                                <span class="status-badge status-danger">
-                                    <i class="fas fa-times-circle"></i>
-                                    Gagal
-                                </span>
-
-                            @else
-
-                                <span class="status-badge status-warning">
-                                    <i class="fas fa-clock"></i>
-                                    {{ ucfirst($item->status) }}
-                                </span>
-
-                            @endif
-
-                        </td>
-
-                        <td>
-                            <span class="date-info">
-                                {{ $item->created_at ? $item->created_at->format('d/m/Y H:i') : '-' }}
-                            </span>
-                        </td>
-
-                    </tr>
-
-                @empty
-
-                    <tr>
-                        <td colspan="6">
-
-                            <div class="empty-state">
-                                <i class="fas fa-file-alt"></i>
-                                <h3>Belum Ada Laporan</h3>
-                                <p>
-                                    Belum ada laporan bulanan yang dibuat.
-                                </p>
-                            </div>
-
-                        </td>
-                    </tr>
-
-                @endforelse
-
-            </tbody>
-
-        </table>
-
-    </div>
-
-</div>
-
-
-</div>
-
-@endsection
+@section('page_subtitle', 'Sistem · Laporan & Dokumentasi')
 
 @push('styles')
 
 <style>
+
+    /* ==============================
+       CONTENT HEADER
+    ============================== */
 
     .content-header {
         margin-bottom: 24px;
@@ -294,9 +20,9 @@
 
     .content-header h1 {
         margin: 0;
-        color: #102f47;
-        font-size: 28px;
+        font-size: 24px;
         font-weight: 700;
+        color: #102f47;
     }
 
     .content-header p {
@@ -305,360 +31,480 @@
         font-size: 14px;
     }
 
-    .alert {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 13px 16px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        font-size: 14px;
-    }
 
-    .alert-success {
-        background: #ecfdf3;
-        color: #087443;
-        border: 1px solid #b7ebcc;
-    }
+    /* ==============================
+       REPORT FORM PANEL
+    ============================== */
 
-    .alert-danger {
-        background: #fef2f2;
-        color: #b91c1c;
-        border: 1px solid #fecaca;
-    }
-
-    .report-layout {
-        display: flex;
-        flex-direction: column;
-        gap: 24px;
-    }
-
-    .report-card {
+    .report-panel {
         background: #ffffff;
         border-radius: 12px;
         border: 1px solid #e5e7eb;
-        box-shadow: 0 2px 8px rgba(16, 47, 71, 0.05);
+        box-shadow: 0 4px 14px rgba(16, 47, 71, 0.06);
+        margin-bottom: 24px;
         overflow: hidden;
     }
 
-    .report-card-header {
-        display: flex;
-        align-items: center;
-        gap: 14px;
-        padding: 22px 24px;
-        border-bottom: 1px solid #edf0f2;
+    .report-panel-header {
+        padding: 18px 22px;
+        border-bottom: 1px solid #e5e7eb;
+        background: #fafcfb;
     }
 
-    .report-icon {
-        width: 46px;
-        height: 46px;
-        border-radius: 10px;
-        background: #ecfdf3;
-        color: #087443;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 20px;
-    }
-
-    .report-card-header h2 {
+    .report-panel-header h3 {
         margin: 0;
         color: #102f47;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
     }
 
-    .report-card-header p {
-        margin: 4px 0 0;
+    .report-panel-header p {
+        margin: 5px 0 0;
         color: #6b7280;
         font-size: 13px;
     }
 
-    .report-card form {
-        padding: 24px;
+    .report-panel-body {
+        padding: 22px;
+    }
+
+
+    /* ==============================
+       FORM
+    ============================== */
+
+    .report-form-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
     }
 
     .form-group {
-        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
     }
 
     .form-group label {
-        display: block;
-        margin-bottom: 8px;
-        color: #102f47;
-        font-size: 14px;
+        margin-bottom: 7px;
+        color: #374151;
+        font-size: 13px;
         font-weight: 600;
     }
 
-    .required {
-        color: #dc2626;
-    }
-
-    .form-control {
+    .form-group select {
         width: 100%;
-        min-height: 44px;
-        padding: 10px 13px;
+        height: 42px;
+        padding: 0 12px;
         border: 1px solid #d1d5db;
         border-radius: 7px;
         background: #ffffff;
         color: #374151;
-        font-size: 14px;
+        font-size: 13px;
         outline: none;
         transition: 0.2s;
     }
 
-    .form-control:focus {
+    .form-group select:focus {
         border-color: #087443;
         box-shadow: 0 0 0 3px rgba(8, 116, 67, 0.08);
     }
 
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 18px;
-    }
 
-    .error-text {
-        display: block;
-        margin-top: 6px;
-        color: #dc2626;
-        font-size: 12px;
-    }
+    /* ==============================
+       FORM FOOTER
+    ============================== */
 
-    .report-info {
+    .report-form-footer {
+        margin-top: 20px;
+        padding-top: 18px;
+        border-top: 1px solid #eeeeee;
         display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 14px 16px;
-        margin-top: 4px;
-        border-radius: 8px;
-        background: #f3f8f5;
-        border: 1px solid #d8ebe1;
+        justify-content: flex-end;
     }
 
-    .report-info-icon {
-        color: #087443;
-        font-size: 17px;
-        padding-top: 2px;
-    }
-
-    .report-info strong {
-        display: block;
-        color: #102f47;
-        font-size: 13px;
-        margin-bottom: 4px;
-    }
-
-    .report-info p {
-        margin: 0;
-        color: #5f6b76;
-        font-size: 12px;
-        line-height: 1.6;
-    }
-
-    .form-footer {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 10px;
-        padding-top: 22px;
-        margin-top: 22px;
-        border-top: 1px solid #edf0f2;
-    }
-
-    .btn {
+    .btn-preview {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 8px;
-        min-height: 42px;
-        padding: 10px 17px;
-        border-radius: 7px;
-        text-decoration: none;
+        gap: 7px;
+        min-width: 165px;
+        height: 42px;
+        padding: 0 18px;
         border: none;
-        cursor: pointer;
+        border-radius: 7px;
+        background: #087443;
+        color: #ffffff;
         font-size: 13px;
         font-weight: 600;
+        cursor: pointer;
         transition: 0.2s;
     }
 
-    .btn-primary {
-        background: #087443;
-        color: #ffffff;
+    .btn-preview:hover {
+        background: #065d36;
     }
 
-    .btn-primary:hover {
-        background: #065f37;
+    .btn-preview:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
     }
 
-    .btn-secondary {
-        background: #f3f4f6;
-        color: #374151;
-    }
 
-    .btn-secondary:hover {
-        background: #e5e7eb;
+    /* ==============================
+       REPORT HISTORY
+    ============================== */
+
+    .table-panel {
+        background: #ffffff;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 14px rgba(16, 47, 71, 0.06);
+        overflow: hidden;
     }
 
     .table-panel-header {
+        padding: 18px 22px;
+        border-bottom: 1px solid #e5e7eb;
+        background: #fafcfb;
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        justify-content: space-between;
         gap: 15px;
-        padding: 20px 24px;
-        border-bottom: 1px solid #edf0f2;
     }
 
-    .table-panel-header h2 {
+    .table-panel-header-left h3 {
         margin: 0;
         color: #102f47;
-        font-size: 18px;
+        font-size: 16px;
+        font-weight: 700;
     }
 
-    .table-panel-header p {
-        margin: 4px 0 0;
+    .table-panel-header-left p {
+        margin: 5px 0 0;
         color: #6b7280;
         font-size: 13px;
     }
 
     .total-data {
-        color: #087443;
-        background: #ecfdf3;
-        border: 1px solid #cdebd9;
-        padding: 7px 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 34px;
+        height: 30px;
+        padding: 0 10px;
         border-radius: 20px;
+        background: #e8f5ef;
+        color: #087443;
         font-size: 12px;
-        font-weight: 600;
-        white-space: nowrap;
+        font-weight: 700;
     }
 
     .table-wrapper {
         width: 100%;
         overflow-x: auto;
-        padding: 0 20px 20px;
+        padding: 0;
     }
 
-    .laporan-table {
+    #tableLaporan {
         width: 100% !important;
-        border-collapse: collapse;
-        font-size: 13px;
+        margin: 0 !important;
+        border-collapse: collapse !important;
     }
 
-    .laporan-table thead th {
-        color: #102f47;
-        font-weight: 700;
-        background: #f8faf9;
+    #tableLaporan thead th {
+        padding: 12px 10px;
+        background: #087443;
+        color: #ffffff;
+        border: none;
+        font-size: 12px;
+        font-weight: 600;
         white-space: nowrap;
-    }
-
-    .laporan-table tbody td {
         vertical-align: middle;
     }
 
-    .report-name {
-        font-weight: 600;
-        color: #102f47;
-    }
-
-    .period-badge {
-        display: inline-block;
-        padding: 5px 9px;
-        border-radius: 6px;
-        background: #f3f4f6;
+    #tableLaporan tbody td {
+        padding: 11px 10px;
+        border-bottom: 1px solid #eeeeee;
         color: #374151;
         font-size: 12px;
-        white-space: nowrap;
+        vertical-align: middle;
     }
 
-    .file-name {
+    #tableLaporan tbody tr:hover td {
+        background: #f8faf9;
+    }
+
+    #tableLaporan tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+
+    /* ==============================
+       TABLE CONTENT
+    ============================== */
+
+    .report-number {
+        font-weight: 600;
+        color: #6b7280;
+    }
+
+    .report-title-cell {
+        color: #102f47;
+        font-weight: 600;
+    }
+
+    .report-menu {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        color: #b91c1c;
-        font-size: 12px;
-    }
-
-    .text-muted {
-        color: #9ca3af;
-    }
-
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        padding: 5px 9px;
+        padding: 4px 9px;
         border-radius: 20px;
+        background: #eef6f2;
+        color: #087443;
         font-size: 11px;
         font-weight: 600;
         white-space: nowrap;
     }
 
-    .status-success {
+    .report-period {
+        color: #374151;
+        white-space: nowrap;
+    }
+
+    .report-status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4px 9px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .report-status.generated {
+        background: #e8f5ef;
         color: #087443;
-        background: #ecfdf3;
     }
 
-    .status-danger {
+    .report-status.failed {
+        background: #fee2e2;
         color: #b91c1c;
-        background: #fef2f2;
     }
 
-    .status-warning {
-        color: #92400e;
-        background: #fffbeb;
+    .report-status.draft {
+        background: #f3f4f6;
+        color: #6b7280;
     }
 
-    .date-info {
+    .report-status.pending {
+        background: #fff7ed;
+        color: #c2410c;
+    }
+
+    .report-date {
         color: #6b7280;
         white-space: nowrap;
+    }
+
+
+    /* ==============================
+       ACTION
+    ============================== */
+
+    .report-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        white-space: nowrap;
+    }
+
+    .report-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 52px;
+        height: 30px;
+        padding: 0 9px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .report-action-preview {
+        border: 1px solid #087443;
+        background: #ffffff;
+        color: #087443;
+    }
+
+    .report-action-preview:hover {
+        background: #087443;
+        color: #ffffff;
+    }
+
+
+    /* ==============================
+       ALERT
+    ============================== */
+
+    .report-alert {
+        margin-bottom: 20px;
+        padding: 12px 15px;
+        border-radius: 8px;
+        font-size: 13px;
+    }
+
+    .report-alert-success {
+        background: #e8f5ef;
+        border: 1px solid #b8dfca;
+        color: #087443;
+    }
+
+    .report-alert-error {
+        background: #fee2e2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+    }
+
+    .report-alert-warning {
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        color: #c2410c;
+    }
+
+
+    /* ==============================
+       EMPTY STATE
+    ============================== */
+
+    .empty-state {
+        padding: 45px 20px;
+        text-align: center;
+        color: #6b7280;
+    }
+
+    .empty-state-icon {
+        margin-bottom: 10px;
+        font-size: 28px;
+        opacity: 0.6;
+    }
+
+    .empty-state-title {
+        margin-bottom: 4px;
+        color: #374151;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .empty-state-text {
         font-size: 12px;
     }
 
-    .empty-state {
-        text-align: center;
-        padding: 50px 20px;
-        color: #9ca3af;
+
+    /* ==============================
+       DATATABLES
+    ============================== */
+
+    .dt-container {
+        padding: 15px 20px 18px;
     }
 
-    .empty-state i {
-        font-size: 40px;
-        margin-bottom: 12px;
+    .dt-layout-row {
+        margin: 0 0 12px !important;
     }
 
-    .empty-state h3 {
-        margin: 0 0 5px;
+    .dt-length,
+    .dt-search {
+        font-size: 12px;
         color: #6b7280;
-        font-size: 16px;
     }
 
-    .empty-state p {
-        margin: 0;
-        font-size: 13px;
+    .dt-length select,
+    .dt-search input {
+        height: 34px;
+        border: 1px solid #d1d5db !important;
+        border-radius: 6px !important;
+        outline: none;
+        font-size: 12px;
+    }
+
+    .dt-search input {
+        margin-left: 6px;
+        padding: 0 9px;
+    }
+
+    .dt-search input:focus,
+    .dt-length select:focus {
+        border-color: #087443 !important;
+        box-shadow: 0 0 0 2px rgba(8, 116, 67, 0.08);
+    }
+
+    .dt-info {
+        color: #6b7280 !important;
+        font-size: 12px !important;
+    }
+
+    .dt-paging-button {
+        min-width: 32px !important;
+        height: 32px !important;
+        margin-left: 3px !important;
+        border-radius: 6px !important;
+        font-size: 12px !important;
+    }
+
+    .dt-paging-button.current {
+        background: #087443 !important;
+        border-color: #087443 !important;
+        color: #ffffff !important;
+    }
+
+    .dt-paging-button:hover:not(.disabled) {
+        background: #e8f5ef !important;
+        border-color: #087443 !important;
+        color: #087443 !important;
+    }
+
+
+    /* ==============================
+       RESPONSIVE
+    ============================== */
+
+    @media (max-width: 900px) {
+
+        .report-form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .report-form-footer {
+            justify-content: stretch;
+        }
+
+        .btn-preview {
+            width: 100%;
+        }
+
     }
 
     @media (max-width: 700px) {
 
         .content-header h1 {
-            font-size: 23px;
+            font-size: 21px;
         }
 
-        .form-row {
-            grid-template-columns: 1fr;
-            gap: 0;
-        }
-
-        .form-footer {
-            flex-direction: column-reverse;
-            align-items: stretch;
-        }
-
-        .form-footer .btn {
-            width: 100%;
+        .report-panel-body {
+            padding: 16px;
         }
 
         .table-panel-header {
+            padding: 16px;
             align-items: flex-start;
-            flex-direction: column;
+        }
+
+        .dt-container {
+            padding: 12px;
         }
 
     }
@@ -667,49 +513,602 @@
 
 @endpush
 
+@section('content')
+
+<div class="content-header">
+
+
+<h1>
+    Laporan Bulanan
+</h1>
+
+<p>
+    Buat dan lihat laporan data Kelurahan Binong berdasarkan periode bulan dan tahun.
+</p>
+
+
+</div>
+
+{{-- ==========================================
+ALERT
+========================================== --}}
+
+@if(session('success'))
+
+
+<div class="report-alert report-alert-success">
+    {{ session('success') }}
+</div>
+
+
+@endif
+
+@if(session('error'))
+
+
+<div class="report-alert report-alert-error">
+    {{ session('error') }}
+</div>
+
+
+@endif
+
+@if(session('warning'))
+
+
+<div class="report-alert report-alert-warning">
+    {{ session('warning') }}
+</div>
+
+
+@endif
+
+{{-- ==========================================
+FORM PEMBUATAN LAPORAN
+========================================== --}}
+
+<div class="report-panel">
+
+
+<div class="report-panel-header">
+
+    <h3>
+        Buat Laporan Baru
+    </h3>
+
+    <p>
+        Pilih menu data dan periode laporan yang ingin ditampilkan.
+    </p>
+
+</div>
+
+
+<div class="report-panel-body">
+
+    <form
+        action="{{ route('laporan.preview') }}"
+        method="POST"
+        id="formLaporan"
+    >
+
+        @csrf
+
+        <div class="report-form-grid">
+
+            {{-- MENU --}}
+
+            <div class="form-group">
+
+                <label for="menu">
+                    Menu Data
+                </label>
+
+                <select
+                    name="menu"
+                    id="menu"
+                    required
+                >
+
+                    <option value="">
+                        -- Pilih Menu Data --
+                    </option>
+
+                    @foreach($daftarMenu as $key => $nama)
+
+                        <option
+                            value="{{ $key }}"
+                            {{ old('menu') == $key ? 'selected' : '' }}
+                        >
+                            {{ $nama }}
+                        </option>
+
+                    @endforeach
+
+                </select>
+
+            </div>
+
+
+            {{-- BULAN --}}
+
+            <div class="form-group">
+
+                <label for="bulan">
+                    Bulan
+                </label>
+
+                <select
+                    name="bulan"
+                    id="bulan"
+                    required
+                >
+
+                    <option value="">
+                        -- Pilih Bulan --
+                    </option>
+
+                    @foreach($daftarBulan as $key => $namaBulan)
+
+                        <option
+                            value="{{ $key }}"
+                            {{ old('bulan') == $key ? 'selected' : '' }}
+                        >
+                            {{ $namaBulan }}
+                        </option>
+
+                    @endforeach
+
+                </select>
+
+            </div>
+
+
+            {{-- TAHUN --}}
+
+            <div class="form-group">
+
+                <label for="tahun">
+                    Tahun
+                </label>
+
+                <select
+                    name="tahun"
+                    id="tahun"
+                    required
+                >
+
+                    <option value="">
+                        -- Pilih Tahun --
+                    </option>
+
+                    @for($tahun = $tahunSekarang; $tahun >= 2020; $tahun--)
+
+                        <option
+                            value="{{ $tahun }}"
+                            {{ old('tahun', $tahunSekarang) == $tahun ? 'selected' : '' }}
+                        >
+                            {{ $tahun }}
+                        </option>
+
+                    @endfor
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="report-form-footer">
+
+            <button
+                type="submit"
+                class="btn-preview"
+                id="btnPreview"
+            >
+                <i class="fas fa-eye"></i>
+                Tampilkan Preview
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+</div>
+
+{{-- ==========================================
+RIWAYAT LAPORAN
+========================================== --}}
+
+<div class="table-panel">
+
+
+<div class="table-panel-header">
+
+    <div class="table-panel-header-left">
+
+        <h3>
+            Riwayat Laporan
+        </h3>
+
+        <p>
+            Daftar laporan yang pernah dibuat melalui SIMPULDASI.
+        </p>
+
+    </div>
+
+    <div class="total-data">
+        {{ $laporan->count() }}
+    </div>
+
+</div>
+
+
+<div class="table-wrapper">
+
+    @if($laporan->count())
+
+        <table
+            id="tableLaporan"
+            class="display"
+            style="width:100%"
+        >
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        No
+                    </th>
+
+                    <th>
+                        Judul Laporan
+                    </th>
+
+                    <th>
+                        Menu
+                    </th>
+
+                    <th>
+                        Periode
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Dibuat
+                    </th>
+
+                    <th>
+                        Aksi
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                @foreach($laporan as $index => $item)
+
+                    <tr>
+
+                        <td class="text-center">
+
+                            <span class="report-number">
+                                {{ $index + 1 }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="report-title-cell">
+                                {{ $item->judul_laporan ?: '-' }}
+                            </div>
+
+                        </td>
+
+
+                        <td>
+
+                            @php
+
+                                $namaMenuRiwayat =
+                                    $daftarMenu[$item->menu]
+                                    ?? $item->menu;
+
+                            @endphp
+
+                            <span class="report-menu">
+                                {{ $namaMenuRiwayat }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            @php
+
+                                $namaBulanRiwayat =
+                                    $daftarBulan[$item->bulan]
+                                    ?? '-';
+
+                            @endphp
+
+                            <span class="report-period">
+                                {{ $namaBulanRiwayat }}
+                                {{ $item->tahun }}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            @php
+
+                                $status =
+                                    strtolower(
+                                        $item->status ?? 'draft'
+                                    );
+
+                            @endphp
+
+                            <span class="report-status {{ $status }}">
+
+                                @if($status === 'generated')
+
+                                    Berhasil
+
+                                @elseif($status === 'failed')
+
+                                    Gagal
+
+                                @elseif($status === 'pending')
+
+                                    Menunggu
+
+                                @else
+
+                                    Draft
+
+                                @endif
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="report-date">
+
+                                {{ $item->created_at
+                                    ? $item->created_at->format('d/m/Y H:i')
+                                    : '-' }}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <div class="report-actions">
+
+                                <form
+                                    action="{{ route('laporan.preview') }}"
+                                    method="POST"
+                                    style="display:inline;"
+                                >
+
+                                    @csrf
+
+                                    <input
+                                        type="hidden"
+                                        name="menu"
+                                        value="{{ $item->menu }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="bulan"
+                                        value="{{ $item->bulan }}"
+                                    >
+
+                                    <input
+                                        type="hidden"
+                                        name="tahun"
+                                        value="{{ $item->tahun }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="report-action report-action-preview"
+                                    >
+                                        <i class="fas fa-eye"></i>
+                                        Lihat
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                @endforeach
+
+            </tbody>
+
+        </table>
+
+    @else
+
+        <div class="empty-state">
+
+            <div class="empty-state-icon">
+                ▤
+            </div>
+
+            <div class="empty-state-title">
+                Belum Ada Riwayat Laporan
+            </div>
+
+            <div class="empty-state-text">
+                Laporan yang sudah dibuat akan muncul di sini.
+            </div>
+
+        </div>
+
+    @endif
+
+</div>
+
+
+</div>
+
+@endsection
+
 @push('scripts')
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
 
-        if (typeof DataTable !== 'undefined') {
+document.addEventListener('DOMContentLoaded', function () {
 
-            new DataTable('#tableLaporan', {
-                pageLength: 10,
+    /* ==========================================
+       DATA TABLES
+    ========================================== */
 
-                lengthMenu: [
-                    [10, 25, 50, 100],
-                    [10, 25, 50, 100]
-                ],
+    if (
+        typeof DataTable !== 'undefined' &&
+        document.querySelector('#tableLaporan')
+    ) {
 
-                order: [],
+        new DataTable('#tableLaporan', {
 
-                columnDefs: [
-                    {
-                        targets: [0, 5],
-                        orderable: false
-                    }
-                ],
+            pageLength: 10,
 
-                language: {
-                    search: 'Cari:',
-                    lengthMenu: 'Tampilkan _MENU_ data',
-                    info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ laporan',
-                    infoEmpty: 'Tidak ada laporan',
-                    zeroRecords: 'Data tidak ditemukan',
-                    emptyTable: 'Belum ada laporan',
-                    paginate: {
-                        first: 'Pertama',
-                        last: 'Terakhir',
-                        next: 'Berikutnya',
-                        previous: 'Sebelumnya'
-                    }
+            lengthMenu: [
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
+            ],
+
+            language: {
+                search: 'Cari:',
+                lengthMenu: 'Tampilkan _MENU_ data',
+                info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+                infoEmpty: 'Tidak ada data',
+                infoFiltered: '(difilter dari _MAX_ total data)',
+                zeroRecords: 'Data tidak ditemukan',
+                emptyTable: 'Belum ada data laporan',
+
+                paginate: {
+                    first: 'Pertama',
+                    last: 'Terakhir',
+                    next: '›',
+                    previous: '‹'
                 }
-            });
+            },
 
-        }
+            /*
+             * Mempertahankan urutan dari Controller.
+             */
+            order: [],
 
-    });
+            columnDefs: [
+
+                {
+                    targets: 0,
+                    orderable: false,
+                    searchable: false
+                },
+
+                {
+                    targets: 6,
+                    orderable: false,
+                    searchable: false
+                }
+
+            ],
+
+            drawCallback: function () {
+
+                var api = this.api();
+
+                var info = api.page.info();
+
+                api.rows({
+                    page: 'current'
+                }).every(function (rowIdx, tableLoop, rowLoop) {
+
+                    var cell = this
+                        .node()
+                        .querySelector('td:first-child');
+
+                    if (cell) {
+
+                        cell.innerHTML =
+                            '<span class="report-number">' +
+                            (
+                                info.start +
+                                rowLoop +
+                                1
+                            ) +
+                            '</span>';
+
+                    }
+
+                });
+
+            }
+
+        });
+
+    }
+
+
+    /* ==========================================
+       SUBMIT PREVIEW
+    ========================================== */
+
+    var formLaporan =
+        document.getElementById('formLaporan');
+
+    var btnPreview =
+        document.getElementById('btnPreview');
+
+
+    if (formLaporan && btnPreview) {
+
+        formLaporan.addEventListener(
+            'submit',
+            function () {
+
+                btnPreview.disabled = true;
+
+                btnPreview.innerHTML =
+                    '<i class="fas fa-spinner fa-spin"></i> ' +
+                    'Memproses Preview...';
+
+            }
+        );
+
+    }
+
+});
+
 </script>
 
 @endpush
