@@ -13,6 +13,7 @@ class DataStunting extends Model
         'nama',
         'tanggal_lahir',
         'jenis_kelamin',
+        'rw',
         'status',
         'keterangan',
         'google_sync_status',

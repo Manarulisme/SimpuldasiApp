@@ -294,6 +294,7 @@
 }
 
 @media (max-width: 800px) {
+
     .detail-grid {
         grid-template-columns: 1fr;
     }
@@ -310,9 +311,11 @@
         align-items: flex-start;
         flex-direction: column;
     }
+
 }
 
 @media (max-width: 600px) {
+
     .detail-body {
         padding: 22px 18px;
     }
@@ -335,6 +338,7 @@
     .detail-actions .btn {
         flex: 1;
     }
+
 }
 </style>
 
@@ -343,7 +347,6 @@
 @section('content')
 
 <div class="breadcrumb">
-
 
 <a href="{{ route('dashboard') }}">
     Beranda
@@ -361,11 +364,9 @@
     Detail Data
 </span>
 
-
 </div>
 
 <div class="page-title-block">
-
 
 <h2>
     Detail Data Stunting
@@ -375,335 +376,389 @@
     Informasi lengkap data stunting anak Kelurahan Binong.
 </p>
 
-
 </div>
 
 <div class="detail-card">
 
-
 <div class="detail-header">
 
-    <div class="detail-header-info">
 
-        <h3>
-            {{ $stunting->nama }}
-        </h3>
+<div class="detail-header-info">
 
-        <p>
-            Detail informasi data stunting Kelurahan Binong
-        </p>
+    <h3>
+        {{ $stunting->nama }}
+    </h3>
 
-    </div>
+    <p>
+        Detail informasi data stunting Kelurahan Binong
+    </p>
 
-    <div class="id-badge">
-        NIK: {{ $stunting->nik }}
-    </div>
+</div>
+
+<div class="id-badge">
+    NIK: {{ $stunting->nik }}
+</div>
+
 
 </div>
 
 <div class="detail-body">
 
-    {{-- IDENTITAS ANAK --}}
-    <div class="detail-section">
+{{-- IDENTITAS ANAK --}}
 
-        <div class="section-title">
+<div class="detail-section">
 
-            <span class="section-number">
-                1
-            </span>
 
-            Identitas Anak
+<div class="section-title">
 
-        </div>
+    <span class="section-number">
+        1
+    </span>
 
-        <div class="detail-grid">
+    Identitas Anak
 
-            <div class="detail-item">
+</div>
 
-                <span class="detail-label">
-                    NIK
-                </span>
+<div class="detail-grid">
 
-                <span class="detail-value">
-                    {{ $stunting->nik }}
-                </span>
+    <div class="detail-item">
 
-            </div>
+        <span class="detail-label">
+            NIK
+        </span>
 
-            <div class="detail-item">
-
-                <span class="detail-label">
-                    Nama Anak
-                </span>
-
-                <span class="detail-value">
-                    {{ $stunting->nama }}
-                </span>
-
-            </div>
-
-            <div class="detail-item">
-
-                <span class="detail-label">
-                    Tanggal Lahir
-                </span>
-
-                <span class="detail-value">
-                    {{ $stunting->tanggal_lahir
-                        ? $stunting->tanggal_lahir->translatedFormat('d F Y')
-                        : '-' }}
-                </span>
-
-            </div>
-
-            <div class="detail-item">
-
-                <span class="detail-label">
-                    Usia
-                </span>
-
-                <span class="detail-value">
-
-                    {{ $stunting->tanggal_lahir
-                        ? $stunting->tanggal_lahir->age . ' tahun'
-                        : '-' }}
-
-                </span>
-
-            </div>
-
-            <div class="detail-item">
-
-                <span class="detail-label">
-                    Jenis Kelamin
-                </span>
-
-                <span class="detail-value">
-
-                    <span class="badge badge-gender">
-                        {{ $stunting->jenis_kelamin }}
-                    </span>
-
-                </span>
-
-            </div>
-
-        </div>
+        <span class="detail-value">
+            {{ $stunting->nik }}
+        </span>
 
     </div>
 
+    <div class="detail-item">
 
-    {{-- DATA PEMANTAUAN --}}
-    <div class="detail-section">
+        <span class="detail-label">
+            Nama Anak
+        </span>
 
-        <div class="section-title">
-
-            <span class="section-number">
-                2
-            </span>
-
-            Data Pemantauan
-
-        </div>
-
-        <div class="detail-grid">
-
-            <div class="detail-item">
-
-                <span class="detail-label">
-                    Status
-                </span>
-
-                <span class="detail-value">
-
-                    @if($stunting->status === 'Normal')
-
-                        <span class="badge badge-normal">
-                            Normal
-                        </span>
-
-                    @elseif($stunting->status === 'Berisiko')
-
-                        <span class="badge badge-risk">
-                            Berisiko
-                        </span>
-
-                    @else
-
-                        <span class="badge badge-stunting">
-                            Stunting
-                        </span>
-
-                    @endif
-
-                </span>
-
-            </div>
-
-            <div class="detail-item">
-
-                <span class="detail-label">
-                    Usia Saat Ini
-                </span>
-
-                <span class="detail-value">
-
-                    {{ $stunting->tanggal_lahir
-                        ? $stunting->tanggal_lahir->age . ' tahun'
-                        : '-' }}
-
-                </span>
-
-            </div>
-
-        </div>
+        <span class="detail-value">
+            {{ $stunting->nama }}
+        </span>
 
     </div>
 
+    <div class="detail-item">
 
-    {{-- KETERANGAN --}}
-    <div class="detail-section">
+        <span class="detail-label">
+            RW
+        </span>
 
-        <div class="section-title">
+        <span class="detail-value">
+            {{ $stunting->rw ?: '-' }}
+        </span>
 
-            <span class="section-number">
-                3
-            </span>
+    </div>
 
-            Keterangan
+    <div class="detail-item">
 
-        </div>
+        <span class="detail-label">
+            Tanggal Lahir
+        </span>
 
-        <div class="keterangan-box">
+        <span class="detail-value">
+            {{ $stunting->tanggal_lahir
+                ? $stunting->tanggal_lahir->translatedFormat('d F Y')
+                : '-' }}
+        </span>
 
-            @if($stunting->keterangan)
+    </div>
 
-                {{ $stunting->keterangan }}
+    <div class="detail-item">
+
+        <span class="detail-label">
+            Usia
+        </span>
+
+        <span class="detail-value">
+
+            @if($stunting->tanggal_lahir)
+
+                @php
+                    $tanggalLahir = $stunting->tanggal_lahir;
+                    $hariIni = now();
+
+                    $usiaBulan =
+                        (($hariIni->year - $tanggalLahir->year) * 12)
+                        + ($hariIni->month - $tanggalLahir->month);
+
+                    if ($hariIni->day < $tanggalLahir->day) {
+                        $usiaBulan--;
+                    }
+
+                    $usiaBulan = max(0, $usiaBulan);
+                @endphp
+
+                {{ $usiaBulan }} bulan
 
             @else
 
-                <span class="keterangan-empty">
-                    Tidak ada keterangan tambahan.
+                -
+
+            @endif
+
+        </span>
+
+    </div>
+
+    <div class="detail-item">
+
+        <span class="detail-label">
+            Jenis Kelamin
+        </span>
+
+        <span class="detail-value">
+
+            <span class="badge badge-gender">
+                {{ $stunting->jenis_kelamin }}
+            </span>
+
+        </span>
+
+    </div>
+
+</div>
+
+
+</div>
+
+{{-- DATA PEMANTAUAN --}}
+
+<div class="detail-section">
+
+
+<div class="section-title">
+
+    <span class="section-number">
+        2
+    </span>
+
+    Data Pemantauan
+
+</div>
+
+<div class="detail-grid">
+
+    <div class="detail-item">
+
+        <span class="detail-label">
+            Status
+        </span>
+
+        <span class="detail-value">
+
+            @if($stunting->status === 'Normal')
+
+                <span class="badge badge-normal">
+                    Normal
+                </span>
+
+            @elseif($stunting->status === 'Berisiko')
+
+                <span class="badge badge-risk">
+                    Berisiko
+                </span>
+
+            @else
+
+                <span class="badge badge-stunting">
+                    Stunting
                 </span>
 
             @endif
 
-        </div>
+        </span>
 
     </div>
 
+    <div class="detail-item">
 
-    {{-- SINKRONISASI --}}
-    <div class="detail-section">
+        <span class="detail-label">
+            Usia Saat Ini
+        </span>
 
-        <div class="section-title">
+        <span class="detail-value">
 
-            <span class="section-number">
-                4
-            </span>
+            @if($stunting->tanggal_lahir)
 
-            Informasi Data
+                {{ $usiaBulan }} bulan
 
-        </div>
+            @else
 
-        @php
-            $syncStatus = $stunting->google_sync_status ?? 'pending';
-        @endphp
+                -
 
-        <div class="info-grid">
+            @endif
 
-            <div class="info-item">
-
-                <span>
-                    Status Data
-                </span>
-
-                @if($syncStatus === 'synced')
-
-                    <strong>
-                        <span class="status-sync synced">
-                            ● Tersinkronisasi
-                        </span>
-                    </strong>
-
-                @elseif($syncStatus === 'failed')
-
-                    <strong>
-                        <span class="status-sync failed">
-                            ● Gagal Sinkronisasi
-                        </span>
-                    </strong>
-
-                @else
-
-                    <strong>
-                        <span class="status-sync pending">
-                            ● Menunggu Sinkronisasi
-                        </span>
-                    </strong>
-
-                @endif
-
-            </div>
-
-            <div class="info-item">
-
-                <span>
-                    Dibuat
-                </span>
-
-                <strong>
-                    {{ $stunting->created_at
-                        ? $stunting->created_at->translatedFormat('d F Y, H:i') . ' WIB'
-                        : '-' }}
-                </strong>
-
-            </div>
-
-            <div class="info-item">
-
-                <span>
-                    Terakhir Diperbarui
-                </span>
-
-                <strong>
-                    {{ $stunting->updated_at
-                        ? $stunting->updated_at->translatedFormat('d F Y, H:i') . ' WIB'
-                        : '-' }}
-                </strong>
-
-            </div>
-
-        </div>
+        </span>
 
     </div>
 
 </div>
 
+
+</div>
+
+{{-- KETERANGAN --}}
+
+<div class="detail-section">
+
+
+<div class="section-title">
+
+    <span class="section-number">
+        3
+    </span>
+
+    Keterangan
+
+</div>
+
+<div class="keterangan-box">
+
+    @if($stunting->keterangan)
+
+        {{ $stunting->keterangan }}
+
+    @else
+
+        <span class="keterangan-empty">
+            Tidak ada keterangan tambahan.
+        </span>
+
+    @endif
+
+</div>
+
+
+</div>
+
+{{-- SINKRONISASI --}}
+
+<div class="detail-section">
+
+
+<div class="section-title">
+
+    <span class="section-number">
+        4
+    </span>
+
+    Informasi Data
+
+</div>
+
+@php
+    $syncStatus = $stunting->google_sync_status ?? 'pending';
+@endphp
+
+<div class="info-grid">
+
+    <div class="info-item">
+
+        <span>
+            Status Data
+        </span>
+
+        @if($syncStatus === 'synced')
+
+            <strong>
+                <span class="status-sync synced">
+                    ● Tersinkronisasi
+                </span>
+            </strong>
+
+        @elseif($syncStatus === 'failed')
+
+            <strong>
+                <span class="status-sync failed">
+                    ● Gagal Sinkronisasi
+                </span>
+            </strong>
+
+        @else
+
+            <strong>
+                <span class="status-sync pending">
+                    ● Menunggu Sinkronisasi
+                </span>
+            </strong>
+
+        @endif
+
+    </div>
+
+    <div class="info-item">
+
+        <span>
+            Dibuat
+        </span>
+
+        <strong>
+            {{ $stunting->created_at
+                ? $stunting->created_at->translatedFormat('d F Y, H:i') . ' WIB'
+                : '-' }}
+        </strong>
+
+    </div>
+
+    <div class="info-item">
+
+        <span>
+            Terakhir Diperbarui
+        </span>
+
+        <strong>
+            {{ $stunting->updated_at
+                ? $stunting->updated_at->translatedFormat('d F Y, H:i') . ' WIB'
+                : '-' }}
+        </strong>
+
+    </div>
+
+</div>
+
+
+</div>
+
+</div>
 
 {{-- FOOTER --}}
+
 <div class="detail-footer">
 
-    <a
-        href="{{ route('datastunting.index') }}"
-        class="btn btn-secondary"
-    >
-        ← Kembali
-    </a>
+<a
+href="{{ route('datastunting.index') }}"
+class="btn btn-secondary"
 
-    <div class="detail-actions">
+>
 
-        <a
-            href="{{ route('datastunting.edit', $stunting->id) }}"
-            class="btn btn-primary"
-        >
-            ✎ Ubah Data
-        </a>
 
-    </div>
+← Kembali
+
+
+</a>
+
+<div class="detail-actions">
+
+
+<a
+    href="{{ route('datastunting.edit', $stunting->id) }}"
+    class="btn btn-primary"
+>
+    ✎ Ubah Data
+</a>
+
 
 </div>
 
+</div>
 
 </div>
 

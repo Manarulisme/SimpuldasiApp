@@ -25,7 +25,6 @@
         color: #18364d;
         font-family: Georgia, serif;
         font-size: 26px;
-        margin: 0;
     }
 
     .content-header p,
@@ -33,7 +32,6 @@
         color: var(--muted);
         font-size: 12px;
         margin-top: 6px;
-        margin-bottom: 0;
     }
 
     .btn-add {
@@ -49,7 +47,6 @@
         font-weight: bold;
         cursor: pointer;
         text-decoration: none;
-        white-space: nowrap;
     }
 
     .btn-add:hover {
@@ -72,7 +69,6 @@
     .table-panel-header h3 {
         color: #18364d;
         font-size: 16px;
-        margin: 0;
     }
 
     .total-data {
@@ -111,83 +107,6 @@
         vertical-align: middle;
     }
 
-    #linmasTable tbody tr:last-child td {
-        border-bottom: 0;
-    }
-
-    /* =========================
-       DATATABLES
-    ========================= */
-
-    #linmasTable_wrapper {
-        font-size: 12px;
-    }
-
-    #linmasTable_wrapper .dt-layout-row {
-        margin: 12px 0;
-    }
-
-    #linmasTable_wrapper .dt-length,
-    #linmasTable_wrapper .dt-search {
-        color: #52616b;
-        font-size: 12px;
-    }
-
-    #linmasTable_wrapper .dt-length select,
-    #linmasTable_wrapper .dt-search input {
-        border: 1px solid #dfe5e8;
-        border-radius: 6px;
-        background: white;
-        color: #52616b;
-        font-size: 12px;
-        padding: 7px 9px;
-        outline: none;
-    }
-
-    #linmasTable_wrapper .dt-length select {
-        margin: 0 5px;
-    }
-
-    #linmasTable_wrapper .dt-search input {
-        margin-left: 7px;
-        width: 200px;
-    }
-
-    #linmasTable_wrapper .dt-length select:focus,
-    #linmasTable_wrapper .dt-search input:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 2px rgba(8, 116, 67, 0.08);
-    }
-
-    #linmasTable_wrapper .dt-info {
-        color: #7a858d;
-        font-size: 11px;
-    }
-
-    #linmasTable_wrapper .dt-paging-button {
-        border: 1px solid #dfe5e8 !important;
-        border-radius: 6px !important;
-        background: white !important;
-        color: #52616b !important;
-        font-size: 11px !important;
-    }
-
-    #linmasTable_wrapper .dt-paging-button:hover {
-        background: var(--primary-light) !important;
-        color: var(--primary) !important;
-        border-color: var(--primary) !important;
-    }
-
-    #linmasTable_wrapper .dt-paging-button.current {
-        background: var(--primary) !important;
-        color: white !important;
-        border-color: var(--primary) !important;
-    }
-
-    /* =========================
-       BADGE
-    ========================= */
-
     .badge {
         display: inline-block;
         padding: 5px 9px;
@@ -198,18 +117,18 @@
     }
 
     .badge-rw {
-        background: #edf4fb;
-        color: #3971a9;
+        background: #eef6fc;
+        color: #2d6a9f;
     }
 
     .badge-count {
-        background: #eaf5ef;
-        color: #087443;
+        background: var(--primary-light);
+        color: var(--primary);
     }
 
     .badge-pos {
-        background: #fff7e6;
-        color: #a66a00;
+        background: #fff7df;
+        color: #987500;
     }
 
     .badge-default {
@@ -217,9 +136,42 @@
         color: #58636a;
     }
 
-    /* =========================
-       TITIK POSKAMLING
-    ========================= */
+    .linmas-name {
+        color: #18364d;
+        font-weight: 600;
+    }
+
+    .linmas-id {
+        color: #8a969d;
+        font-size: 10px;
+        margin-top: 3px;
+    }
+
+    .nik {
+        color: #52616b;
+        font-size: 11px;
+        white-space: nowrap;
+    }
+
+    .linmas-alamat {
+        max-width: 220px;
+        color: #52616b;
+        line-height: 1.5;
+    }
+
+    .linmas-pekerjaan {
+        max-width: 180px;
+        color: #52616b;
+        line-height: 1.5;
+    }
+
+    .linmas-keterangan {
+        max-width: 220px;
+        color: #52616b;
+        line-height: 1.5;
+    }
+
+    /* TITIK POSKAMLING */
 
     .poskamling-location {
         min-width: 150px;
@@ -237,7 +189,7 @@
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        color: #3971a9;
+        color: #2d6a9f;
         font-size: 10px;
         font-weight: 600;
         text-decoration: none;
@@ -249,55 +201,7 @@
         text-decoration: underline;
     }
 
-    /* =========================
-       DATA LINMAS
-    ========================= */
-
-    .linmas-name {
-        color: #18364d;
-        font-weight: 600;
-        white-space: nowrap;
-    }
-
-    .linmas-id {
-        color: #8a969d;
-        font-size: 10px;
-        margin-top: 3px;
-    }
-
-    .nik {
-        color: #52616b;
-        font-size: 11px;
-        white-space: nowrap;
-    }
-
-    .address {
-        color: #52616b;
-        font-size: 11px;
-        line-height: 1.5;
-        min-width: 180px;
-        max-width: 280px;
-    }
-
-    .occupation {
-        color: #52616b;
-        font-size: 11px;
-        line-height: 1.5;
-        min-width: 120px;
-        max-width: 200px;
-    }
-
-    .description {
-        color: #52616b;
-        font-size: 11px;
-        line-height: 1.5;
-        min-width: 180px;
-        max-width: 280px;
-    }
-
-    /* =========================
-       TERAKHIR PERUBAHAN
-    ========================= */
+    /* TERAKHIR PERUBAHAN */
 
     .last-update {
         min-width: 125px;
@@ -318,9 +222,7 @@
         white-space: nowrap;
     }
 
-    /* =========================
-       ACTION
-    ========================= */
+    /* ACTION */
 
     .action-buttons {
         display: flex;
@@ -339,17 +241,21 @@
         justify-content: center;
         text-decoration: none;
         font-size: 15px;
-        padding: 0;
+        transition: all 0.15s ease;
     }
 
-    .action-view {
-        color: #2d6a9f;
+    /* SHOW */
+
+    .action-show {
+        color: #52616b;
     }
 
-    .action-view:hover {
-        background: #edf5fb;
-        color: #2d6a9f;
+    .action-show:hover {
+        background: #f1f3f4;
+        color: #18364d;
     }
+
+    /* EDIT */
 
     .action-edit {
         color: var(--primary);
@@ -359,6 +265,8 @@
         background: var(--primary-light);
         color: var(--primary);
     }
+
+    /* DELETE */
 
     .action-delete {
         color: #c0392b;
@@ -379,43 +287,52 @@
         font-family: inherit;
     }
 
-    /* =========================
-       ALERT
-    ========================= */
+    /* DATATABLES */
 
-    .alert-success,
-    .alert-error {
-        margin-bottom: 20px;
-        padding: 12px 15px;
-        border-radius: 7px;
+    .dt-container {
+        font-size: 12px;
+        color: #52616b;
+    }
+
+    .dt-layout-row {
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+
+    .dt-length,
+    .dt-search {
         font-size: 12px;
     }
 
-    .alert-success {
-        background: #eaf5ef;
-        color: #087443;
-        border: 1px solid #cce7d9;
+    .dt-length select,
+    .dt-search input {
+        border: 1px solid var(--border) !important;
+        border-radius: 6px !important;
+        padding: 7px 10px !important;
+        font-size: 12px !important;
+        outline: none;
     }
 
-    .alert-error {
-        background: #fff0ee;
-        color: #c0392b;
-        border: 1px solid #f3d0cc;
+    .dt-length select:focus,
+    .dt-search input:focus {
+        border-color: var(--primary) !important;
+        box-shadow: 0 0 0 2px rgba(8, 116, 67, 0.08);
     }
 
-    /* =========================
-       EMPTY
-    ========================= */
-
-    .empty-state {
-        text-align: center;
-        padding: 30px !important;
-        color: #8a969d;
+    .dt-search input {
+        margin-left: 6px !important;
+        min-width: 190px;
     }
 
-    /* =========================
-       RESPONSIVE
-    ========================= */
+    .dt-info {
+        color: #8a969d !important;
+        font-size: 11px !important;
+    }
+
+    .dt-paging button {
+        border-radius: 5px !important;
+        font-size: 11px !important;
+    }
 
     @media (max-width: 700px) {
 
@@ -424,34 +341,14 @@
             flex-direction: column;
         }
 
-        .content-header h2 {
-            font-size: 23px;
-        }
-
-        .btn-add {
-            width: 100%;
-            justify-content: center;
-        }
-
-        .table-panel-header {
-            align-items: flex-start;
-            flex-direction: column;
-        }
-
-        #linmasTable_wrapper .dt-layout-row {
-            flex-direction: column;
-            align-items: flex-start;
+        .dt-layout-row {
             gap: 10px;
         }
 
-        #linmasTable_wrapper .dt-search {
-            width: 100%;
+        .dt-search input {
+            min-width: 150px;
         }
 
-        #linmasTable_wrapper .dt-search input {
-            width: 100%;
-            margin-left: 5px;
-        }
     }
 </style>
 
@@ -459,452 +356,388 @@
 
 @section('content')
 
-@if(session('success'))
-
-<div class="alert-success">
-    {{ session('success') }}
-</div>
-
-@endif
-
-@if(session('error'))
-
-<div class="alert-error">
-    {{ session('error') }}
-</div>
-
-@endif
-
-@if(session('warning'))
-
-<div class="alert-error">
-    {{ session('warning') }}
-</div>
-
-@endif
-
 <div class="content-header">
+
 
 <div>
 
+    <h2>
+        Data Linmas &amp; Siskamling
+    </h2>
 
-<h2>
-    Data Linmas &amp; Siskamling
-</h2>
-
-<p>
-    Kelola data Linmas dan Siskamling Kelurahan Binong.
-</p>
-
+    <p>
+        Kelola data Linmas dan Siskamling Kelurahan Binong.
+    </p>
 
 </div>
 
 <a
-href="{{ route('datalinmas.create') }}"
-class="btn-add"
-
+    href="{{ route('datalinmas.create') }}"
+    class="btn-add"
 >
-
-
-+ Tambah Data
-
-
+    + Tambah Data
 </a>
+
 
 </div>
 
 <section class="table-panel">
 
+
 <div class="table-panel-header">
 
+    <div>
 
-<div>
+        <h3>
+            Daftar Linmas &amp; Siskamling
+        </h3>
 
-    <h3>
-        Daftar Linmas &amp; Siskamling
-    </h3>
+        <p>
+            Data anggota Linmas dan fasilitas Poskamling Kelurahan Binong
+        </p>
 
-    <p>
-        Data anggota Linmas dan fasilitas Poskamling Kelurahan Binong.
-    </p>
+    </div>
 
-</div>
-
-<span
-    class="total-data"
-    id="totalData"
->
-    {{ $dataLinmas->count() }} Data
-</span>
-
+    <span
+        class="total-data"
+        id="totalData"
+    >
+        {{ $dataLinmas->count() }} Data
+    </span>
 
 </div>
 
 <div class="table-wrapper">
 
+    <table
+        id="linmasTable"
+        class="display"
+    >
 
-<table
-    id="linmasTable"
-    class="display"
->
+        <thead>
 
-    <thead>
+            <tr>
 
-        <tr>
+                <th>RW</th>
 
-            <th>No</th>
+                <th>Jumlah Linmas</th>
 
-            <th>RW</th>
+                <th>Nama</th>
 
-            <th>Jumlah Linmas</th>
+                <th>NIK</th>
 
-            <th>Nama</th>
+                <th>Alamat</th>
 
-            <th>NIK</th>
+                <th>Pekerjaan</th>
 
-            <th>Alamat</th>
+                <th>Jumlah Poskamling</th>
 
-            <th>Pekerjaan</th>
+                <th>Titik Poskamling</th>
 
-            <th>Jumlah Poskamling</th>
+                <th>Keterangan</th>
 
-            <th>Titik Poskamling</th>
+                <th>Terakhir Perubahan</th>
 
-            <th>Keterangan</th>
+                <th>Aksi</th>
 
-            <th>Terakhir Perubahan</th>
+            </tr>
 
-            <th>Aksi</th>
+        </thead>
 
-        </tr>
+        <tbody>
 
-    </thead>
+            @forelse ($dataLinmas as $item)
 
-    <tbody>
+                <tr>
 
-        @forelse ($dataLinmas as $item)
+                    {{-- RW --}}
 
-        <tr>
+                    <td>
 
-            {{-- NO --}}
+                        @if ($item->rw)
 
-            <td>
+                            <span class="badge badge-rw">
+                                RW {{ $item->rw }}
+                            </span>
 
-                <div style="text-align:center;color:#7a858d;font-size:11px;">
-                    {{ $loop->iteration }}
-                </div>
+                        @else
 
-            </td>
+                            <span class="badge badge-default">
+                                -
+                            </span>
 
-            {{-- RW --}}
+                        @endif
 
-            <td>
+                    </td>
 
-                @if($item->rw)
 
-                    <span class="badge badge-rw">
-                        {{ $item->rw }}
-                    </span>
+                    {{-- JUMLAH LINMAS --}}
 
-                @else
+                    <td>
 
-                    <span class="badge badge-default">
-                        -
-                    </span>
+                        @if ($item->jumlah_linmas !== null)
 
-                @endif
+                            <span class="badge badge-count">
+                                {{ number_format($item->jumlah_linmas, 0, ',', '.') }}
+                                Orang
+                            </span>
 
-            </td>
+                        @else
 
-            {{-- JUMLAH LINMAS --}}
+                            <span class="badge badge-default">
+                                -
+                            </span>
 
-            <td>
+                        @endif
 
-                @if($item->jumlah_linmas !== null)
+                    </td>
 
-                    <span class="badge badge-count">
-                        {{ number_format($item->jumlah_linmas, 0, ',', '.') }}
-                        Orang
-                    </span>
 
-                @else
+                    {{-- NAMA --}}
 
-                    <span class="badge badge-default">
-                        -
-                    </span>
+                    <td>
 
-                @endif
+                        @if ($item->nama)
 
-            </td>
+                            <div class="linmas-name">
+                                {{ $item->nama }}
+                            </div>
 
-            {{-- NAMA --}}
+                            <div class="linmas-id">
+                                ID {{ $item->id }}
+                            </div>
 
-            <td>
+                        @else
 
-                @if($item->nama)
+                            <span class="badge badge-default">
+                                -
+                            </span>
 
-                    <div class="linmas-name">
-                        {{ $item->nama }}
-                    </div>
+                        @endif
 
-                    <div class="linmas-id">
-                        ID {{ $item->id }}
-                    </div>
+                    </td>
 
-                @else
 
-                    <span class="badge badge-default">
-                        -
-                    </span>
+                    {{-- NIK --}}
 
-                @endif
+                    <td>
 
-            </td>
+                        @if ($item->nik)
 
-            {{-- NIK --}}
+                            <div class="nik">
+                                {{ $item->nik }}
+                            </div>
 
-            <td>
+                        @else
 
-                @if($item->nik)
+                            <span class="badge badge-default">
+                                -
+                            </span>
 
-                    <div class="nik">
-                        {{ $item->nik }}
-                    </div>
+                        @endif
 
-                @else
+                    </td>
 
-                    <span class="badge badge-default">
-                        -
-                    </span>
 
-                @endif
+                    {{-- ALAMAT --}}
 
-            </td>
+                    <td>
 
-            {{-- ALAMAT --}}
-
-            <td>
-
-                @if($item->alamat)
-
-                    <div class="address">
-                        {{ $item->alamat }}
-                    </div>
-
-                @else
-
-                    <span class="badge badge-default">
-                        -
-                    </span>
-
-                @endif
-
-            </td>
-
-            {{-- PEKERJAAN --}}
-
-            <td>
-
-                @if($item->pekerjaan)
-
-                    <div class="occupation">
-                        {{ $item->pekerjaan }}
-                    </div>
-
-                @else
-
-                    <span class="badge badge-default">
-                        -
-                    </span>
-
-                @endif
-
-            </td>
-
-            {{-- JUMLAH POSKAMLING --}}
-
-            <td>
-
-                @if($item->jumlah_poskamling !== null)
-
-                    <span class="badge badge-pos">
-                        {{ number_format($item->jumlah_poskamling, 0, ',', '.') }}
-                        Pos
-                    </span>
-
-                @else
-
-                    <span class="badge badge-default">
-                        -
-                    </span>
-
-                @endif
-
-            </td>
-
-            {{-- TITIK POSKAMLING --}}
-
-            <td>
-
-                @if($item->titik_poskamling)
-
-                    <div class="poskamling-location">
-
-                        <div class="poskamling-coordinate">
-                            {{ $item->titik_poskamling }}
+                        <div class="linmas-alamat">
+                            {{ $item->alamat ?: '-' }}
                         </div>
 
-                        <a
-                            href="https://www.google.com/maps/search/?api=1&query={{ urlencode($item->titik_poskamling) }}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="poskamling-map"
-                        >
-                            📍 Lihat Lokasi
-                        </a>
+                    </td>
 
-                    </div>
 
-                @else
+                    {{-- PEKERJAAN --}}
 
-                    <span class="badge badge-default">
-                        Belum diisi
-                    </span>
+                    <td>
 
-                @endif
-
-            </td>
-
-            {{-- KETERANGAN --}}
-
-            <td>
-
-                @if($item->keterangan)
-
-                    <div class="description">
-                        {{ $item->keterangan }}
-                    </div>
-
-                @else
-
-                    <span class="badge badge-default">
-                        -
-                    </span>
-
-                @endif
-
-            </td>
-
-            {{-- TERAKHIR PERUBAHAN --}}
-
-            <td>
-
-                @if($item->updated_at)
-
-                    <div
-                        class="last-update"
-                        data-order="{{ $item->updated_at->timestamp }}"
-                    >
-
-                        <div class="last-update-date">
-                            {{ $item->updated_at->locale('id')->translatedFormat('d M Y') }}
+                        <div class="linmas-pekerjaan">
+                            {{ $item->pekerjaan ?: '-' }}
                         </div>
 
-                        <div class="last-update-time">
-                            {{ $item->updated_at->format('H:i') }} WIB
+                    </td>
+
+
+                    {{-- JUMLAH POSKAMLING --}}
+
+                    <td>
+
+                        @if ($item->jumlah_poskamling !== null)
+
+                            <span class="badge badge-pos">
+                                {{ number_format($item->jumlah_poskamling, 0, ',', '.') }}
+                                Pos
+                            </span>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- TITIK POSKAMLING --}}
+
+                    <td>
+
+                        @if ($item->titik_poskamling)
+
+                            <div class="poskamling-location">
+
+                                <div class="poskamling-coordinate">
+                                    {{ $item->titik_poskamling }}
+                                </div>
+
+                                <a
+                                    href="https://www.google.com/maps/search/?api=1&query={{ urlencode($item->titik_poskamling) }}"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="poskamling-map"
+                                >
+                                    📍 Lihat Lokasi
+                                </a>
+
+                            </div>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                Belum diisi
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- KETERANGAN --}}
+
+                    <td>
+
+                        <div class="linmas-keterangan">
+                            {{ $item->keterangan ?: '-' }}
                         </div>
 
-                    </div>
+                    </td>
 
-                @else
 
-                    <span class="badge badge-default">
-                        -
-                    </span>
+                    {{-- TERAKHIR PERUBAHAN --}}
 
-                @endif
+                    <td>
 
-            </td>
+                        @if ($item->updated_at)
 
-            {{-- AKSI --}}
+                            <div
+                                class="last-update"
+                                data-order="{{ $item->updated_at->timestamp }}"
+                            >
 
-            <td>
+                                <div class="last-update-date">
+                                    {{ $item->updated_at->locale('id')->translatedFormat('d M Y') }}
+                                </div>
 
-                <div class="action-buttons">
+                                <div class="last-update-time">
+                                    {{ $item->updated_at->format('H:i') }} WIB
+                                </div>
 
-                    {{-- LIHAT --}}
+                            </div>
 
-                    <a
-                        href="{{ route('datalinmas.show', ['datalinma' => $item->id]) }}"
-                        class="action-btn action-view"
-                        title="Lihat Detail"
-                        aria-label="Lihat Detail"
+                        @else
+
+                            <span class="badge badge-default">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
+                    {{-- AKSI --}}
+
+                    <td>
+
+                        <div class="action-buttons">
+
+                            {{-- SHOW --}}
+
+                            <a
+                                href="{{ route('datalinmas.show', $item->id) }}"
+                                class="action-btn action-show"
+                                title="Lihat Detail"
+                            >
+                                ◉
+                            </a>
+
+
+                            {{-- EDIT --}}
+
+                            <a
+                                href="{{ route('datalinmas.edit', $item->id) }}"
+                                class="action-btn action-edit"
+                                title="Ubah"
+                            >
+                                ✎
+                            </a>
+
+
+                            {{-- DELETE --}}
+
+                            <form
+                                action="{{ route('datalinmas.destroy', $item->id) }}"
+                                method="POST"
+                                class="delete-form"
+                                onsubmit="return confirm('Yakin ingin menghapus data Linmas ini?')"
+                            >
+
+                                @csrf
+
+                                @method('DELETE')
+
+                                <button
+                                    type="submit"
+                                    class="action-btn action-delete"
+                                    title="Hapus"
+                                >
+                                    ×
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            @empty
+
+                <tr>
+
+                    <td
+                        colspan="11"
+                        style="text-align: center; padding: 30px; color: #8a969d;"
                     >
-                        ◉
-                    </a>
+                        Belum ada data Linmas &amp; Siskamling.
+                    </td>
 
-                    {{-- EDIT --}}
+                </tr>
 
-                    <a
-                        href="{{ route('datalinmas.edit', ['datalinma' => $item->id]) }}"
-                        class="action-btn action-edit"
-                        title="Ubah Data"
-                        aria-label="Ubah Data"
-                    >
-                        ✎
-                    </a>
+            @endforelse
 
-                    {{-- HAPUS --}}
+        </tbody>
 
-                    <form
-                        action="{{ route('datalinmas.destroy', ['datalinma' => $item->id]) }}"
-                        method="POST"
-                        class="delete-form"
-                        onsubmit="return confirm('Yakin ingin menghapus data Linmas {{ $item->nama ?? $item->rw }}? Data yang dihapus hanya akan dihapus dari sistem lokal.')"
-                    >
-
-                        @csrf
-
-                        @method('DELETE')
-
-                        <button
-                            type="submit"
-                            class="action-btn action-delete"
-                            title="Hapus Data"
-                            aria-label="Hapus Data"
-                        >
-                            ×
-                        </button>
-
-                    </form>
-
-                </div>
-
-            </td>
-
-        </tr>
-
-        @empty
-
-        <tr>
-
-            <td
-                colspan="12"
-                class="empty-state"
-            >
-                Belum ada data Linmas &amp; Siskamling.
-            </td>
-
-        </tr>
-
-        @endforelse
-
-    </tbody>
-
-</table>
-
+    </table>
 
 </div>
+
 
 </section>
 
@@ -918,86 +751,70 @@ class="btn-add"
 
 <script>
 
-    const linmasTable = new DataTable(
-        '#linmasTable',
-        {
-            pageLength: 10,
+    const linmasTable = new DataTable('#linmasTable', {
 
-            lengthMenu: [
-                [10, 25, 50, 100],
-                [10, 25, 50, 100]
-            ],
+        pageLength: 10,
 
-            language: {
+        lengthMenu: [
+            [10, 25, 50, 100],
+            [10, 25, 50, 100]
+        ],
 
-                lengthMenu:
-                    'Tampilkan _MENU_ data',
+        order: [],
 
-                search:
-                    'Cari:',
+        language: {
 
-                searchPlaceholder:
-                    'Cari data Linmas & Siskamling...',
+            lengthMenu: 'Tampilkan _MENU_ data',
 
-                info:
-                    'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+            search: 'Cari:',
 
-                infoEmpty:
-                    'Tidak ada data',
+            searchPlaceholder: 'Cari data Linmas & Siskamling...',
 
-                infoFiltered:
-                    '(difilter dari _MAX_ total data)',
+            info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
 
-                zeroRecords:
-                    'Data tidak ditemukan',
+            infoEmpty: 'Tidak ada data',
 
-                emptyTable:
-                    'Belum ada data',
+            infoFiltered: '(difilter dari _MAX_ total data)',
 
-                paginate: {
+            zeroRecords: 'Data tidak ditemukan',
 
-                    first: '«',
+            paginate: {
 
-                    last: '»',
+                first: '«',
 
-                    next: '›',
+                last: '»',
 
-                    previous: '‹'
+                next: '›',
 
-                }
+                previous: '‹'
 
-            },
+            }
 
-            order: [],
+        },
 
-            columnDefs: [
+        columnDefs: [
 
-                {
-                    orderable: false,
-                    searchable: false,
-                    targets: 0
-                },
+            {
 
-                {
-                    orderable: false,
-                    searchable: false,
-                    targets: 11
-                }
+                orderable: false,
 
-            ]
+                searchable: false,
 
-        }
-    );
+                targets: 10
 
-    linmasTable.on(
-        'draw',
-        function () {
+            }
 
-            document.getElementById('totalData').textContent =
-                linmasTable.page.info().recordsDisplay + ' Data';
+        ]
 
-        }
-    );
+    });
+
+
+    linmasTable.on('draw', function () {
+
+        document.getElementById('totalData').textContent =
+            linmasTable.page.info().recordsDisplay + ' Data';
+
+    });
 
 </script>
 

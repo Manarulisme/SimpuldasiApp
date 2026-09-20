@@ -41,6 +41,7 @@
         margin-top: 6px;
     }
 
+
     /* =========================================
        BUTTON TAMBAH
     ========================================= */
@@ -64,6 +65,7 @@
         background: #065c35;
         color: white;
     }
+
 
     /* =========================================
        TABLE PANEL
@@ -101,6 +103,7 @@
         overflow-x: auto;
     }
 
+
     /* =========================================
        TABLE
     ========================================= */
@@ -125,6 +128,7 @@
         border-bottom: 1px solid #f0f2f3;
         vertical-align: middle;
     }
+
 
     /* =========================================
        BADGE
@@ -158,6 +162,7 @@
         color: #58636a;
     }
 
+
     /* =========================================
        NAMA PEGAWAI
     ========================================= */
@@ -172,6 +177,7 @@
         font-size: 10px;
         margin-top: 3px;
     }
+
 
     /* =========================================
        LAST UPDATE
@@ -196,6 +202,43 @@
         white-space: nowrap;
     }
 
+
+    /* =========================================
+       SYNC STATUS
+    ========================================= */
+
+    .sync-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 8px;
+        border-radius: 5px;
+        font-size: 9px;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .sync-synced {
+        background: #e9f7ef;
+        color: #087443;
+    }
+
+    .sync-pending {
+        background: #fff7df;
+        color: #987500;
+    }
+
+    .sync-failed {
+        background: #fff0ee;
+        color: #c0392b;
+    }
+
+    .sync-unknown {
+        background: #f1f3f4;
+        color: #58636a;
+    }
+
+
     /* =========================================
        ACTION BUTTON
     ========================================= */
@@ -219,6 +262,7 @@
         font-size: 15px;
     }
 
+
     /* SHOW */
 
     .action-show {
@@ -229,6 +273,7 @@
         background: #eef3f7;
         color: #18364d;
     }
+
 
     /* EDIT */
 
@@ -241,6 +286,7 @@
         color: var(--primary);
     }
 
+
     /* DELETE */
 
     .action-delete {
@@ -251,6 +297,7 @@
         background: #fff0ee;
         color: #c0392b;
     }
+
 
     /* =========================================
        DELETE FORM
@@ -265,6 +312,7 @@
     .delete-form button {
         font-family: inherit;
     }
+
 
     /* =========================================
        DATATABLES
@@ -326,6 +374,7 @@
         border-color: var(--primary) !important;
     }
 
+
     /* =========================================
        MOBILE
     ========================================= */
@@ -378,6 +427,7 @@
 
 </div>
 
+
 <a
     href="{{ route('dataumumpegawai.create') }}"
     class="btn-add"
@@ -404,6 +454,7 @@
         </p>
 
     </div>
+
 
     <span
         class="total-data"
@@ -452,6 +503,10 @@
 
                 <th>
                     Terakhir Perubahan
+                </th>
+
+                <th>
+                    Sinkronisasi
                 </th>
 
                 <th>
@@ -616,6 +671,39 @@
                     </td>
 
 
+                    {{-- STATUS SINKRONISASI --}}
+
+                    <td>
+
+                        @if ($item->google_sync_status === 'synced')
+
+                            <span class="sync-status sync-synced">
+                                ✓ Synced
+                            </span>
+
+                        @elseif ($item->google_sync_status === 'pending')
+
+                            <span class="sync-status sync-pending">
+                                ⟳ Pending
+                            </span>
+
+                        @elseif ($item->google_sync_status === 'failed')
+
+                            <span class="sync-status sync-failed">
+                                ! Failed
+                            </span>
+
+                        @else
+
+                            <span class="sync-status sync-unknown">
+                                — Belum Sync
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
                     {{-- AKSI --}}
 
                     <td>
@@ -678,7 +766,7 @@
                 <tr>
 
                     <td
-                        colspan="8"
+                        colspan="9"
                         style="
                             text-align:center;
                             padding:30px;
@@ -711,57 +799,72 @@
 
 <script>
 
-    const pegawaiTable = new DataTable('#pegawaiTable', {
+    const pegawaiTable = new DataTable(
+        '#pegawaiTable',
+        {
 
-        pageLength: 10,
+            pageLength: 10,
 
-        lengthMenu: [
-            [10, 25, 50, 100],
-            [10, 25, 50, 100]
-        ],
+            lengthMenu: [
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
+            ],
 
-        /*
-         * Urutan awal mengikuti hasil dari Controller.
-         */
+            /*
+             * Urutan awal mengikuti hasil Controller.
+             */
 
-        order: [],
+            order: [],
 
-        language: {
+            language: {
 
-            lengthMenu: 'Tampilkan _MENU_ data',
+                lengthMenu:
+                    'Tampilkan _MENU_ data',
 
-            search: 'Cari:',
+                search:
+                    'Cari:',
 
-            searchPlaceholder: 'Cari data pegawai...',
+                searchPlaceholder:
+                    'Cari data pegawai...',
 
-            info: 'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
+                info:
+                    'Menampilkan _START_ sampai _END_ dari _TOTAL_ data',
 
-            infoEmpty: 'Tidak ada data',
+                infoEmpty:
+                    'Tidak ada data',
 
-            infoFiltered: '(difilter dari _MAX_ total data)',
+                infoFiltered:
+                    '(difilter dari _MAX_ total data)',
 
-            zeroRecords: 'Data tidak ditemukan',
+                zeroRecords:
+                    'Data tidak ditemukan',
 
-            paginate: {
-                first: '«',
-                last: '»',
-                next: '›',
-                previous: '‹'
-            }
+                paginate: {
 
-        },
+                    first: '«',
 
-        columnDefs: [
+                    last: '»',
 
-            {
-                orderable: false,
-                searchable: false,
-                targets: 7
-            }
+                    next: '›',
 
-        ]
+                    previous: '‹'
 
-    });
+                }
+
+            },
+
+            columnDefs: [
+
+                {
+                    orderable: false,
+                    searchable: false,
+                    targets: 8
+                }
+
+            ]
+
+        }
+    );
 
 
     /*
@@ -769,12 +872,19 @@
      * setiap kali tabel berubah.
      */
 
-    pegawaiTable.on('draw', function () {
+    pegawaiTable.on(
+        'draw',
+        function () {
 
-        document.getElementById('totalData').textContent =
-            pegawaiTable.page.info().recordsDisplay + ' Pegawai';
+            document.getElementById(
+                'totalData'
+            ).textContent =
+                pegawaiTable.page.info()
+                    .recordsDisplay +
+                ' Pegawai';
 
-    });
+        }
+    );
 
 </script>
 

@@ -217,6 +217,11 @@
         color: #58636a;
     }
 
+    .badge-rw {
+        background: #eef4f8;
+        color: #355b73;
+    }
+
     .badge-default {
         background: #f1f3f4;
         color: #58636a;
@@ -252,6 +257,13 @@
     .age {
         color: #18364d;
         font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .age-detail {
+        color: #8a969d;
+        font-size: 10px;
+        margin-top: 2px;
         white-space: nowrap;
     }
 
@@ -421,31 +433,25 @@
 
 @if(session('success'))
 
-
 <div class="alert-success">
     {{ session('success') }}
 </div>
-
 
 @endif
 
 @if(session('error'))
 
-
 <div class="alert-error">
     {{ session('error') }}
 </div>
-
 
 @endif
 
 @if(session('warning'))
 
-
 <div class="alert-error">
     {{ session('warning') }}
 </div>
-
 
 @endif
 
@@ -518,6 +524,8 @@
 
                 <th>Nama Anak</th>
 
+                <th>RW</th>
+
                 <th>Tanggal Lahir</th>
 
                 <th>Usia</th>
@@ -567,6 +575,27 @@
                     </td>
 
 
+                    {{-- RW --}}
+
+                    <td>
+
+                        @if ($item->rw)
+
+                            <span class="badge badge-rw">
+                                RW {{ $item->rw }}
+                            </span>
+
+                        @else
+
+                            <span class="badge badge-default">
+                                -
+                            </span>
+
+                        @endif
+
+                    </td>
+
+
                     {{-- TANGGAL LAHIR --}}
 
                     <td>
@@ -588,19 +617,31 @@
                     </td>
 
 
-                    {{-- USIA --}}
+                    {{-- USIA DALAM BULAN --}}
 
                     <td>
 
                         @if ($item->tanggal_lahir)
 
-                            <div class="age">
+                            @php
+                                $usiaBulan = $item->tanggal_lahir->diffInMonths(now());
+                            @endphp
 
-                                {{ $item->tanggal_lahir->age }}
-
-                                {{ $item->tanggal_lahir->age == 1 ? 'Tahun' : 'Tahun' }}
-
+                            <div
+                                class="age"
+                                data-order="{{ $usiaBulan }}"
+                            >
+                                {{ $usiaBulan }} Bulan
                             </div>
+
+                            @if ($usiaBulan >= 12)
+
+                                <div class="age-detail">
+                                    {{ floor($usiaBulan / 12) }} Tahun
+                                    {{ $usiaBulan % 12 }} Bulan
+                                </div>
+
+                            @endif
 
                         @else
 
@@ -765,11 +806,10 @@
                 <tr>
 
                     <td
-                        colspan="8"
+                        colspan="9"
                         class="empty-state"
                     >
                         Belum ada data stunting.
-
                     </td>
 
                 </tr>
@@ -836,7 +876,7 @@
             {
                 orderable: false,
                 searchable: false,
-                targets: 7
+                targets: 8
             }
 
         ]

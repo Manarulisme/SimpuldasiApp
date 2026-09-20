@@ -315,267 +315,299 @@ textarea.form-control {
 
 <div class="form-body">
 
-
 <div class="form-section">
 
-    <div class="section-title">
+<div class="section-title">
 
-        <span class="section-number">
-            1
-        </span>
 
-        Identitas Anak
+<span class="section-number">
+    1
+</span>
 
-    </div>
+Identitas Anak
 
-    <div class="form-grid">
 
-        <div class="form-group">
+</div>
 
-            <label for="nik">
-                NIK
-                <span class="required">*</span>
-            </label>
+<div class="form-grid">
 
-            <input
-                type="text"
-                id="nik"
-                name="nik"
-                class="form-control"
-                placeholder="Masukkan NIK"
-                value="{{ $stuntingValue('nik') }}"
-                maxlength="20"
-                inputmode="numeric"
-                required
-            >
 
-            @error('nik')
-                <div class="error-message">
-                    {{ $message }}
-                </div>
-            @enderror
+<div class="form-group">
 
+    <label for="nik">
+        NIK
+        <span class="required">*</span>
+    </label>
+
+    <input
+        type="text"
+        id="nik"
+        name="nik"
+        class="form-control"
+        placeholder="Masukkan NIK"
+        value="{{ $stuntingValue('nik') }}"
+        maxlength="20"
+        inputmode="numeric"
+        required
+    >
+
+    @error('nik')
+        <div class="error-message">
+            {{ $message }}
         </div>
+    @enderror
 
-        <div class="form-group">
+</div>
 
-            <label for="nama">
-                Nama Anak
-                <span class="required">*</span>
-            </label>
+<div class="form-group">
 
-            <input
-                type="text"
-                id="nama"
-                name="nama"
-                class="form-control"
-                placeholder="Nama lengkap anak"
-                value="{{ $stuntingValue('nama') }}"
-                maxlength="150"
-                required
-            >
+    <label for="nama">
+        Nama Anak
+        <span class="required">*</span>
+    </label>
 
-            @error('nama')
-                <div class="error-message">
-                    {{ $message }}
-                </div>
-            @enderror
+    <input
+        type="text"
+        id="nama"
+        name="nama"
+        class="form-control"
+        placeholder="Nama lengkap anak"
+        value="{{ $stuntingValue('nama') }}"
+        maxlength="150"
+        required
+    >
 
+    @error('nama')
+        <div class="error-message">
+            {{ $message }}
         </div>
+    @enderror
 
-        <div class="form-group">
+</div>
 
-            <label for="tanggal_lahir">
-                Tanggal Lahir
-                <span class="required">*</span>
-            </label>
+<div class="form-group">
 
-            <input
-                type="date"
-                id="tanggal_lahir"
-                name="tanggal_lahir"
-                class="form-control"
-                value="{{ $stuntingValue('tanggal_lahir') ? \Illuminate\Support\Carbon::parse($stuntingValue('tanggal_lahir'))->format('Y-m-d') : '' }}"
-                required
-            >
+    <label for="rw">
+        RW
+        <span class="required">*</span>
+    </label>
 
-            @error('tanggal_lahir')
-                <div class="error-message">
-                    {{ $message }}
-                </div>
-            @enderror
+    <input
+        type="text"
+        id="rw"
+        name="rw"
+        class="form-control"
+        placeholder="Masukkan nomor RW"
+        value="{{ $stuntingValue('rw') }}"
+        maxlength="3"
+        inputmode="numeric"
+        required
+    >
 
+    @error('rw')
+        <div class="error-message">
+            {{ $message }}
         </div>
+    @enderror
 
-        <div class="form-group">
+</div>
 
-            <label for="jenis_kelamin">
-                Jenis Kelamin
-                <span class="required">*</span>
-            </label>
+<div class="form-group">
 
-            <select
-                id="jenis_kelamin"
-                name="jenis_kelamin"
-                class="form-control"
-                required
-            >
+    <label for="tanggal_lahir">
+        Tanggal Lahir
+        <span class="required">*</span>
+    </label>
 
-                <option value="">
-                    Pilih Jenis Kelamin
-                </option>
+    <input
+        type="date"
+        id="tanggal_lahir"
+        name="tanggal_lahir"
+        class="form-control"
+        value="{{ $stuntingValue('tanggal_lahir') ? \Illuminate\Support\Carbon::parse($stuntingValue('tanggal_lahir'))->format('Y-m-d') : '' }}"
+        required
+    >
 
-                <option
-                    value="Laki-laki"
-                    @selected($stuntingValue('jenis_kelamin') === 'Laki-laki')
-                >
-                    Laki-laki
-                </option>
-
-                <option
-                    value="Perempuan"
-                    @selected($stuntingValue('jenis_kelamin') === 'Perempuan')
-                >
-                    Perempuan
-                </option>
-
-            </select>
-
-            @error('jenis_kelamin')
-                <div class="error-message">
-                    {{ $message }}
-                </div>
-            @enderror
-
+    @error('tanggal_lahir')
+        <div class="error-message">
+            {{ $message }}
         </div>
+    @enderror
 
-    </div>
+</div>
+
+<div class="form-group">
+
+    <label for="jenis_kelamin">
+        Jenis Kelamin
+        <span class="required">*</span>
+    </label>
+
+    <select
+        id="jenis_kelamin"
+        name="jenis_kelamin"
+        class="form-control"
+        required
+    >
+
+        <option value="">
+            Pilih Jenis Kelamin
+        </option>
+
+        <option
+            value="Laki-laki"
+            @selected($stuntingValue('jenis_kelamin') === 'Laki-laki')
+        >
+            Laki-laki
+        </option>
+
+        <option
+            value="Perempuan"
+            @selected($stuntingValue('jenis_kelamin') === 'Perempuan')
+        >
+            Perempuan
+        </option>
+
+    </select>
+
+    @error('jenis_kelamin')
+        <div class="error-message">
+            {{ $message }}
+        </div>
+    @enderror
+
+</div>
+
+
+</div>
 
 </div>
 
 <div class="form-section">
 
-    <div class="section-title">
+<div class="section-title">
 
-        <span class="section-number">
-            2
-        </span>
 
-        Data Pemantauan
+<span class="section-number">
+    2
+</span>
 
-    </div>
+Data Pemantauan
 
-    <div class="form-grid">
 
-        <div class="form-group">
+</div>
 
-            <label for="usia">
-                Usia
-            </label>
+<div class="form-grid">
 
-            <input
-                type="text"
-                id="usia"
-                class="form-control"
-                placeholder="Otomatis dari tanggal lahir"
-                readonly
-            >
 
+<div class="form-group">
+
+    <label for="usia">
+        Usia
+    </label>
+
+    <input
+        type="text"
+        id="usia"
+        class="form-control"
+        placeholder="Otomatis dari tanggal lahir"
+        readonly
+    >
+
+</div>
+
+<div class="form-group">
+
+    <label for="status">
+        Status
+        <span class="required">*</span>
+    </label>
+
+    <select
+        id="status"
+        name="status"
+        class="form-control"
+        required
+    >
+
+        <option value="">
+            Pilih Status
+        </option>
+
+        <option
+            value="Normal"
+            @selected($stuntingValue('status') === 'Normal')
+        >
+            Normal
+        </option>
+
+        <option
+            value="Berisiko"
+            @selected($stuntingValue('status') === 'Berisiko')
+        >
+            Berisiko
+        </option>
+
+        <option
+            value="Stunting"
+            @selected($stuntingValue('status') === 'Stunting')
+        >
+            Stunting
+        </option>
+
+    </select>
+
+    @error('status')
+        <div class="error-message">
+            {{ $message }}
         </div>
+    @enderror
 
-        <div class="form-group">
+</div>
 
-            <label for="status">
-                Status
-                <span class="required">*</span>
-            </label>
+<div class="form-group full">
 
-            <select
-                id="status"
-                name="status"
-                class="form-control"
-                required
-            >
+    <label for="keterangan">
+        Keterangan
+    </label>
 
-                <option value="">
-                    Pilih Status
-                </option>
+    <textarea
+        id="keterangan"
+        name="keterangan"
+        class="form-control"
+        placeholder="Keterangan atau catatan pemantauan"
+    >{{ $stuntingValue('keterangan') }}</textarea>
 
-                <option
-                    value="Normal"
-                    @selected($stuntingValue('status') === 'Normal')
-                >
-                    Normal
-                </option>
-
-                <option
-                    value="Berisiko"
-                    @selected($stuntingValue('status') === 'Berisiko')
-                >
-                    Berisiko
-                </option>
-
-                <option
-                    value="Stunting"
-                    @selected($stuntingValue('status') === 'Stunting')
-                >
-                    Stunting
-                </option>
-
-            </select>
-
-            @error('status')
-                <div class="error-message">
-                    {{ $message }}
-                </div>
-            @enderror
-
+    @error('keterangan')
+        <div class="error-message">
+            {{ $message }}
         </div>
+    @enderror
 
-        <div class="form-group full">
+</div>
 
-            <label for="keterangan">
-                Keterangan
-            </label>
 
-            <textarea
-                id="keterangan"
-                name="keterangan"
-                class="form-control"
-                placeholder="Keterangan atau catatan pemantauan"
-            >{{ $stuntingValue('keterangan') }}</textarea>
-
-            @error('keterangan')
-                <div class="error-message">
-                    {{ $message }}
-                </div>
-            @enderror
-
-        </div>
-
-    </div>
+</div>
 
 </div>
 
 <div class="info-box">
 
-    <div class="info-icon">
-        i
-    </div>
-
-    <p>
-        Pastikan data anak yang dimasukkan sudah benar.
-        Data akan disimpan ke database Kelurahan Binong
-        dan dapat diperbarui kembali melalui menu Edit Data.
-    </p>
-
+<div class="info-icon">
+    i
 </div>
 
+<p>
+    Pastikan data anak yang dimasukkan sudah benar.
+    Data akan disimpan ke database Kelurahan Binong
+    dan dapat diperbarui kembali melalui menu Edit Data.
+</p>
+
+</div>
 
 </div>
 
 <div class="form-footer">
-
 
 <span>
     <span class="required">*</span>
@@ -584,22 +616,31 @@ textarea.form-control {
 
 <div class="form-actions">
 
-    <a
-        href="{{ route('datastunting.index') }}"
-        class="btn btn-secondary"
-    >
-        Batal
-    </a>
+<a
+href="{{ route('datastunting.index') }}"
+class="btn btn-secondary"
 
-    <button
-        type="submit"
-        class="btn btn-primary"
-    >
-        {{ $isEdit ? 'Perbarui Data' : 'Simpan Data' }}
-    </button>
+>
+
+
+Batal
+
+
+</a>
+
+<button
+type="submit"
+class="btn btn-primary"
+
+>
+
+
+{{ $isEdit ? 'Perbarui Data' : 'Simpan Data' }}
+
+
+</button>
 
 </div>
-
 
 </div>
 
@@ -624,32 +665,33 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
 
-        const tanggal = new Date(
+        const tanggalLahirValue = new Date(
             tanggalLahir.value + 'T00:00:00'
         );
 
         const hariIni = new Date();
 
-        let tahun = hariIni.getFullYear() - tanggal.getFullYear();
+        if (tanggalLahirValue > hariIni) {
+            usia.value = '';
+            return;
+        }
 
-        const bulan =
-            hariIni.getMonth() - tanggal.getMonth();
+        let bulan =
+            (hariIni.getFullYear() - tanggalLahirValue.getFullYear()) * 12
+            + (hariIni.getMonth() - tanggalLahirValue.getMonth());
 
         if (
-            bulan < 0 ||
-            (
-                bulan === 0 &&
-                hariIni.getDate() < tanggal.getDate()
-            )
+            hariIni.getDate() < tanggalLahirValue.getDate()
         ) {
-            tahun--;
+            bulan--;
         }
 
-        if (tahun >= 0) {
-            usia.value = tahun + ' tahun';
-        } else {
+        if (bulan < 0) {
             usia.value = '';
+            return;
         }
+
+        usia.value = bulan + ' bulan';
     }
 
     tanggalLahir.addEventListener(

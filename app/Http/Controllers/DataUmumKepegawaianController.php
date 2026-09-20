@@ -9,11 +9,20 @@ use Illuminate\Support\Facades\Log;
 class DataUmumKepegawaianController extends Controller
 {
     /**
+     * Nama sheet Google Spreadsheet
+     */
+    private const GOOGLE_SHEET_NAME = 'DUK';
+
+
+    /**
      * Menampilkan seluruh data pegawai
      */
     public function index()
     {
-        $pegawai = DataUmumKepegawaian::orderBy('updated_at', 'desc')->get();
+        $pegawai = DataUmumKepegawaian::orderBy(
+            'updated_at',
+            'desc'
+        )->get();
 
         return view(
             'Admin.Konten.Data_umum_pegawai.index',
@@ -28,11 +37,15 @@ class DataUmumKepegawaianController extends Controller
     public function create()
     {
         $pegawai = null;
+
         $isEdit = false;
 
         return view(
             'Admin.Konten.Data_umum_pegawai.tambah',
-            compact('pegawai', 'isEdit')
+            compact(
+                'pegawai',
+                'isEdit'
+            )
         );
     }
 
@@ -42,69 +55,81 @@ class DataUmumKepegawaianController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'jenis' => [
-                'required',
-                'in:ASN,PPPK,Non-ASN'
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI
+        |--------------------------------------------------------------------------
+        */
+
+        $validated = $request->validate(
+            [
+
+                'jenis' => [
+                    'required',
+                    'in:ASN,PPPK,Non-ASN'
+                ],
+
+                'nomor' => [
+                    'required',
+                    'string',
+                    'max:100'
+                ],
+
+                'nama' => [
+                    'required',
+                    'string',
+                    'max:150'
+                ],
+
+                'golongan' => [
+                    'required',
+                    'string',
+                    'max:20'
+                ],
+
+                'pangkat' => [
+                    'required',
+                    'string',
+                    'max:100'
+                ],
+
+                'jabatan' => [
+                    'required',
+                    'string',
+                    'max:150'
+                ],
+
+                'keterangan' => [
+                    'nullable',
+                    'string'
+                ],
+
             ],
+            [
 
-            'nomor' => [
-                'required',
-                'string',
-                'max:100'
-            ],
+                'jenis.required' =>
+                    'Jenis pegawai wajib dipilih.',
 
-            'nama' => [
-                'required',
-                'string',
-                'max:150'
-            ],
+                'jenis.in' =>
+                    'Jenis pegawai tidak valid.',
 
-            'golongan' => [
-                'required',
-                'string',
-                'max:20'
-            ],
+                'nomor.required' =>
+                    'NIP / NRP / TT wajib diisi.',
 
-            'pangkat' => [
-                'required',
-                'string',
-                'max:100'
-            ],
+                'nama.required' =>
+                    'Nama lengkap wajib diisi.',
 
-            'jabatan' => [
-                'required',
-                'string',
-                'max:150'
-            ],
+                'golongan.required' =>
+                    'Golongan wajib dipilih.',
 
-            'keterangan' => [
-                'nullable',
-                'string'
-            ],
-        ], [
+                'pangkat.required' =>
+                    'Pangkat wajib diisi.',
 
-            'jenis.required' =>
-                'Jenis pegawai wajib dipilih.',
+                'jabatan.required' =>
+                    'Jabatan wajib diisi.',
 
-            'jenis.in' =>
-                'Jenis pegawai tidak valid.',
-
-            'nomor.required' =>
-                'NIP / NRP / TT wajib diisi.',
-
-            'nama.required' =>
-                'Nama lengkap wajib diisi.',
-
-            'golongan.required' =>
-                'Golongan wajib dipilih.',
-
-            'pangkat.required' =>
-                'Pangkat wajib diisi.',
-
-            'jabatan.required' =>
-                'Jabatan wajib diisi.',
-        ]);
+            ]
+        );
 
 
         /*
@@ -113,80 +138,127 @@ class DataUmumKepegawaianController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $pegawai = DataUmumKepegawaian::create([
+        $pegawai = DataUmumKepegawaian::create(
+            [
 
-            'jenis' => $validated['jenis'],
+                'jenis' =>
+                    $validated['jenis'],
 
-            'nomor' => $validated['nomor'],
+                'nomor' =>
+                    $validated['nomor'],
 
-            'nama' => $validated['nama'],
+                'nama' =>
+                    $validated['nama'],
 
-            'golongan' => $validated['golongan'],
+                'golongan' =>
+                    $validated['golongan'],
 
-            'pangkat' => $validated['pangkat'],
+                'pangkat' =>
+                    $validated['pangkat'],
 
-            'jabatan' => $validated['jabatan'],
+                'jabatan' =>
+                    $validated['jabatan'],
 
-            'keterangan' => $validated['keterangan'] ?? null,
+                'keterangan' =>
+                    $validated['keterangan'] ?? null,
 
-            'google_sync_status' => 'pending',
+                'google_sync_status' =>
+                    'pending',
 
-            'google_synced_at' => null,
-        ]);
+                'google_synced_at' =>
+                    null,
+
+            ]
+        );
 
 
         /*
         |--------------------------------------------------------------------------
-        | 2. KIRIM KE GOOGLE SHEETS
+        | 2. REFRESH DATA
+        |--------------------------------------------------------------------------
+        |
+        | Memastikan ID dan updated_at sudah merupakan
+        | data terbaru dari database.
+        |
+        */
+
+        $pegawai->refresh();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3. KIRIM KE GOOGLE SHEETS
         |--------------------------------------------------------------------------
         */
 
-        $sync = $this->sendToGoogleSheets([
+        $sync = $this->sendToGoogleSheets(
+            [
 
-            'module' => 'Data Umum Kepegawaian',
+                'sheet' =>
+                    self::GOOGLE_SHEET_NAME,
 
-            'action' => 'create',
+                'action' =>
+                    'create',
 
-            'id' => $pegawai->id,
+                'id' =>
+                    $pegawai->id,
 
-            'jenis' => $pegawai->jenis,
+                'jenis' =>
+                    $pegawai->jenis,
 
-            'nomor' => $pegawai->nomor,
+                'nomor' =>
+                    $pegawai->nomor,
 
-            'nama' => $pegawai->nama,
+                'nama' =>
+                    $pegawai->nama,
 
-            'golongan' => $pegawai->golongan,
+                'golongan' =>
+                    $pegawai->golongan,
 
-            'pangkat' => $pegawai->pangkat,
+                'pangkat' =>
+                    $pegawai->pangkat,
 
-            'jabatan' => $pegawai->jabatan,
+                'jabatan' =>
+                    $pegawai->jabatan,
 
-            'keterangan' => $pegawai->keterangan,
+                'diperbarui' =>
+                    $pegawai->updated_at
+                        ? $pegawai->updated_at->format(
+                            'Y-m-d H:i:s'
+                        )
+                        : now()->format(
+                            'Y-m-d H:i:s'
+                        ),
 
-            'updated_at' => $pegawai->updated_at
-                ? $pegawai->updated_at->format('d/m/Y H:i:s')
-                : now()->format('d/m/Y H:i:s'),
-        ]);
+            ]
+        );
 
 
         /*
         |--------------------------------------------------------------------------
-        | 3. UPDATE STATUS SINKRONISASI
+        | 4. UPDATE STATUS SINKRONISASI
         |--------------------------------------------------------------------------
         */
 
         if ($sync) {
 
-            $pegawai->update([
+            $pegawai->update(
+                [
 
-                'google_sync_status' => 'synced',
+                    'google_sync_status' =>
+                        'synced',
 
-                'google_synced_at' => now(),
-            ]);
+                    'google_synced_at' =>
+                        now(),
+
+                ]
+            );
 
 
             return redirect()
-                ->route('dataumumpegawai.index')
+                ->route(
+                    'dataumumpegawai.index'
+                )
                 ->with(
                     'success',
                     'Data pegawai berhasil ditambahkan dan disinkronkan ke Google Sheets.'
@@ -194,16 +266,32 @@ class DataUmumKepegawaianController extends Controller
         }
 
 
-        $pegawai->update([
+        /*
+        |--------------------------------------------------------------------------
+        | GOOGLE SHEETS GAGAL
+        |--------------------------------------------------------------------------
+        |
+        | Data tetap dianggap berhasil tersimpan di database.
+        |
+        */
 
-            'google_sync_status' => 'failed',
+        $pegawai->update(
+            [
 
-            'google_synced_at' => null,
-        ]);
+                'google_sync_status' =>
+                    'failed',
+
+                'google_synced_at' =>
+                    null,
+
+            ]
+        );
 
 
         return redirect()
-            ->route('dataumumpegawai.index')
+            ->route(
+                'dataumumpegawai.index'
+            )
             ->with(
                 'warning',
                 'Data pegawai berhasil disimpan, tetapi gagal disinkronkan ke Google Sheets.'
@@ -214,8 +302,9 @@ class DataUmumKepegawaianController extends Controller
     /**
      * Menampilkan detail data pegawai
      */
-    public function show(DataUmumKepegawaian $dataumumpegawai)
-    {
+    public function show(
+        DataUmumKepegawaian $dataumumpegawai
+    ) {
         $pegawai = $dataumumpegawai;
 
         return view(
@@ -228,20 +317,26 @@ class DataUmumKepegawaianController extends Controller
     /**
      * Menampilkan form edit
      */
-    public function edit(DataUmumKepegawaian $dataumumpegawai)
-    {
-        $pegawai = $dataumumpegawai;
+/**
 
-        $isEdit = true;
+* Menampilkan form edit
+  */
+  public function edit(
+  DataUmumKepegawaian $dataumumpegawai
+  ) {
+  $pegawai = $dataumumpegawai;
 
-        return view(
-            'Admin.Konten.Data_umum_pegawai.edit',
-            compact(
-                'pegawai',
-                'isEdit'
-            )
-        );
-    }
+  $isEdit = true;
+
+  return view(
+  'Admin.Konten.Data_umum_pegawai.tambah',
+  compact(
+  'pegawai',
+  'isEdit'
+  )
+  );
+  }
+
 
 
     /**
@@ -251,69 +346,81 @@ class DataUmumKepegawaianController extends Controller
         Request $request,
         DataUmumKepegawaian $dataumumpegawai
     ) {
-        $validated = $request->validate([
-            'jenis' => [
-                'required',
-                'in:ASN,PPPK,Non-ASN'
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI
+        |--------------------------------------------------------------------------
+        */
+
+        $validated = $request->validate(
+            [
+
+                'jenis' => [
+                    'required',
+                    'in:ASN,PPPK,Non-ASN'
+                ],
+
+                'nomor' => [
+                    'required',
+                    'string',
+                    'max:100'
+                ],
+
+                'nama' => [
+                    'required',
+                    'string',
+                    'max:150'
+                ],
+
+                'golongan' => [
+                    'required',
+                    'string',
+                    'max:20'
+                ],
+
+                'pangkat' => [
+                    'required',
+                    'string',
+                    'max:100'
+                ],
+
+                'jabatan' => [
+                    'required',
+                    'string',
+                    'max:150'
+                ],
+
+                'keterangan' => [
+                    'nullable',
+                    'string'
+                ],
+
             ],
+            [
 
-            'nomor' => [
-                'required',
-                'string',
-                'max:100'
-            ],
+                'jenis.required' =>
+                    'Jenis pegawai wajib dipilih.',
 
-            'nama' => [
-                'required',
-                'string',
-                'max:150'
-            ],
+                'jenis.in' =>
+                    'Jenis pegawai tidak valid.',
 
-            'golongan' => [
-                'required',
-                'string',
-                'max:20'
-            ],
+                'nomor.required' =>
+                    'NIP / NRP / TT wajib diisi.',
 
-            'pangkat' => [
-                'required',
-                'string',
-                'max:100'
-            ],
+                'nama.required' =>
+                    'Nama lengkap wajib diisi.',
 
-            'jabatan' => [
-                'required',
-                'string',
-                'max:150'
-            ],
+                'golongan.required' =>
+                    'Golongan wajib dipilih.',
 
-            'keterangan' => [
-                'nullable',
-                'string'
-            ],
-        ], [
+                'pangkat.required' =>
+                    'Pangkat wajib diisi.',
 
-            'jenis.required' =>
-                'Jenis pegawai wajib dipilih.',
+                'jabatan.required' =>
+                    'Jabatan wajib diisi.',
 
-            'jenis.in' =>
-                'Jenis pegawai tidak valid.',
-
-            'nomor.required' =>
-                'NIP / NRP / TT wajib diisi.',
-
-            'nama.required' =>
-                'Nama lengkap wajib diisi.',
-
-            'golongan.required' =>
-                'Golongan wajib dipilih.',
-
-            'pangkat.required' =>
-                'Pangkat wajib diisi.',
-
-            'jabatan.required' =>
-                'Jabatan wajib diisi.',
-        ]);
+            ]
+        );
 
 
         /*
@@ -322,26 +429,38 @@ class DataUmumKepegawaianController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $dataumumpegawai->update([
+        $dataumumpegawai->update(
+            [
 
-            'jenis' => $validated['jenis'],
+                'jenis' =>
+                    $validated['jenis'],
 
-            'nomor' => $validated['nomor'],
+                'nomor' =>
+                    $validated['nomor'],
 
-            'nama' => $validated['nama'],
+                'nama' =>
+                    $validated['nama'],
 
-            'golongan' => $validated['golongan'],
+                'golongan' =>
+                    $validated['golongan'],
 
-            'pangkat' => $validated['pangkat'],
+                'pangkat' =>
+                    $validated['pangkat'],
 
-            'jabatan' => $validated['jabatan'],
+                'jabatan' =>
+                    $validated['jabatan'],
 
-            'keterangan' => $validated['keterangan'] ?? null,
+                'keterangan' =>
+                    $validated['keterangan'] ?? null,
 
-            'google_sync_status' => 'pending',
+                'google_sync_status' =>
+                    'pending',
 
-            'google_synced_at' => null,
-        ]);
+                'google_synced_at' =>
+                    null,
+
+            ]
+        );
 
 
         /*
@@ -349,8 +468,8 @@ class DataUmumKepegawaianController extends Controller
         | 2. REFRESH DATA
         |--------------------------------------------------------------------------
         |
-        | Memastikan updated_at yang dikirim adalah
-        | updated_at terbaru dari database.
+        | Memastikan updated_at yang dikirim ke Google
+        | adalah timestamp terbaru.
         |
         */
 
@@ -359,36 +478,51 @@ class DataUmumKepegawaianController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | 3. KIRIM PERUBAHAN KE GOOGLE SHEETS
+        | 3. KIRIM UPDATE KE GOOGLE SHEETS
         |--------------------------------------------------------------------------
         */
 
-        $sync = $this->sendToGoogleSheets([
+        $sync = $this->sendToGoogleSheets(
+            [
 
-            'module' => 'Data Umum Kepegawaian',
+                'sheet' =>
+                    self::GOOGLE_SHEET_NAME,
 
-            'action' => 'update',
+                'action' =>
+                    'update',
 
-            'id' => $dataumumpegawai->id,
+                'id' =>
+                    $dataumumpegawai->id,
 
-            'jenis' => $dataumumpegawai->jenis,
+                'jenis' =>
+                    $dataumumpegawai->jenis,
 
-            'nomor' => $dataumumpegawai->nomor,
+                'nomor' =>
+                    $dataumumpegawai->nomor,
 
-            'nama' => $dataumumpegawai->nama,
+                'nama' =>
+                    $dataumumpegawai->nama,
 
-            'golongan' => $dataumumpegawai->golongan,
+                'golongan' =>
+                    $dataumumpegawai->golongan,
 
-            'pangkat' => $dataumumpegawai->pangkat,
+                'pangkat' =>
+                    $dataumumpegawai->pangkat,
 
-            'jabatan' => $dataumumpegawai->jabatan,
+                'jabatan' =>
+                    $dataumumpegawai->jabatan,
 
-            'keterangan' => $dataumumpegawai->keterangan,
+                'diperbarui' =>
+                    $dataumumpegawai->updated_at
+                        ? $dataumumpegawai->updated_at->format(
+                            'Y-m-d H:i:s'
+                        )
+                        : now()->format(
+                            'Y-m-d H:i:s'
+                        ),
 
-            'updated_at' => $dataumumpegawai->updated_at
-                ? $dataumumpegawai->updated_at->format('d/m/Y H:i:s')
-                : now()->format('d/m/Y H:i:s'),
-        ]);
+            ]
+        );
 
 
         /*
@@ -399,16 +533,23 @@ class DataUmumKepegawaianController extends Controller
 
         if ($sync) {
 
-            $dataumumpegawai->update([
+            $dataumumpegawai->update(
+                [
 
-                'google_sync_status' => 'synced',
+                    'google_sync_status' =>
+                        'synced',
 
-                'google_synced_at' => now(),
-            ]);
+                    'google_synced_at' =>
+                        now(),
+
+                ]
+            );
 
 
             return redirect()
-                ->route('dataumumpegawai.index')
+                ->route(
+                    'dataumumpegawai.index'
+                )
                 ->with(
                     'success',
                     'Data pegawai berhasil diperbarui dan disinkronkan ke Google Sheets.'
@@ -416,16 +557,29 @@ class DataUmumKepegawaianController extends Controller
         }
 
 
-        $dataumumpegawai->update([
+        /*
+        |--------------------------------------------------------------------------
+        | GOOGLE SHEETS GAGAL
+        |--------------------------------------------------------------------------
+        */
 
-            'google_sync_status' => 'failed',
+        $dataumumpegawai->update(
+            [
 
-            'google_synced_at' => null,
-        ]);
+                'google_sync_status' =>
+                    'failed',
+
+                'google_synced_at' =>
+                    null,
+
+            ]
+        );
 
 
         return redirect()
-            ->route('dataumumpegawai.index')
+            ->route(
+                'dataumumpegawai.index'
+            )
             ->with(
                 'warning',
                 'Data pegawai berhasil diperbarui, tetapi gagal disinkronkan ke Google Sheets.'
@@ -438,14 +592,18 @@ class DataUmumKepegawaianController extends Controller
      *
      * CATATAN:
      * Delete hanya dilakukan pada database lokal.
-     * Tidak ada sinkronisasi delete ke Google Sheets.
+     * Data yang sudah masuk Google Sheets tetap dipertahankan
+     * sebagai arsip.
      */
-    public function destroy(DataUmumKepegawaian $dataumumpegawai)
-    {
+    public function destroy(
+        DataUmumKepegawaian $dataumumpegawai
+    ) {
         $dataumumpegawai->delete();
 
         return redirect()
-            ->route('dataumumpegawai.index')
+            ->route(
+                'dataumumpegawai.index'
+            )
             ->with(
                 'success',
                 'Data pegawai berhasil dihapus.'
@@ -456,21 +614,31 @@ class DataUmumKepegawaianController extends Controller
     /**
      * Mengirim data ke Google Apps Script
      */
-    private function sendToGoogleSheets(array $data): bool
-    {
-        $url = env('GOOGLE_SHEETS_WEBHOOK_URL');
+    private function sendToGoogleSheets(
+        array $data
+    ): bool {
+
+        /*
+        |--------------------------------------------------------------------------
+        | AMBIL URL APPS SCRIPT DARI .ENV
+        |--------------------------------------------------------------------------
+        */
+
+        $url = env(
+            'GOOGLE_SHEETS_SCRIPT_URL'
+        );
 
 
         /*
         |--------------------------------------------------------------------------
-        | CEK WEBHOOK
+        | CEK URL
         |--------------------------------------------------------------------------
         */
 
         if (!$url) {
 
             Log::error(
-                'GOOGLE_SHEETS_WEBHOOK_URL tidak ditemukan di .env'
+                'GOOGLE_SHEETS_SCRIPT_URL tidak ditemukan di file .env.'
             );
 
             return false;
@@ -479,25 +647,29 @@ class DataUmumKepegawaianController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | ENCODE JSON
+        | SIAPKAN JSON
         |--------------------------------------------------------------------------
         */
 
         $jsonData = json_encode(
             $data,
-            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+            JSON_UNESCAPED_UNICODE |
+            JSON_UNESCAPED_SLASHES
         );
 
 
         if ($jsonData === false) {
 
             Log::error(
-                'Gagal encode JSON Google Sheets Data Umum Kepegawaian',
+                'Gagal melakukan JSON encode untuk Google Sheets.',
                 [
-                    'data' => $data,
+
+                    'data' =>
+                        $data,
 
                     'json_error' =>
                         json_last_error_msg(),
+
                 ]
             );
 
@@ -509,48 +681,64 @@ class DataUmumKepegawaianController extends Controller
         |--------------------------------------------------------------------------
         | CURL REQUEST
         |--------------------------------------------------------------------------
+        |
+        | Google Apps Script Web App dapat memberikan redirect
+        | setelah menerima POST.
+        |
         */
 
-        $ch = curl_init($url);
+        $ch = curl_init(
+            $url
+        );
 
 
-        curl_setopt_array($ch, [
+        curl_setopt_array(
+            $ch,
+            [
 
-            CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_RETURNTRANSFER =>
+                    true,
 
-            CURLOPT_POST => true,
+                CURLOPT_POST =>
+                    true,
 
-            CURLOPT_POSTFIELDS => $jsonData,
+                CURLOPT_POSTFIELDS =>
+                    $jsonData,
 
-            CURLOPT_HTTPHEADER => [
+                CURLOPT_HTTPHEADER =>
+                    [
 
-                'Content-Type: application/json',
+                        'Content-Type: application/json',
 
-                'Accept: application/json',
+                        'Accept: application/json',
 
-                'Content-Length: ' . strlen($jsonData),
-            ],
+                        'Content-Length: ' .
+                            strlen($jsonData),
 
-            CURLOPT_CONNECTTIMEOUT => 10,
+                    ],
 
-            CURLOPT_TIMEOUT => 30,
+                CURLOPT_CONNECTTIMEOUT =>
+                    10,
 
-            /*
-             * Jangan mengikuti redirect otomatis.
-             * Google Apps Script biasanya memberikan
-             * response redirect setelah menerima POST.
-             */
+                CURLOPT_TIMEOUT =>
+                    30,
 
-            CURLOPT_FOLLOWLOCATION => false,
+                CURLOPT_FOLLOWLOCATION =>
+                    false,
 
-            CURLOPT_HTTP_VERSION =>
-                CURL_HTTP_VERSION_1_1,
+                CURLOPT_HTTP_VERSION =>
+                    CURL_HTTP_VERSION_1_1,
 
-            CURLOPT_HEADER => true,
-        ]);
+                CURLOPT_HEADER =>
+                    true,
+
+            ]
+        );
 
 
-        $rawResponse = curl_exec($ch);
+        $rawResponse = curl_exec(
+            $ch
+        );
 
 
         $httpCode = curl_getinfo(
@@ -565,10 +753,14 @@ class DataUmumKepegawaianController extends Controller
         );
 
 
-        $curlErrno = curl_errno($ch);
+        $curlErrno = curl_errno(
+            $ch
+        );
 
 
-        $curlError = curl_error($ch);
+        $curlError = curl_error(
+            $ch
+        );
 
 
         $headerSize = curl_getinfo(
@@ -597,32 +789,42 @@ class DataUmumKepegawaianController extends Controller
         }
 
 
-        curl_close($ch);
+        curl_close(
+            $ch
+        );
 
 
         /*
         |--------------------------------------------------------------------------
-        | LOG RESPONSE AWAL
+        | LOG RESPONSE
         |--------------------------------------------------------------------------
         */
 
         Log::info(
-            'Response Google Sheets Data Umum Kepegawaian - Initial',
+            'Google Sheets DUK - Initial Response',
             [
 
-                'http_code' => $httpCode,
+                'http_code' =>
+                    $httpCode,
 
-                'curl_errno' => $curlErrno,
+                'curl_errno' =>
+                    $curlErrno,
 
-                'curl_error' => $curlError,
+                'curl_error' =>
+                    $curlError,
 
-                'redirect_url' => $redirectUrl,
+                'redirect_url' =>
+                    $redirectUrl,
 
-                'response_headers' => $responseHeaders,
+                'response_headers' =>
+                    $responseHeaders,
 
-                'response_body' => $responseBody,
+                'response_body' =>
+                    $responseBody,
 
-                'data' => $data,
+                'data' =>
+                    $data,
+
             ]
         );
 
@@ -636,14 +838,18 @@ class DataUmumKepegawaianController extends Controller
         if ($rawResponse === false) {
 
             Log::error(
-                'cURL Google Sheets Data Umum Kepegawaian gagal',
+                'cURL Google Sheets DUK gagal.',
                 [
 
-                    'curl_errno' => $curlErrno,
+                    'curl_errno' =>
+                        $curlErrno,
 
-                    'curl_error' => $curlError,
+                    'curl_error' =>
+                        $curlError,
 
-                    'data' => $data,
+                    'data' =>
+                        $data,
+
                 ]
             );
 
@@ -654,14 +860,18 @@ class DataUmumKepegawaianController extends Controller
         if ($curlErrno !== 0) {
 
             Log::error(
-                'cURL Google Sheets Data Umum Kepegawaian error',
+                'cURL Google Sheets DUK mengalami error.',
                 [
 
-                    'curl_errno' => $curlErrno,
+                    'curl_errno' =>
+                        $curlErrno,
 
-                    'curl_error' => $curlError,
+                    'curl_error' =>
+                        $curlError,
 
-                    'data' => $data,
+                    'data' =>
+                        $data,
+
                 ]
             );
 
@@ -671,7 +881,7 @@ class DataUmumKepegawaianController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | JIKA GOOGLE MEMBERIKAN REDIRECT
+        | HANDLE REDIRECT GOOGLE APPS SCRIPT
         |--------------------------------------------------------------------------
         */
 
@@ -685,15 +895,19 @@ class DataUmumKepegawaianController extends Controller
             $redirectUrl
         ) {
 
-            $redirectUrl = trim(
-                $redirectUrl
-            );
+            $redirectUrl =
+                trim($redirectUrl);
 
 
             /*
             |--------------------------------------------------------------------------
             | REQUEST KE URL REDIRECT
             |--------------------------------------------------------------------------
+            |
+            | POST awal sudah diterima oleh Apps Script.
+            | Request berikutnya digunakan untuk membaca
+            | response hasil eksekusi.
+            |
             */
 
             $ch = curl_init(
@@ -701,29 +915,45 @@ class DataUmumKepegawaianController extends Controller
             );
 
 
-            curl_setopt_array($ch, [
+            curl_setopt_array(
+                $ch,
+                [
 
-                CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_RETURNTRANSFER =>
+                        true,
 
-                CURLOPT_HTTPGET => true,
+                    CURLOPT_HTTPGET =>
+                        true,
 
-                CURLOPT_HTTPHEADER => [
+                    CURLOPT_HTTPHEADER =>
+                        [
 
-                    'Accept: application/json',
-                ],
+                            'Accept: application/json',
 
-                CURLOPT_CONNECTTIMEOUT => 10,
+                        ],
 
-                CURLOPT_TIMEOUT => 30,
+                    CURLOPT_CONNECTTIMEOUT =>
+                        10,
 
-                CURLOPT_FOLLOWLOCATION => false,
+                    CURLOPT_TIMEOUT =>
+                        30,
 
-                CURLOPT_HTTP_VERSION =>
-                    CURL_HTTP_VERSION_1_1,
-            ]);
+                    CURLOPT_FOLLOWLOCATION =>
+                        true,
+
+                    CURLOPT_MAXREDIRS =>
+                        5,
+
+                    CURLOPT_HTTP_VERSION =>
+                        CURL_HTTP_VERSION_1_1,
+
+                ]
+            );
 
 
-            $finalResponse = curl_exec($ch);
+            $finalResponse = curl_exec(
+                $ch
+            );
 
 
             $finalHttpCode = curl_getinfo(
@@ -742,17 +972,19 @@ class DataUmumKepegawaianController extends Controller
             );
 
 
-            curl_close($ch);
+            curl_close(
+                $ch
+            );
 
 
             /*
             |--------------------------------------------------------------------------
-            | LOG RESPONSE REDIRECT
+            | LOG RESPONSE AKHIR
             |--------------------------------------------------------------------------
             */
 
             Log::info(
-                'Response Google Sheets Data Umum Kepegawaian - Redirect',
+                'Google Sheets DUK - Redirect Response',
                 [
 
                     'http_code' =>
@@ -769,14 +1001,34 @@ class DataUmumKepegawaianController extends Controller
 
                     'data' =>
                         $data,
+
                 ]
             );
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | CEK ERROR REDIRECT
+            |--------------------------------------------------------------------------
+            */
 
             if (
                 $finalResponse === false ||
                 $finalCurlErrno !== 0
             ) {
+
+                Log::error(
+                    'Gagal mengambil response redirect Google Sheets DUK.',
+                    [
+
+                        'curl_errno' =>
+                            $finalCurlErrno,
+
+                        'curl_error' =>
+                            $finalCurlError,
+
+                    ]
+                );
 
                 return false;
             }
@@ -784,7 +1036,7 @@ class DataUmumKepegawaianController extends Controller
 
             /*
             |--------------------------------------------------------------------------
-            | CEK JSON RESPONSE
+            | PARSE JSON
             |--------------------------------------------------------------------------
             */
 
@@ -796,16 +1048,20 @@ class DataUmumKepegawaianController extends Controller
 
             if (
                 is_array($decoded) &&
-                isset($decoded['success'])
+                array_key_exists(
+                    'success',
+                    $decoded
+                )
             ) {
 
-                return (bool) $decoded['success'];
+                return (bool)
+                    $decoded['success'];
             }
 
 
             /*
             |--------------------------------------------------------------------------
-            | HTTP 2xx DIANGGAP BERHASIL
+            | HTTP 2XX
             |--------------------------------------------------------------------------
             */
 
@@ -836,16 +1092,20 @@ class DataUmumKepegawaianController extends Controller
 
         if (
             is_array($decoded) &&
-            isset($decoded['success'])
+            array_key_exists(
+                'success',
+                $decoded
+            )
         ) {
 
-            return (bool) $decoded['success'];
+            return (bool)
+                $decoded['success'];
         }
 
 
         /*
         |--------------------------------------------------------------------------
-        | HTTP 2xx
+        | HTTP 2XX
         |--------------------------------------------------------------------------
         */
 
@@ -865,14 +1125,18 @@ class DataUmumKepegawaianController extends Controller
         */
 
         Log::error(
-            'Google Sheets Data Umum Kepegawaian HTTP error',
+            'Google Sheets DUK HTTP error.',
             [
 
-                'http_code' => $httpCode,
+                'http_code' =>
+                    $httpCode,
 
-                'response' => $responseBody,
+                'response' =>
+                    $responseBody,
 
-                'data' => $data,
+                'data' =>
+                    $data,
+
             ]
         );
 

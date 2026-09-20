@@ -10,11 +10,20 @@ use Illuminate\Support\Facades\Log;
 class DataBmdController extends Controller
 {
     /**
+     * Nama sheet Google Spreadsheet
+     */
+    private const GOOGLE_SHEET_NAME = 'BMD';
+
+
+    /**
      * Menampilkan seluruh data BMD
      */
     public function index()
     {
-        $dataBmd = DataBmd::orderBy('updated_at', 'desc')->get();
+        $dataBmd = DataBmd::orderBy(
+            'updated_at',
+            'desc'
+        )->get();
 
         return view(
             'Admin.Konten.Data_bmd.index',
@@ -24,77 +33,227 @@ class DataBmdController extends Controller
 
 
     /**
-     * Form tambah data
+     * Menampilkan form tambah data
      */
     public function create()
     {
         $bmd = null;
+
         $isEdit = false;
 
         return view(
             'Admin.Konten.Data_bmd.tambah',
-            compact('bmd', 'isEdit')
+            compact(
+                'bmd',
+                'isEdit'
+            )
         );
     }
 
 
     /**
-     * Simpan data baru
+     * Menyimpan data BMD baru
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'id_data' => 'required|string|max:50|unique:data_bmd,id_data',
-            'nama_barang' => 'required|string|max:150',
-            'type' => 'nullable|string|max:100',
-            'tahun_perolehan' => 'nullable|integer|min:1900|max:2100',
-            'sumber_dana' => 'nullable|string|max:100',
-            'kondisi' => 'nullable|string|max:50',
-            'keterangan' => 'nullable|string',
-        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI
+        |--------------------------------------------------------------------------
+        */
 
+        $validated = $request->validate(
+            [
 
-        $bmd = DataBmd::create([
-            'id_data' => $validated['id_data'],
-            'nama_barang' => $validated['nama_barang'],
-            'type' => $validated['type'] ?? null,
-            'tahun_perolehan' => $validated['tahun_perolehan'] ?? null,
-            'sumber_dana' => $validated['sumber_dana'] ?? null,
-            'kondisi' => $validated['kondisi'] ?? null,
-            'keterangan' => $validated['keterangan'] ?? null,
-            'google_sync_status' => 'pending',
-        ]);
+                'id_data' => [
+                    'required',
+                    'string',
+                    'max:50',
+                    'unique:data_bmd,id_data'
+                ],
+
+                'nama_barang' => [
+                    'required',
+                    'string',
+                    'max:150'
+                ],
+
+                'type' => [
+                    'nullable',
+                    'string',
+                    'max:100'
+                ],
+
+                'tahun_perolehan' => [
+                    'nullable',
+                    'integer',
+                    'min:1900',
+                    'max:2100'
+                ],
+
+                'sumber_dana' => [
+                    'nullable',
+                    'string',
+                    'max:100'
+                ],
+
+                'kondisi' => [
+                    'nullable',
+                    'string',
+                    'max:50'
+                ],
+
+                'keterangan' => [
+                    'nullable',
+                    'string'
+                ],
+
+            ],
+            [
+
+                'id_data.required' =>
+                    'ID BMD wajib diisi.',
+
+                'id_data.unique' =>
+                    'ID BMD sudah digunakan.',
+
+                'nama_barang.required' =>
+                    'Nama barang wajib diisi.',
+
+                'tahun_perolehan.integer' =>
+                    'Tahun perolehan harus berupa angka.',
+
+            ]
+        );
 
 
         /*
-         * Sinkronisasi data baru ke Google Sheets
-         */
-        $sync = $this->sendToGoogleSheets([
-            'module' => 'BMD',
-            'action' => 'create',
-            'id_data' => $bmd->id_data,
-            'nama_barang' => $bmd->nama_barang,
-            'type' => $bmd->type,
-            'tahun_perolehan' => $bmd->tahun_perolehan,
-            'sumber_dana' => $bmd->sumber_dana,
-            'kondisi' => $bmd->kondisi,
-            'keterangan' => $bmd->keterangan,
-            'updated_at' => $bmd->updated_at
-                ? $bmd->updated_at->format('d/m/Y H:i:s')
-                : now()->format('d/m/Y H:i:s'),
-        ]);
+        |--------------------------------------------------------------------------
+        | 1. SIMPAN KE DATABASE
+        |--------------------------------------------------------------------------
+        */
 
+        $bmd = DataBmd::create(
+            [
+
+                'id_data' =>
+                    $validated['id_data'],
+
+                'nama_barang' =>
+                    $validated['nama_barang'],
+
+                'type' =>
+                    $validated['type'] ?? null,
+
+                'tahun_perolehan' =>
+                    $validated['tahun_perolehan'] ?? null,
+
+                'sumber_dana' =>
+                    $validated['sumber_dana'] ?? null,
+
+                'kondisi' =>
+                    $validated['kondisi'] ?? null,
+
+                'keterangan' =>
+                    $validated['keterangan'] ?? null,
+
+                'google_sync_status' =>
+                    'pending',
+
+                'google_synced_at' =>
+                    null,
+
+            ]
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2. REFRESH DATA
+        |--------------------------------------------------------------------------
+        |
+        | Memastikan updated_at sudah merupakan data terbaru
+        | dari database.
+        |
+        */
+
+        $bmd->refresh();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3. SINKRONISASI CREATE KE GOOGLE SHEETS
+        |--------------------------------------------------------------------------
+        */
+
+        $sync = $this->sendToGoogleSheets(
+            [
+
+                'sheet' =>
+                    self::GOOGLE_SHEET_NAME,
+
+                'action' =>
+                    'create',
+
+                'id' =>
+                    $bmd->id_data,
+
+                'nama_barang' =>
+                    $bmd->nama_barang,
+
+                'type' =>
+                    $bmd->type,
+
+                'tahun_perolehan' =>
+                    $bmd->tahun_perolehan,
+
+                'sumber_dana' =>
+                    $bmd->sumber_dana,
+
+                'kondisi' =>
+                    $bmd->kondisi,
+
+                'keterangan' =>
+                    $bmd->keterangan,
+
+                'diperbarui' =>
+                    $bmd->updated_at
+                        ? $bmd->updated_at->format(
+                            'Y-m-d H:i:s'
+                        )
+                        : now()->format(
+                            'Y-m-d H:i:s'
+                        ),
+
+            ]
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | 4. UPDATE STATUS SINKRONISASI
+        |--------------------------------------------------------------------------
+        */
 
         if ($sync) {
 
-            $bmd->update([
-                'google_sync_status' => 'synced',
-                'google_synced_at' => now(),
-            ]);
+            $bmd->update(
+                [
+
+                    'google_sync_status' =>
+                        'synced',
+
+                    'google_synced_at' =>
+                        now(),
+
+                ]
+            );
 
 
             return redirect()
-                ->route('databmd.index')
+                ->route(
+                    'databmd.index'
+                )
                 ->with(
                     'success',
                     'Data BMD berhasil ditambahkan dan disinkronkan ke Google Sheets.'
@@ -102,13 +261,32 @@ class DataBmdController extends Controller
         }
 
 
-        $bmd->update([
-            'google_sync_status' => 'failed',
-        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | GOOGLE SHEETS GAGAL
+        |--------------------------------------------------------------------------
+        |
+        | Data tetap tersimpan di database Laravel.
+        |
+        */
+
+        $bmd->update(
+            [
+
+                'google_sync_status' =>
+                    'failed',
+
+                'google_synced_at' =>
+                    null,
+
+            ]
+        );
 
 
         return redirect()
-            ->route('databmd.index')
+            ->route(
+                'databmd.index'
+            )
             ->with(
                 'warning',
                 'Data BMD berhasil disimpan, tetapi gagal disinkronkan ke Google Sheets.'
@@ -119,8 +297,9 @@ class DataBmdController extends Controller
     /**
      * Menampilkan detail data BMD
      */
-    public function show(DataBmd $databmd)
-    {
+    public function show(
+        DataBmd $databmd
+    ) {
         return view(
             'Admin.Konten.Data_bmd.show',
             compact('databmd')
@@ -129,93 +308,259 @@ class DataBmdController extends Controller
 
 
     /**
-     * Form edit data
+     * Menampilkan form edit data BMD
      */
-    public function edit(DataBmd $databmd)
-    {
+    public function edit(
+        DataBmd $databmd
+    ) {
         $bmd = $databmd;
+
         $isEdit = true;
 
         return view(
             'Admin.Konten.Data_bmd.tambah',
-            compact('bmd', 'isEdit')
+            compact(
+                'bmd',
+                'isEdit'
+            )
         );
     }
 
 
     /**
-     * Update data
+     * Memperbarui data BMD
      */
-    public function update(Request $request, DataBmd $databmd)
-    {
-        $validated = $request->validate([
-            'id_data' => [
-                'required',
-                'string',
-                'max:50',
-                Rule::unique('data_bmd', 'id_data')
-                    ->ignore($databmd->id),
+    public function update(
+        Request $request,
+        DataBmd $databmd
+    ) {
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDASI
+        |--------------------------------------------------------------------------
+        */
+
+        $validated = $request->validate(
+            [
+
+                'id_data' => [
+                    'required',
+                    'string',
+                    'max:50',
+                    Rule::unique(
+                        'data_bmd',
+                        'id_data'
+                    )->ignore(
+                        $databmd->id
+                    ),
+                ],
+
+                'nama_barang' => [
+                    'required',
+                    'string',
+                    'max:150'
+                ],
+
+                'type' => [
+                    'nullable',
+                    'string',
+                    'max:100'
+                ],
+
+                'tahun_perolehan' => [
+                    'nullable',
+                    'integer',
+                    'min:1900',
+                    'max:2100'
+                ],
+
+                'sumber_dana' => [
+                    'nullable',
+                    'string',
+                    'max:100'
+                ],
+
+                'kondisi' => [
+                    'nullable',
+                    'string',
+                    'max:50'
+                ],
+
+                'keterangan' => [
+                    'nullable',
+                    'string'
+                ],
+
             ],
+            [
 
-            'nama_barang' => 'required|string|max:150',
+                'id_data.required' =>
+                    'ID BMD wajib diisi.',
 
-            'type' => 'nullable|string|max:100',
+                'id_data.unique' =>
+                    'ID BMD sudah digunakan.',
 
-            'tahun_perolehan' =>
-                'nullable|integer|min:1900|max:2100',
+                'nama_barang.required' =>
+                    'Nama barang wajib diisi.',
 
-            'sumber_dana' =>
-                'nullable|string|max:100',
+                'tahun_perolehan.integer' =>
+                    'Tahun perolehan harus berupa angka.',
 
-            'kondisi' =>
-                'nullable|string|max:50',
-
-            'keterangan' =>
-                'nullable|string',
-        ]);
-
-
-        $databmd->update([
-            'id_data' => $validated['id_data'],
-            'nama_barang' => $validated['nama_barang'],
-            'type' => $validated['type'] ?? null,
-            'tahun_perolehan' => $validated['tahun_perolehan'] ?? null,
-            'sumber_dana' => $validated['sumber_dana'] ?? null,
-            'kondisi' => $validated['kondisi'] ?? null,
-            'keterangan' => $validated['keterangan'] ?? null,
-            'google_sync_status' => 'pending',
-        ]);
+            ]
+        );
 
 
         /*
-         * Sinkronisasi perubahan ke Google Sheets
-         */
-        $sync = $this->sendToGoogleSheets([
-            'module' => 'BMD',
-            'action' => 'update',
-            'id_data' => $databmd->id_data,
-            'nama_barang' => $databmd->nama_barang,
-            'type' => $databmd->type,
-            'tahun_perolehan' => $databmd->tahun_perolehan,
-            'sumber_dana' => $databmd->sumber_dana,
-            'kondisi' => $databmd->kondisi,
-            'keterangan' => $databmd->keterangan,
-            'updated_at' => $databmd->updated_at
-                ? $databmd->updated_at->format('d/m/Y H:i:s')
-                : now()->format('d/m/Y H:i:s'),
-        ]);
+        |--------------------------------------------------------------------------
+        | SIMPAN ID LAMA
+        |--------------------------------------------------------------------------
+        |
+        | Sangat penting untuk Google Sheets.
+        |
+        | Contoh:
+        | ID lama = BMD-001
+        | ID baru = BMD-002
+        |
+        | Google Sheets akan mencari BMD-001,
+        | kemudian mengganti baris tersebut menjadi BMD-002.
+        |
+        */
 
+        $oldId = $databmd->id_data;
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | 1. UPDATE DATABASE
+        |--------------------------------------------------------------------------
+        */
+
+        $databmd->update(
+            [
+
+                'id_data' =>
+                    $validated['id_data'],
+
+                'nama_barang' =>
+                    $validated['nama_barang'],
+
+                'type' =>
+                    $validated['type'] ?? null,
+
+                'tahun_perolehan' =>
+                    $validated['tahun_perolehan'] ?? null,
+
+                'sumber_dana' =>
+                    $validated['sumber_dana'] ?? null,
+
+                'kondisi' =>
+                    $validated['kondisi'] ?? null,
+
+                'keterangan' =>
+                    $validated['keterangan'] ?? null,
+
+                'google_sync_status' =>
+                    'pending',
+
+                'google_synced_at' =>
+                    null,
+
+            ]
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2. REFRESH DATA
+        |--------------------------------------------------------------------------
+        */
+
+        $databmd->refresh();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3. SINKRONISASI UPDATE KE GOOGLE SHEETS
+        |--------------------------------------------------------------------------
+        */
+
+        $sync = $this->sendToGoogleSheets(
+            [
+
+                'sheet' =>
+                    self::GOOGLE_SHEET_NAME,
+
+                'action' =>
+                    'update',
+
+                /*
+                | ID sebelum perubahan.
+                */
+                'old_id' =>
+                    $oldId,
+
+                /*
+                | ID setelah perubahan.
+                */
+                'id' =>
+                    $databmd->id_data,
+
+                'nama_barang' =>
+                    $databmd->nama_barang,
+
+                'type' =>
+                    $databmd->type,
+
+                'tahun_perolehan' =>
+                    $databmd->tahun_perolehan,
+
+                'sumber_dana' =>
+                    $databmd->sumber_dana,
+
+                'kondisi' =>
+                    $databmd->kondisi,
+
+                'keterangan' =>
+                    $databmd->keterangan,
+
+                'diperbarui' =>
+                    $databmd->updated_at
+                        ? $databmd->updated_at->format(
+                            'Y-m-d H:i:s'
+                        )
+                        : now()->format(
+                            'Y-m-d H:i:s'
+                        ),
+
+            ]
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | 4. UPDATE STATUS SINKRONISASI
+        |--------------------------------------------------------------------------
+        */
 
         if ($sync) {
 
-            $databmd->update([
-                'google_sync_status' => 'synced',
-                'google_synced_at' => now(),
-            ]);
+            $databmd->update(
+                [
+
+                    'google_sync_status' =>
+                        'synced',
+
+                    'google_synced_at' =>
+                        now(),
+
+                ]
+            );
 
 
             return redirect()
-                ->route('databmd.index')
+                ->route(
+                    'databmd.index'
+                )
                 ->with(
                     'success',
                     'Data BMD berhasil diperbarui dan disinkronkan ke Google Sheets.'
@@ -223,13 +568,29 @@ class DataBmdController extends Controller
         }
 
 
-        $databmd->update([
-            'google_sync_status' => 'failed',
-        ]);
+        /*
+        |--------------------------------------------------------------------------
+        | GOOGLE SHEETS GAGAL
+        |--------------------------------------------------------------------------
+        */
+
+        $databmd->update(
+            [
+
+                'google_sync_status' =>
+                    'failed',
+
+                'google_synced_at' =>
+                    null,
+
+            ]
+        );
 
 
         return redirect()
-            ->route('databmd.index')
+            ->route(
+                'databmd.index'
+            )
             ->with(
                 'warning',
                 'Data BMD berhasil diperbarui, tetapi gagal disinkronkan ke Google Sheets.'
@@ -238,18 +599,20 @@ class DataBmdController extends Controller
 
 
     /**
-     * Hapus data BMD
+     * Menghapus data BMD
      *
-     * Penghapusan hanya dilakukan pada database Laravel.
-     * Tidak ada sinkronisasi delete ke Google Sheets.
+     * Delete hanya dilakukan di database Laravel.
+     * Google Sheets tetap menyimpan data sebagai arsip.
      */
-    public function destroy(DataBmd $databmd)
-    {
+    public function destroy(
+        DataBmd $databmd
+    ) {
         $databmd->delete();
 
-
         return redirect()
-            ->route('databmd.index')
+            ->route(
+                'databmd.index'
+            )
             ->with(
                 'success',
                 'Data BMD berhasil dihapus.'
@@ -258,38 +621,64 @@ class DataBmdController extends Controller
 
 
     /**
-     * Kirim data ke Google Sheets
-     *
-     * Digunakan untuk CREATE dan UPDATE.
+     * Mengirim data ke Google Apps Script
      */
-    private function sendToGoogleSheets(array $data): bool
-    {
-        $url = env('GOOGLE_SHEETS_WEBHOOK_URL');
+    private function sendToGoogleSheets(
+        array $data
+    ): bool {
 
+        /*
+        |--------------------------------------------------------------------------
+        | AMBIL URL APPS SCRIPT
+        |--------------------------------------------------------------------------
+        */
+
+        $url = env(
+            'GOOGLE_SHEETS_SCRIPT_URL'
+        );
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | CEK URL
+        |--------------------------------------------------------------------------
+        */
 
         if (!$url) {
 
             Log::error(
-                'GOOGLE_SHEETS_WEBHOOK_URL tidak ditemukan di .env'
+                'GOOGLE_SHEETS_SCRIPT_URL tidak ditemukan di file .env untuk BMD.'
             );
 
             return false;
         }
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | JSON ENCODE
+        |--------------------------------------------------------------------------
+        */
+
         $jsonData = json_encode(
             $data,
-            JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
+            JSON_UNESCAPED_UNICODE |
+            JSON_UNESCAPED_SLASHES
         );
 
 
         if ($jsonData === false) {
 
             Log::error(
-                'Gagal encode JSON Google Sheets BMD',
+                'Gagal melakukan JSON encode untuk Google Sheets BMD.',
                 [
-                    'data' => $data,
-                    'json_error' => json_last_error_msg(),
+
+                    'data' =>
+                        $data,
+
+                    'json_error' =>
+                        json_last_error_msg(),
+
                 ]
             );
 
@@ -297,41 +686,64 @@ class DataBmdController extends Controller
         }
 
 
-        $ch = curl_init($url);
+        /*
+        |--------------------------------------------------------------------------
+        | CURL REQUEST AWAL
+        |--------------------------------------------------------------------------
+        */
+
+        $ch = curl_init(
+            $url
+        );
 
 
-        curl_setopt_array($ch, [
+        curl_setopt_array(
+            $ch,
+            [
 
-            CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_RETURNTRANSFER =>
+                    true,
 
-            CURLOPT_POST => true,
+                CURLOPT_POST =>
+                    true,
 
-            CURLOPT_POSTFIELDS => $jsonData,
+                CURLOPT_POSTFIELDS =>
+                    $jsonData,
 
-            CURLOPT_HTTPHEADER => [
+                CURLOPT_HTTPHEADER =>
+                    [
 
-                'Content-Type: application/json',
+                        'Content-Type: application/json',
 
-                'Accept: application/json',
+                        'Accept: application/json',
 
-                'Content-Length: ' . strlen($jsonData),
+                        'Content-Length: ' .
+                            strlen($jsonData),
 
-            ],
+                    ],
 
-            CURLOPT_CONNECTTIMEOUT => 10,
+                CURLOPT_CONNECTTIMEOUT =>
+                    10,
 
-            CURLOPT_TIMEOUT => 30,
+                CURLOPT_TIMEOUT =>
+                    30,
 
-            CURLOPT_FOLLOWLOCATION => false,
+                CURLOPT_FOLLOWLOCATION =>
+                    false,
 
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_HTTP_VERSION =>
+                    CURL_HTTP_VERSION_1_1,
 
-            CURLOPT_HEADER => true,
+                CURLOPT_HEADER =>
+                    true,
 
-        ]);
+            ]
+        );
 
 
-        $rawResponse = curl_exec($ch);
+        $rawResponse = curl_exec(
+            $ch
+        );
 
 
         $httpCode = curl_getinfo(
@@ -346,9 +758,14 @@ class DataBmdController extends Controller
         );
 
 
-        $curlErrno = curl_errno($ch);
+        $curlErrno = curl_errno(
+            $ch
+        );
 
-        $curlError = curl_error($ch);
+
+        $curlError = curl_error(
+            $ch
+        );
 
 
         $headerSize = curl_getinfo(
@@ -377,30 +794,69 @@ class DataBmdController extends Controller
         }
 
 
-        curl_close($ch);
+        curl_close(
+            $ch
+        );
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | LOG RESPONSE AWAL
+        |--------------------------------------------------------------------------
+        */
 
         Log::info(
-            'Response Google Sheets BMD - Initial',
+            'Google Sheets BMD - Initial Response',
             [
-                'http_code' => $httpCode,
 
-                'curl_errno' => $curlErrno,
+                'http_code' =>
+                    $httpCode,
 
-                'curl_error' => $curlError,
+                'curl_errno' =>
+                    $curlErrno,
 
-                'redirect_url' => $redirectUrl,
+                'curl_error' =>
+                    $curlError,
 
-                'response_headers' => $responseHeaders,
+                'redirect_url' =>
+                    $redirectUrl,
 
-                'response_body' => $responseBody,
+                'response_headers' =>
+                    $responseHeaders,
 
-                'data' => $data,
+                'response_body' =>
+                    $responseBody,
+
+                'data' =>
+                    $data,
+
             ]
         );
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | CEK CURL ERROR
+        |--------------------------------------------------------------------------
+        */
+
         if ($rawResponse === false) {
+
+            Log::error(
+                'cURL Google Sheets BMD gagal.',
+                [
+
+                    'curl_errno' =>
+                        $curlErrno,
+
+                    'curl_error' =>
+                        $curlError,
+
+                    'data' =>
+                        $data,
+
+                ]
+            );
 
             return false;
         }
@@ -408,26 +864,44 @@ class DataBmdController extends Controller
 
         if ($curlErrno !== 0) {
 
+            Log::error(
+                'cURL Google Sheets BMD mengalami error.',
+                [
+
+                    'curl_errno' =>
+                        $curlErrno,
+
+                    'curl_error' =>
+                        $curlError,
+
+                    'data' =>
+                        $data,
+
+                ]
+            );
+
             return false;
         }
 
 
         /*
-         * Google Apps Script biasanya memberikan HTTP 302
-         * menuju script.googleusercontent.com.
-         *
-         * URL redirect dibuka menggunakan GET.
-         */
+        |--------------------------------------------------------------------------
+        | HANDLE REDIRECT GOOGLE APPS SCRIPT
+        |--------------------------------------------------------------------------
+        */
+
         if (
             (
-                $httpCode === 301
-                || $httpCode === 302
-                || $httpCode === 303
+                $httpCode === 301 ||
+                $httpCode === 302 ||
+                $httpCode === 303
             )
-            && $redirectUrl
+            &&
+            $redirectUrl
         ) {
 
-            $redirectUrl = trim($redirectUrl);
+            $redirectUrl =
+                trim($redirectUrl);
 
 
             $ch = curl_init(
@@ -435,30 +909,45 @@ class DataBmdController extends Controller
             );
 
 
-            curl_setopt_array($ch, [
+            curl_setopt_array(
+                $ch,
+                [
 
-                CURLOPT_RETURNTRANSFER => true,
+                    CURLOPT_RETURNTRANSFER =>
+                        true,
 
-                CURLOPT_HTTPGET => true,
+                    CURLOPT_HTTPGET =>
+                        true,
 
-                CURLOPT_HTTPHEADER => [
+                    CURLOPT_HTTPHEADER =>
+                        [
 
-                    'Accept: application/json',
+                            'Accept: application/json',
 
-                ],
+                        ],
 
-                CURLOPT_CONNECTTIMEOUT => 10,
+                    CURLOPT_CONNECTTIMEOUT =>
+                        10,
 
-                CURLOPT_TIMEOUT => 30,
+                    CURLOPT_TIMEOUT =>
+                        30,
 
-                CURLOPT_FOLLOWLOCATION => false,
+                    CURLOPT_FOLLOWLOCATION =>
+                        true,
 
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                    CURLOPT_MAXREDIRS =>
+                        5,
 
-            ]);
+                    CURLOPT_HTTP_VERSION =>
+                        CURL_HTTP_VERSION_1_1,
+
+                ]
+            );
 
 
-            $finalResponse = curl_exec($ch);
+            $finalResponse = curl_exec(
+                $ch
+            );
 
 
             $finalHttpCode = curl_getinfo(
@@ -467,38 +956,83 @@ class DataBmdController extends Controller
             );
 
 
-            $finalCurlErrno = curl_errno($ch);
+            $finalCurlErrno = curl_errno(
+                $ch
+            );
 
-            $finalCurlError = curl_error($ch);
+
+            $finalCurlError = curl_error(
+                $ch
+            );
 
 
-            curl_close($ch);
+            curl_close(
+                $ch
+            );
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | LOG RESPONSE AKHIR
+            |--------------------------------------------------------------------------
+            */
 
             Log::info(
-                'Response Google Sheets BMD - Redirect',
+                'Google Sheets BMD - Redirect Response',
                 [
-                    'http_code' => $finalHttpCode,
 
-                    'curl_errno' => $finalCurlErrno,
+                    'http_code' =>
+                        $finalHttpCode,
 
-                    'curl_error' => $finalCurlError,
+                    'curl_errno' =>
+                        $finalCurlErrno,
 
-                    'response' => $finalResponse,
+                    'curl_error' =>
+                        $finalCurlError,
 
-                    'data' => $data,
+                    'response' =>
+                        $finalResponse,
+
+                    'data' =>
+                        $data,
+
                 ]
             );
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | CEK ERROR REDIRECT
+            |--------------------------------------------------------------------------
+            */
+
             if (
-                $finalResponse === false
-                || $finalCurlErrno !== 0
+                $finalResponse === false ||
+                $finalCurlErrno !== 0
             ) {
+
+                Log::error(
+                    'Gagal mengambil response redirect Google Sheets BMD.',
+                    [
+
+                        'curl_errno' =>
+                            $finalCurlErrno,
+
+                        'curl_error' =>
+                            $finalCurlError,
+
+                    ]
+                );
 
                 return false;
             }
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | PARSE JSON
+            |--------------------------------------------------------------------------
+            */
 
             $decoded = json_decode(
                 $finalResponse,
@@ -507,17 +1041,27 @@ class DataBmdController extends Controller
 
 
             if (
-                is_array($decoded)
-                && isset($decoded['success'])
+                is_array($decoded) &&
+                array_key_exists(
+                    'success',
+                    $decoded
+                )
             ) {
 
-                return (bool) $decoded['success'];
+                return (bool)
+                    $decoded['success'];
             }
 
 
+            /*
+            |--------------------------------------------------------------------------
+            | HTTP 2XX
+            |--------------------------------------------------------------------------
+            */
+
             if (
-                $finalHttpCode >= 200
-                && $finalHttpCode < 300
+                $finalHttpCode >= 200 &&
+                $finalHttpCode < 300
             ) {
 
                 return true;
@@ -529,9 +1073,11 @@ class DataBmdController extends Controller
 
 
         /*
-         * Jika Google tidak memberikan redirect
-         * tetapi langsung memberikan JSON response.
-         */
+        |--------------------------------------------------------------------------
+        | RESPONSE JSON NORMAL
+        |--------------------------------------------------------------------------
+        */
+
         $decoded = json_decode(
             $responseBody,
             true
@@ -539,21 +1085,54 @@ class DataBmdController extends Controller
 
 
         if (
-            is_array($decoded)
-            && isset($decoded['success'])
+            is_array($decoded) &&
+            array_key_exists(
+                'success',
+                $decoded
+            )
         ) {
 
-            return (bool) $decoded['success'];
+            return (bool)
+                $decoded['success'];
         }
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | HTTP 2XX
+        |--------------------------------------------------------------------------
+        */
+
         if (
-            $httpCode >= 200
-            && $httpCode < 300
+            $httpCode >= 200 &&
+            $httpCode < 300
         ) {
 
             return true;
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | HTTP ERROR
+        |--------------------------------------------------------------------------
+        */
+
+        Log::error(
+            'Google Sheets BMD HTTP error.',
+            [
+
+                'http_code' =>
+                    $httpCode,
+
+                'response' =>
+                    $responseBody,
+
+                'data' =>
+                    $data,
+
+            ]
+        );
 
 
         return false;
